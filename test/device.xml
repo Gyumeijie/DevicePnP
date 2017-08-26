@@ -1,0 +1,51 @@
+<root>
+<device id="gyroscope1"> 
+  <global name="global">
+     <para_list length="1" name="global">
+       <para name="slave_address" type="char">0xD2</para>
+     </para_list>
+  </global>
+  <op_list length="2">
+    <op name="gyroscope_open" template_id="0">
+       <para_list length="5" name="open_template0">
+          <para address="0x20">0x4F</para>
+          <para address="0x21">0x00</para>
+          <para address="0x22">0x08</para>
+          <para address="0x23">0x00</para>
+          <para address="0x24">0x00</para>
+       </para_list>
+    </op>
+    <op name="gyroscope_getx" template_id="0">
+       <para_list length="2" name="getx_template0">
+          <para name="reg_address" type="char">0x28</para> 
+          <para name="size" type="int">2</para>
+       </para_list>
+    </op>
+  </op_list>
+</device>
+<device id="gyroscope2"> 
+  <global>
+     <para_list length="1" name="global">
+       <para name="slave_address"  type="char">0x68</para>
+     </para_list>
+  </global>
+  <op_list length="1">
+    <op name="gyroscope_open" template_id="0"> 
+       <para_list length="1" name="open_template0">
+          <para address="0x6B">0x00</para>
+       </para_list>
+    </op>
+  </op_list>
+ </device>
+ <device id="analogsunsensor1"> 
+  <op_list length="1">
+    <op name="analogsunsensor_read" template_id="0"> 
+       <para_list length="3" name="read_template0">
+          <para type="int">6</para>
+          <para type="int">7</para>
+          <para type="int">8</para>
+       </para_list>
+    </op>
+  </op_list>
+ </device>
+</root>

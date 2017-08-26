@@ -23,7 +23,7 @@ void register_devices(void)
        int i;
        
 #if DEBUG
-       puts("---------------begin register_device-------------");
+       printf("\n---------------Begin device registeration-------------\n\n");
 #endif
        attrs_item_num = get_attrs_item_num();
        for (i=0; i<attrs_item_num; i++){
@@ -53,7 +53,7 @@ void register_devices(void)
        }
 
 #if DEBUG
-       puts("---------------end register_device-------------");
+       printf("\n-----------------End device registeration---------------\n");
 #endif
 
 }
