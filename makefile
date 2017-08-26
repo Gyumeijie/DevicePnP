@@ -1,22 +1,14 @@
-VPATH = src/  src/utility test/ 
+VPATH = src/  src/utility  src/drivers  test/ 
 
-CPPFLAGS = -I include/ -I include/utility
+CPPFLAGS = -I include/ -I include/utility -I include/drivers -DDEBUG
 
-TEST_HASHSTR_OBJ = test_hashstr.o hashstr.o
+TEST_DRIVER_REGISTER_OBJ = test_driver_register.o driver.o driver_register.o \
+						   driver_loaders.o dev_t.o hashstr.o init.o device.o \
+						   driver_match.o xml_operation.o gyroscope_match.o \
+						   gyroscope_driver.o analogsunsensor_driver.o \
+						   analogsunsensor_match.o adda_operation.o
 
-test_hashstr: $(TEST_HASHSTR_OBJ)
-	gcc  $^ -o $@
+test_driver_register: $(TEST_DRIVER_REGISTER_OBJ)
+	gcc  $^ -lmxml -lpthread -o $@
 	rm -f *.o
 	mv $@ ./test
-run_test_hashstr:
-	./test/test_hashstr
-
-
-TEST_DEVICE_REGISTER_OBJ = test_device_register.o hashstr.o device.o \
-						   device_attrs.o device_register.o dev_t.o init.o
-test_device_register: $(TEST_DEVICE_REGISTER_OBJ)
-	gcc  $^ -o $@
-	rm -f *.o
-	mv $@ ./test
-run_test_device_register:
-	./test/test_device_register
