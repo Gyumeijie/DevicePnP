@@ -3,6 +3,7 @@
 #include "driver.h"
 #include "dev_t.h"
 #include "xml_operation.h"
+#include "device_open.h"
 #include <stdio.h>
 
 void init(void)
@@ -15,7 +16,7 @@ void init(void)
     devt_init();
     driver_init();
     xml_operation_init();
-
+    device_open_init();
 #if DEBUG
     printf("\n---------------------------End init-------------------------\n");
 #endif
