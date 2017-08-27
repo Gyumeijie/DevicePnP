@@ -1,6 +1,9 @@
 #include "init.h"
 #include "device.h"
 #include "driver.h"
+#include "device_register.h"
+#include "driver_register.h"
+#include "driver_bind.h"
 #include "dev_t.h"
 #include "xml_operation.h"
 #include "device_open.h"
@@ -17,6 +20,10 @@ void init(void)
     driver_init();
     xml_operation_init();
     device_open_init();
+
+    register_devices();
+    register_drivers();
+    bind_drivers();
 #if DEBUG
     printf("\n---------------------------End init-------------------------\n");
 #endif

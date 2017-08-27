@@ -59,11 +59,33 @@ struct template_data{
     void* para_struct;
 };
 
-static struct template_data* template_data_table;
+//
+struct match_info{
+ struct template_data* template_data_table;
+ struct template_match* match_funcs_table;
+ int data_table_size;
+ int match_funcs_num;
+};
+static struct match_info* g_mip; 
 
+#if 0
 extern int do_match(void* (*init_template_data_table)(void),
                     int (*find_and_exec_match_func)(char* func_name),
                     void (*undo_match)(void));
+#endif 
+
+static int find_and_exec_match_func(char* name);
+
+static void undo_match(void);
+
+static void init_template_data_table(int dtsize);
+
+static match_func_ptr find_match_func(char* name);
+
+extern int check_match(int status, int index, int template_id, void* template_data);
+
+extern int do_match(struct match_info* mip); 
 
 extern void* get_template_data_table(void);
+
 #endif

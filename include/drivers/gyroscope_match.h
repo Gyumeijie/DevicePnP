@@ -16,8 +16,8 @@
 #define GYROSCOPE_GETX_INDEX 2
 
 //模板参数结构体表
-static struct template_data* template_data_table;
-
+//static struct template_data* template_data_table;
+static struct match_info* mip;
 
 //具体模板参数结构体
 #if 0
@@ -43,6 +43,7 @@ static int open_template0_match(void);
 static int getx_template0_match(void);
 static void getxtpl0_do_fill(int index, void* data);
 
+#if 0
 static int find_and_exec_match_func(char* name);
 
 static void undo_match(void);
@@ -52,7 +53,7 @@ static void* init_template_data_table(void);
 static match_func_ptr find_match_func(char* name);
 
 static int check_match(int status, int index, int template_id, void* template_data);
-
+#endif 
 extern int gyroscope_match(void);
 
 #endif

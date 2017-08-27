@@ -22,15 +22,5 @@ static int open_template0_match(void);
 //read相关的模板匹配函数
 static int read_template0_match(void);
 
-static int check_match(int status, int index, int template_id, void* template_data);
-
-static match_func_ptr find_match_func(char* name);
-
-static void undo_match(void);
-
-static int find_and_exec_match_func(char* name);
-
-static void* init_template_data_table(void);
-
 extern int analogsunsensor_match(void);
 #endif
