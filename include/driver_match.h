@@ -7,7 +7,7 @@
 #define MAX_TEMPLATE_NAME_LENGTH 64
 
 //定义填充结构体的函数类型
-typedef void (*fill_struct)(int, void*);
+typedef void (*struct_fill_func_ptr)(int, void*);
 
 //定义模板匹配函数类型
 typedef int (*match_func_ptr) (void);

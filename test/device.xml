@@ -18,7 +18,7 @@
     <op name="gyroscope_getx" template_id="0">
        <para_list length="2" name="getx_template0">
           <para name="reg_address" type="char">0x28</para> 
-          <para name="size" type="int">2</para>
+          <para name="size" type="int" >2</para>
        </para_list>
     </op>
   </op_list>
