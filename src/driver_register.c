@@ -18,7 +18,7 @@ void register_drivers(void)
 
 
 #if DEBUG
-    printf("\n---------------Begin driver registeration------------------\n\n");
+    printf("\n---------------Begin driver registeration-----------------\n\n");
 #endif
 
     driver_loader_num = get_driver_loader_num();
@@ -31,7 +31,7 @@ void register_drivers(void)
 
 #if DEBUG
     printf("driver loaders num: %d\n", driver_loader_num);
-    printf("\n----------------End driver registeration-------------------\n");
+    printf("\n------------------End driver registeration------------------\n");
 #endif
 }
 

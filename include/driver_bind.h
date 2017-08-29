@@ -3,4 +3,6 @@
 
 extern void bind_drivers(void);
 
+static void do_bind(struct device* devp, struct driver* drip);
+
 #endif 

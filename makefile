@@ -8,7 +8,7 @@ TEST_DEVICE_OPEN_OBJ  = test_device_open.o driver.o driver_register.o \
 					   gyroscope_match.o  gyroscope_driver.o \
 					   device_register.o device_attrs.o analogsunsensor.o \
 					   device_open.o gyroscope.o analogsunsensor_match.o \
-                                           analogsunsensor_driver.o adda_operation.o
+                       analogsunsensor_driver.o adda_operation.o error_report.o
                   
 
 test_device_open: $(TEST_DEVICE_OPEN_OBJ)
