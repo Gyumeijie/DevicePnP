@@ -1,5 +1,5 @@
 #include "driver_match.h"
-#include "utility/xml_operation.h"
+#include "xml_operation.h"
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
@@ -151,4 +151,19 @@ extern int check_match(int status, int index, int template_id, void* template_da
 void* get_template_data_table(void)
 {
     return (void*)g_mip->template_data_table;
+}
+
+
+struct match_info*
+init_match_info(struct template_match* match_funcs_table, int data_table_size, int match_funcs_num)
+{
+    struct match_info* mip;
+
+    mip = (struct match_info*)malloc(sizeof(struct match_info));
+    mip->template_data_table = NULL;
+    mip->match_funcs_table = match_funcs_table;
+    mip->data_table_size = data_table_size;
+    mip->match_funcs_num = match_funcs_num;
+
+    return mip;
 }

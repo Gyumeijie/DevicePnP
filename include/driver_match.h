@@ -93,4 +93,7 @@ extern int do_match(struct match_info* mip);
 
 extern void* get_template_data_table(void);
 
+extern struct match_info*
+init_match_info(struct template_match* match_funcs_table, int data_table_size, int match_funcs_num);
+
 #endif
