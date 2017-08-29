@@ -59,7 +59,7 @@ struct template_data{
     void* para_struct;
 };
 
-//
+//匹配信息结构体
 struct match_info{
  struct template_data* template_data_table;
  struct template_match* match_funcs_table;
@@ -81,6 +81,11 @@ static void undo_match(void);
 static void init_template_data_table(int dtsize);
 
 static match_func_ptr find_match_func(char* name);
+
+static void 
+construct_template_name(char* template_name, char* op_name, int template_id);
+
+static int try_match(char* template_name);
 
 extern int check_match(int status, int index, int template_id, void* template_data);
 

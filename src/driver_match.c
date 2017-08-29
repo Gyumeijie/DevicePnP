@@ -1,5 +1,5 @@
 #include "driver_match.h"
-#include "xml_operation.h"
+#include "utility/xml_operation.h"
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
@@ -18,19 +18,15 @@ int do_match(struct match_info* mip)
     int template_id;
     char template_name[MAX_TEMPLATE_NAME_LENGTH];
     int exec_status;
-    
+
     g_mip = mip;
     
     //初始化设备的模板参数结构体表
     init_template_data_table(mip->data_table_size);
 
-    //先通过全局变量匹配函数来匹配以及收集全局的参数信息
 #if 0
-    exec_status  = find_and_exec_match_func("global");
-    if (exec_status == 0){
-        undo_match();
-        return 0;
-    }
+    //先通过全局变量匹配函数来匹配以及收集全局的参数信息
+    try_match("global");
 #endif 
     //然后依次匹配以及收集每个模板的参数
     int i;
@@ -38,19 +34,10 @@ int do_match(struct match_info* mip)
     for (i=0; i<length; i++){
         op_name = get_op_name();
         template_id = get_op_template_id(op_name);
+                
+        construct_template_name(template_name, op_name, template_id);
         
-        //构造模板名 设备类型_操作名_templatexxx，其中xxx为template_id
-        sprintf(template_name, "%s_template%d", op_name, template_id);
-        
-        //通过模板名找到给定模板的匹配函数入口地址并执行
-        exec_status = find_and_exec_match_func(template_name);
-
-        if (exec_status == 0){
-           //释放掉匹配以及收集前面模板所分配的数据结构并返回不匹配
-           undo_match();
-           mip->template_data_table = NULL;
-           return 0;
-        }
+        if (try_match(template_name) == 0) return 0;
     }
 
     //返回匹配
@@ -58,9 +45,32 @@ int do_match(struct match_info* mip)
 }
 
 
+static void construct_template_name(char* template_name, char* op_name, int template_id)
+{
+    //构造模板名 设备类型_操作名_templatexxx，其中xxx为template_id
+     sprintf(template_name, "%s_template%d", op_name, template_id);
+}
+
+
+static int try_match(char* template_name)
+{
+    int exec_status;
+
+    //通过模板名找到给定模板的匹配函数入口地址并执行
+    exec_status = find_and_exec_match_func(template_name);
+    if (exec_status == 0){
+        //释放掉匹配以及收集前面模板所分配的数据结构并返回不匹配
+        undo_match();
+        g_mip->template_data_table = NULL;
+        return 0;
+    }else{
+        return 1;
+    }
+}
+
 static void init_template_data_table(int dtsize)
 { 
-    g_mip->template_data_table = malloc(sizeof(struct template_data)*dtsize);
+    g_mip->template_data_table = malloc(sizeof(struct template_data)*dtsize); 
 #if DEBUG
     printf("template_data_table: %p\n", g_mip->template_data_table);
 #endif
