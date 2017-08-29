@@ -43,7 +43,7 @@ void bind_drivers(void)
        //调用通用驱动提供的match函数并判断匹配的结果
         exec_status = drip->match();
 
-        if (exec_status == 1){
+        if (exec_status){
             devp->device_operation = drip->device_operation;
             devp->private_data = get_template_data_table();
 #if DEBUG

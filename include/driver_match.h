@@ -1,6 +1,8 @@
 #ifndef DRIVER_MATCH_H
 #define DRIVER_MATCH_H
 
+#define MATCH 1
+#define UNMATCH 0
 
 #define MAX_TEMPLATE_NAME_LENGTH 64
 

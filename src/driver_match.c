@@ -26,7 +26,7 @@ int do_match(struct match_info* mip)
 
 #if 0
     //先通过全局变量匹配函数来匹配以及收集全局的参数信息
-    try_match("global");
+    if (!try_match(template_name)) return UNMATCH;
 #endif 
     //然后依次匹配以及收集每个模板的参数
     int i;
@@ -37,11 +37,11 @@ int do_match(struct match_info* mip)
                 
         construct_template_name(template_name, op_name, template_id);
         
-        if (try_match(template_name) == 0) return 0;
+        if (!try_match(template_name)) return UNMATCH;
     }
 
     //返回匹配
-    return 1;
+    return MATCH;
 }
 
 
@@ -58,14 +58,13 @@ static int try_match(char* template_name)
 
     //通过模板名找到给定模板的匹配函数入口地址并执行
     exec_status = find_and_exec_match_func(template_name);
-    if (exec_status == 0){
+    if (!exec_status){
         //释放掉匹配以及收集前面模板所分配的数据结构并返回不匹配
         undo_match();
         g_mip->template_data_table = NULL;
-        return 0;
-    }else{
-        return 1;
     }
+
+    return exec_status;
 }
 
 static void init_template_data_table(int dtsize)
@@ -98,7 +97,7 @@ static int find_and_exec_match_func(char* name)
 #if DEBUG
         printf("Error: tempalte %s has no corresponding match function\n", name);
 #endif
-        return 0;
+        return UNMATCH;
     }
 
     //执行函数
@@ -137,14 +136,14 @@ extern int check_match(int status, int index, int template_id, void* template_da
     template_data_table = g_mip->template_data_table; 
     
     //返回不匹配
-    if (status == 0) return 0;
+    if (!status) return UNMATCH;
 
     //否则将收集到的数据存放到template_data_table中供后面使用
     template_data_table[index].para_struct = template_data;
     template_data_table[index].template_id = template_id;
     
     //返回匹配
-    return 1;
+    return MATCH;
 }
 
 

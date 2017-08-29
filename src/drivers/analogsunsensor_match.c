@@ -5,7 +5,7 @@
 
 static int open_template0_match(void) 
 {
-   return 1;
+   return MATCH;
 }
 
 static int read_template0_match(void) 
