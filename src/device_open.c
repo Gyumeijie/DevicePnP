@@ -19,9 +19,6 @@ int open_device(char* lid, open_status* os)
     struct device_open* devop = NULL;
 
     already_open = has_already_open(lid);    
-#if DEBUG
-    printf("already_open: %d\n", already_open);
-#endif
     //判断该设备是否已经打开
     if (already_open){
         index = get_index_by_lid(lid);
@@ -32,9 +29,6 @@ int open_device(char* lid, open_status* os)
 
     //获取设备打开索引表空闲的表项
     index = get_unused_index();
-#if DEBUG
-    printf("unused_index: %d\n", index);
-#endif
     if (index == -1) return -1;
     
     //分配设备打开结构体

@@ -6,7 +6,7 @@
 
 static const char* file = "xml_operation.c";
 
-void xml_operation_init(void)
+int xml_operation_init(void)
 { 
    fp = NULL;
    tree = NULL;
@@ -17,8 +17,11 @@ void xml_operation_init(void)
    fp = fopen("device.xml", "r");
    if (!check_null(file, func, "fp", fp)){
        printf("Detail: can't open xml file\n");
+       return FAILURE;
    }
    tree = mxmlLoadFile(NULL, fp, MXML_NO_CALLBACK);
+   
+   return SUCCESS;
 }
 
 
@@ -66,11 +69,12 @@ void destroy_device_context(void)
 }
 
 
-/**
- *　输入：无
- *　输出：设备配置文件中某设备的操作列表长度
- *　功能：返回设备配置文件中某设备的操作列表长度
- */
+const char* get_device_context()
+{
+   return mxmlElementGetAttr(device_context, "id");
+}
+
+
 int get_op_list_length(void)
 {
    mxml_node_t* node = NULL;
@@ -83,11 +87,6 @@ int get_op_list_length(void)
 }
 
 
-/**
- *　输入：操作名op_name
- *　输出：操作名op_name对应选择的模板id号
- *　功能：操作名op_name对应选择的模板id号
- */
 int get_op_template_id(char* op_name)
 {
    mxml_node_t* node = NULL;
@@ -100,20 +99,12 @@ int get_op_template_id(char* op_name)
 }
 
 
-/**
- *　输入：无
- *　输出：无
- *　功能：依次获取设备配置文件中设备的操作名
- */
 char* get_op_name(void)
 {   
-
-    if (op_name_list == NULL) return NULL;
-     
     if (counter < op_list_length){
         return op_name_list[counter++];
     }else{
-           return NULL;
+        return NULL;
     }
 }
 
@@ -197,7 +188,7 @@ find_para(mxml_node_t* op, mxml_node_t* para_list, mxml_node_t** pp, const char*
 static int alloc_reg_array(int len, struct reg_array** rega2p)
 {
    struct reg *regp;
-   const char func[] = "alloc_reg_array";
+   const char* func = "alloc_reg_array";
 
    (*rega2p)->len = len;
    regp = (struct reg*)malloc(sizeof(struct reg)*len);  
@@ -208,30 +199,35 @@ static int alloc_reg_array(int len, struct reg_array** rega2p)
 }
 
 
-static void do_fill_reg_array(mxml_node_t* para, struct reg_array* regap)
+static int do_fill_reg_array(mxml_node_t* para, struct reg_array* regap)
 {
    int i, len;
    struct reg *regp;
-   const char* value = NULL;
-   const char* address = NULL;
+   const char *value, *address;
+   const char* func = "do_fill_reg_array";
 
    len = regap->len;
    regp = regap->regp;
    for (i=0; i<len; i++){
        address  = mxmlElementGetAttr(para, "address");
+       if(!check_null(file, func, "address", address)) return FAILURE;
+
        value = mxmlGetText(para, NULL);
+       if(check_null(file, func, "value", value)) return FAILURE;
+
        regp[i].addr = strtol(address, NULL, 16);
        regp[i].val = strtol(value, NULL, 16);
 
        para = skip_text_node(para, "address");
     }
 
+    return SUCCESS;
 }
 
 
-//没有必要检测oop, driver_match的find_and_exec_match_func会检测
 static void find_op(char* op_name, mxml_node_t** opp)
 {
+   //没有必要检测oop, driver_match的find_and_exec_match_func会检测
    *opp = mxmlFindElement(device_context, tree, "op","name", op_name, MXML_DESCEND);
 }
 
@@ -239,7 +235,7 @@ static void find_op(char* op_name, mxml_node_t** opp)
 
 static int find_para_list(char* para_name, mxml_node_t* op, mxml_node_t** plp)
 {
-   const char func[] = "find_para_list";
+   const char* func = "find_para_list";
 
    //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
    *plp = mxmlFindElement(op, device_context, "para_list",
@@ -323,7 +319,7 @@ static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* op, int len
        if(!find_para(op, para_list, &para, name)) return FAILURE;
        
        //检查type是否一致，如果不是则表示不匹配
-       if(!check_data_type(para, &st[i])) return FAILURE;
+       if(!check_data_type(para, st[i].name, st[i].type)) return FAILURE;
 
        //将成员的数据写入到相应的结构体中
        value = mxmlGetText(para, NULL);
@@ -338,21 +334,21 @@ static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* op, int len
 }
 
 
-static int check_data_type(mxml_node_t* para, struct st_member* smp)
+static int check_data_type(mxml_node_t* para, char* name, char* type)
 {
    const char* config_type;
    const char* func = "check_data_type";
 
    config_type = mxmlElementGetAttr(para, "type");
    if (!check_null(file, func, "type", config_type)){
-       printf("Detail: can't resolve the type of %s\n", smp->name);
+       printf("Detail: can't resolve the type of '%s'\n", name);
        return FAILURE;
    }
 
-   if ((strcmp(config_type, smp->type) != 0 )){
+   if (strcmp(config_type, type)){
        report_error(file, func, "bad type!");
-       printf("Detail: the type of '%s' should be '%s' but not '%s'\n",
-                                           smp->name, smp->type, config_type);
+       printf("Detail: the type of '%s' should be '%s', but not '%s'\n",
+                                           name, type, config_type);
        return FAILURE;
     }
 
@@ -392,54 +388,71 @@ static void* convert_type(const char* value, const char* type)
 int fill_plain_array(char* op_name, char* para_name, struct plain_array* plainap)
 {
 
-   mxml_node_t* op = NULL;
-   mxml_node_t* para_list = NULL;
-   mxml_node_t* para = NULL;
+   mxml_node_t *op, *para_list, *para;
 
-   const char* value = NULL;
-   long int *arr = NULL;
-   int len;
 
    //先查找到op_name对应的op项，如果找不到则返回不匹配
-   op = mxmlFindElement(device_context, tree, "op","name", op_name, MXML_DESCEND);
-   if (op == NULL){
-#if DEBUG
-       printf("Error: there is no op named '%s' in xml file\n", op_name);
-#endif
-       return 0;
-   } 
+   find_op(op_name, &op);
 
    //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
-   para_list = mxmlFindElement(op, device_context, "para_list",
-                                              "name", para_name, MXML_DESCEND); 
-   if (para_list == NULL){
-#if DEBUG
-       printf("Error: there is no para_list named '%s' in xml file\n", para_name);
-#endif
-       return 0;
-   }
-   len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10);
- 
+   if(!find_para_list(para_name, op, &para_list)) return UNMATCH;
+   int len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10);
 
    //分配存储空间，如果分配失败则返回错误
-   plainap->len = len;
-   arr = (long int*)malloc(sizeof(long int)*len);  
-   if (arr == NULL) return 0;
-   plainap->arr = arr;
+   if (!alloc_plain_array(len, &plainap)) return UNMATCH;
+   
+   //获取para_list的第一个para
+   if (!find_para(op, para_list, &para, NULL)) return UNMATCH;
+   
+   //填充plain_array类型的模板参数
+   if(!do_fill_plain_array(para, plainap)) return UNMATCH;
 
-   para = mxmlFindElement(para_list, op, "para", NULL, NULL, MXML_DESCEND);
+   return MATCH;
+}
+
+
+static int 
+do_fill_plain_array(mxml_node_t* para, struct plain_array* plainap)
+{
+
    int i;
+   const char* value;
+   void* arr = plainap->arr;
+   int len = plainap->len;
+   char* type = plainap->type;
+   void* data;
+
    for (i=0; i<len; i++){
        value = mxmlGetText(para, NULL);
-       arr[i] = strtol(value, NULL, 10);
-#if DEBUG
-       printf("index: %d value: %ld\n", i, ((long int*)plainap->arr)[i]);
-#endif
+
+       //检查type是否一致，如果不是则表示不匹配
+       if(!check_data_type(para, "plain_array", type)) return FAILURE;
+       
+       data = convert_type(value, type);
+       if (!strcmp(type, "char")){
+           ((char*)arr)[i] = *(char*)data;
+       }else if(!strcmp(type, "int")){
+           ((int*)arr)[i] = *(int*)data;
+       }else{
+           ((float*)arr)[i] = *(float*)data;
+       }
+       
        para = skip_text_node(para, "type");
    }
 
-   //返回填充reg_array类型的模板参数成功
-   return 1;
+   return SUCCESS;
+}
 
 
+static int alloc_plain_array(int len, struct plain_array** plaina2p)
+{
+   void* arr;
+   const char* func = "alloc_reg_array";
+
+   (*plaina2p)->len = len;
+   arr = malloc(sizeof(long int)*len);  
+   if (!check_null(file, func, "arr", arr)) return FAILURE;
+   (*plaina2p)->arr = arr;
+   
+   return SUCCESS;
 }

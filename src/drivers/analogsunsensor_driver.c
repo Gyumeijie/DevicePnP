@@ -49,17 +49,10 @@ static void analogsunsensor_read_template0(void* para_struct)
     unsigned int len = open_template0->len;
     unsigned int* arr = open_template0->arr;
 
+    static unsigned int data[10];
+    ad_devices_read(data, len, arr);
 #if DEBUG
     int i;
-    for (i=0; i<len; i++){
-       printf("channel: %d\n", arr[i]);
-    }
-#endif 
-    static unsigned int data[10];
-    //fill plain array
-    ad_devices_read(data, len, arr);
-
-#if DEBUG
     for (i=0; i<len; i++){
        printf("channel: %d  data: %d\n", arr[i], data[i]);
     }

@@ -2,6 +2,7 @@
 #include "xml_operation.h"
 #include <malloc.h>
 #include <stdio.h>
+#include <string.h>
 
 static int open_template0_match(void) 
 {
@@ -15,7 +16,8 @@ static int read_template0_match(void)
 
     //分配open_template0结构体
     read_template0  = (struct plain_array*)malloc(sizeof(struct plain_array));
-    
+    read_template0->type = "int"; 
+
     //获取信息
     exec_status = fill_plain_array("analogsunsensor_read","read_template0", read_template0); 
 

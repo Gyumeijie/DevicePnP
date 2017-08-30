@@ -6,6 +6,7 @@
 #include <malloc.h>
 
 static const char file[] = "driver_match.c";
+static const char* op_context = NULL;
 
 /** 
  *　输入：待匹配设备的类型dev_type，处理不匹配的情况的函数undo_match以及通过
@@ -27,7 +28,6 @@ int do_match(struct match_info* mip)
     
     //初始化设备的模板参数结构体表
     init_template_data_table(mip->data_table_size);
-
 #if 0
     //先通过全局变量匹配函数来匹配以及收集全局的参数信息
     if (!try_match(template_name)) return UNMATCH;
@@ -38,6 +38,7 @@ int do_match(struct match_info* mip)
     for (i=0; i<length; i++){
         op_name = get_op_name();
         template_id = get_op_template_id(op_name);
+        op_context = op_name;
                 
         construct_template_name(template_name, op_name, template_id);
         
@@ -166,4 +167,11 @@ init_match_info(struct template_match* match_funcs_table, int data_table_size, i
     mip->match_funcs_num = match_funcs_num;
 
     return mip;
+}
+
+
+const char* get_op_context()
+{   
+    //为了调试方便加入的
+    return op_context;
 }

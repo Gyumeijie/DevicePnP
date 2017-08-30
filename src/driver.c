@@ -1,13 +1,11 @@
 #include "driver.h"
+#include "error_report.h"
 #include <malloc.h>
 #include <string.h>
 
+static const char* file = "driver.c";
 
-/**
- * 输入：无
- * 输出：无
- * 功能：初始化driver_index_table
- */ 
+ 
 void driver_init(void)
 {
      // 初始化设备驱动索引表
@@ -44,17 +42,21 @@ void add_driver_node(struct driver_node** head, struct driver_node* node)
  * 输出：无
  * 功能：向设备驱动索引表添加设备驱动（驱动注册模块）
  */
-void add_driver(int index, struct driver* drip)
+int add_driver(int index, struct driver* drip)
 {
-#if DEBUG
-    printf("major: %d interface: %s\n", index, drip->interface);
-#endif    
-     struct driver_node** head = &driver_index_table[index];
-     struct driver_node* node = (struct driver_node*)malloc(sizeof(struct driver_node));
+     const char* func = "add_driver";
+     struct driver_node** head;
+     struct driver_node* node;
+
+     head = &driver_index_table[index];
+     node = malloc(sizeof(struct driver_node));
+     if(!check_null(file, func, "node", node)) return FAILURE;
+
      node->drip = drip;
      node->next = NULL;
-     
      add_driver_node(head, node);
+
+     return SUCCESS;
 }
 
 

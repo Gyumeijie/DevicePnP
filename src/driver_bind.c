@@ -6,22 +6,19 @@
 #include "error_report.h"
 #include <stdio.h>
 
-static const char file[] = "driver_bind.c";
+static const char* file = "driver_bind.c";
 
-void bind_drivers(void)
+int bind_drivers(void)
 {
     struct device* devp = NULL;
     struct driver* drip = NULL;
     unsigned int device_num;
     devno_t devno;
     int exec_status;
-    const char func[] = "bind_drivers";
+    const char* func = "bind_drivers";
 
     device_num = get_device_num();
    
-#if DEBUG
-       printf("\n--------------------Begin driver bind------------------\n\n");
-#endif
     //依次处理设备索引表中的设备
     int i;
     for (i=0; i<device_num; i++){
@@ -33,13 +30,13 @@ void bind_drivers(void)
         if(!check_null(file, func, "drip", drip)){
             printf("Detail: can't not find driver for %s of %s\n", 
                               major2type(GET_MAJOR(devno)), devp->interface);
-            break;
+            continue;
         }
 
        //如果配置文件中没有lid对应的配置信息
         if (!establish_device_context(devp->lid)){
             destroy_device_context();
-            break;
+            return FAILURE;
         }
 
        //调用通用驱动提供的match函数并判断匹配的结果
@@ -48,20 +45,19 @@ void bind_drivers(void)
             do_bind(devp, drip);
         }else{
             destroy_device_context();
-            break;
+            return FAILURE;
         }
 
         destroy_device_context();
 
    }
 
-#if DEBUG
-       printf("\n---------------------End driver bind---------------------\n");
-#endif
+    return SUCCESS;
 }
 
 
-static void do_bind(struct device* devp, struct driver* drip){
+static void do_bind(struct device* devp, struct driver* drip)
+{
     devp->device_operation = drip->device_operation;
     devp->private_data = get_template_data_table();
 }

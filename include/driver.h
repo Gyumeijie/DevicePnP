@@ -27,7 +27,7 @@ static struct driver_node* driver_index_table[MAX_DEVICE_TYPE];
 extern void driver_init(void);
 
 //添加向设备驱动索引表设备驱动结构体(设备驱动注册模块)
-extern void add_driver(int index, struct driver* drip);
+extern int add_driver(int index, struct driver* drip);
 
 //添加设备索引表节点
 static void add_driver_node(struct driver_node** head, struct driver_node* node);

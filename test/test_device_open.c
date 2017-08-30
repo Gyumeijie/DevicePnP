@@ -5,7 +5,7 @@
 
 int main()
 {
-   init();
+   if(!init()) return 1;
 
    int fd;
 
@@ -17,4 +17,6 @@ int main()
    fd = analogsunsensor_open("analogsunsensor1");
    printf("analogsunsensor1 has fd: %d\n", fd);
    analogsunsensor_read(fd);
+
+   return 0;
 }

@@ -47,9 +47,7 @@ devno_t alloc_devno(char* dev_type)
     major = type2major(dev_type);
     minor = minors[major]++;
     devno = MAKE_DEV(major, minor);
-#if DEBUG    
-    printf("device type: %s  major: %d minor:  %d\n", dev_type, major, minor);
-#endif
+
     return devno;
 }
 
