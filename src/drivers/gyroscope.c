@@ -26,7 +26,7 @@ int gyroscope_open(char* lid)
     return index;
 }
 
-void gyroscope_getx(int index)
+void gyroscope_getx(int index, unsigned int* data)
 {
     devop = get_device_open_struct(index);
     gdop = devop->device_operation;
@@ -34,7 +34,7 @@ void gyroscope_getx(int index)
     para_struct = ((struct template_data*)devop->private_data)[GYROSCOPE_GETX_INDEX].para_struct;
     
     if(para_struct != NULL){
-        gdop->general_gyroscope_getx(devop->private_data);
+        gdop->general_gyroscope_getx(devop->private_data, data);
     }
 #if DEBUG
     else{

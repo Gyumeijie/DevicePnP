@@ -60,7 +60,7 @@ static void gyroscope_open_template0(void* para_struct)
  *　输出：
  *　功能：
  */
-static void gyroscope_getx(void* private_data)
+static void gyroscope_getx(void* private_data, unsigned int* data)
 {
     template_id = ((struct template_data*)private_data)[GYROSCOPE_GETX_INDEX].template_id;
     para_struct = ((struct template_data*)private_data)[GYROSCOPE_GETX_INDEX].para_struct;
@@ -69,20 +69,21 @@ static void gyroscope_getx(void* private_data)
     printf("template_id: %d\n", template_id);
 #endif
     switch(template_id){
-        case 0: gyroscope_getx_template0(para_struct);
+        case 0: gyroscope_getx_template0(para_struct, data);
                 break;
         default:break;
     }
 }
 
 
-static void gyroscope_getx_template0(void* para_struct)
+static void gyroscope_getx_template0(void* para_struct, unsigned int* data)
 {
     struct getx_template0* getx_tpl0p = para_struct;
 #if DEBUG
     char reg_address = getx_tpl0p->reg_address;
     int size = getx_tpl0p->size;
     printf("address: 0x%02x size:%d\n", reg_address, size);
+    *data = 1;
 #endif
     //i2c读寄存器函数
 }
@@ -102,8 +103,5 @@ static struct driver gyroscope_driver = {
 void gyroscope_driver_loader(void)
 {
     int major = type2major("gyroscope");
-#if DEBUG
-    printf("gyroscope driver loader is being called\n");
-#endif
     add_driver(major, &gyroscope_driver);
 }
