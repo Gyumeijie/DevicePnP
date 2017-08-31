@@ -213,7 +213,7 @@ static int do_fill_reg_array(mxml_node_t* para, struct reg_array* regap)
        if(!check_null(file, func, "address", address)) return FAILURE;
 
        value = mxmlGetText(para, NULL);
-       if(check_null(file, func, "value", value)) return FAILURE;
+       if(!check_null(file, func, "value", value)) return FAILURE;
 
        regp[i].addr = strtol(address, NULL, 16);
        regp[i].val = strtol(value, NULL, 16);
@@ -282,7 +282,7 @@ static mxml_node_t* skip_text_node(mxml_node_t* node, char* attr)
  *　输出：填充类型为struct的模板参数是否成功
  *　功能：为给定操作名填充类型为struct的模板参数
  */
-int fill_plain_struct(char* op_name, char* para_name, struct st_member st[],
+int fill_plain_struct(char* op_name, char* para_name, struct struct_member st[],
                       struct_fill_func_ptr do_fill)
 {
    mxml_node_t *op, *para_list, *para;
@@ -303,7 +303,7 @@ int fill_plain_struct(char* op_name, char* para_name, struct st_member st[],
 
 
 static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* op, int len,
-                                struct st_member st[], struct_fill_func_ptr do_fill)
+                                struct struct_member st[], struct_fill_func_ptr do_fill)
 {
 
    void* data;

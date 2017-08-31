@@ -20,7 +20,7 @@ extern int xml_operation_init(void);
 
 extern int fill_reg_array(char* op_name, char* para_name, struct reg_array* regap);
 
-extern int fill_plain_struct(char* op_name, char* para_name, struct st_member st[], struct_fill_func_ptr do_fill);
+extern int fill_plain_struct(char* op_name, char* para_name, struct struct_member st[], struct_fill_func_ptr do_fill);
 
 extern int fill_plain_array(char* op_name, char* para_name, struct plain_array* plainap);
 
@@ -43,7 +43,7 @@ static int alloc_reg_array(int len, struct reg_array** rega2p);
 static int check_data_type(mxml_node_t* para, char* name, char* type);
 
 static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* op, int len,
-                                struct st_member st[], struct_fill_func_ptr do_fill);
+                                struct struct_member st[], struct_fill_func_ptr do_fill);
 
 static int do_fill_plain_array(mxml_node_t* para, struct plain_array* plainap);
     

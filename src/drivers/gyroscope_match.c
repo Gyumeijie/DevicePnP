@@ -8,7 +8,8 @@
 static int open_template0_match(void)
 {
     int exec_status;
-    
+    struct reg_array* open_template0;
+
     //分配open_template0结构体
     open_template0  = (struct reg_array*)malloc(sizeof(struct reg_array));
     
@@ -22,32 +23,50 @@ static int open_template0_match(void)
 
 static int getx_template0_match(void)
 {
-    int exec_status;
-    struct getx_template0* getx_tpl0; 
-    struct st_member st[2] = {
-       {"char", "reg_address", 0},
-       {"int", "size", 1}
-    };
-
-    //分配getx_template0结构体
-    getx_tpl0p  = (struct getx_template0*)malloc(sizeof(struct getx_template0));
-   
-    exec_status = fill_plain_struct("gyroscope_getx", "getx_template0", 
-                                                    &st[0], getxtpl0_do_fill);
-
-    //返回不匹配或者匹配
-    return check_match(exec_status, GYROSCOPE_GETX_INDEX, 0, (void*)getx_tpl0p);
+    return getreg_pat0_match("gyroscope_getx", "getx_template0", GYROSCOPE_GETX_INDEX);
 }
 
-static void getxtpl0_do_fill(int index, void* data)
-{
 
+static int gety_template0_match(void)
+{
+    return getreg_pat0_match("gyroscope_gety", "gety_template0", GYROSCOPE_GETY_INDEX);
+}
+
+static int getz_template0_match(void)
+{
+    return getreg_pat0_match("gyroscope_getz", "getz_template0", GYROSCOPE_GETZ_INDEX);
+}
+
+
+static int getxyz_template0_match(void)
+{
+    return getreg_pat0_match("gyroscope_getxyz", "getxyz_template0", GYROSCOPE_GETXYZ_INDEX);
+}
+
+
+static int getreg_pat0_match(char* op_name, char* para_name, int index)
+{
+    int exec_status;
+
+    //分配get_reg_pattern0结构体
+    getreg_pat0p = (struct get_reg_pattern0*)malloc(sizeof(struct get_reg_pattern0));
+   
+    exec_status = fill_plain_struct(op_name, para_name,
+                                    &getreg_pat0[0], getreg_pat0_do_fill);
+
+    //返回不匹配或者匹配
+    return check_match(exec_status, index, 0, (void*)getreg_pat0p);
+}
+
+
+static void getreg_pat0_do_fill(int index, void* data)
+{
      switch(index){
          case 0:
-                getx_tpl0p->reg_address = *(char*)data; 
+                getreg_pat0p->reg_address = *(char*)data; 
                 break;
          case 1:  
-                getx_tpl0p->size = *(int*)data; 
+                getreg_pat0p->size = *(int*)data; 
                 break;
          default:
                 break;
@@ -55,15 +74,16 @@ static void getxtpl0_do_fill(int index, void* data)
 }
 
 
-
-
 //模板匹配函数表
 static struct template_match match_funcs_table[GYROSCOPE_TEMPLATE_NUM] = {
 //    {"gyroscope_global", global_match},
     {"gyroscope_open_template0", open_template0_match},
     {"gyroscope_getx_template0", getx_template0_match},
+    {"gyroscope_gety_template0", gety_template0_match},
+    {"gyroscope_getz_template0", getz_template0_match},
+    {"gyroscope_getxyz_template0", getxyz_template0_match}
 }; 
-static int match_funcs_num = 2;
+static int match_funcs_num = 5;
 
 
 

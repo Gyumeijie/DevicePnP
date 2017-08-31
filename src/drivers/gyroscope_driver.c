@@ -7,27 +7,11 @@
 static int template_id;
 static void* para_struct;
 
-#if 0
-//根据lid唯一标识的的设备配置信息去匹配
-static int gyroscope_match(void)
-{  
-    return  do_match(init_template_data_table,
-                     find_and_exec_match_func, undo_match);
-}
-#endif
-
-/**
- *　输入：　
- *　输出：
- *　功能：
- */
 static void gyroscope_open(void* private_data)
 { 
-    template_id = ((struct template_data*)private_data)[GYROSCOPE_OPEN_INDEX].template_id;
-    para_struct = ((struct template_data*)private_data)[GYROSCOPE_OPEN_INDEX].para_struct;
+    fetch_data(private_data, GYROSCOPE_OPEN_INDEX);
 #if DEBUG
-    printf("gyroscope_open is called\n");
-    printf("template_id: %d\n", template_id);
+    printf("gyroscope_open is called with template_id: %d\n", template_id);
 #endif
    switch(template_id){
        case 0 : gyroscope_open_template0(para_struct);
@@ -55,18 +39,11 @@ static void gyroscope_open_template0(void* para_struct)
 }
 
 
-/**
- *　输入：　
- *　输出：
- *　功能：
- */
 static void gyroscope_getx(void* private_data, unsigned int* data)
 {
-    template_id = ((struct template_data*)private_data)[GYROSCOPE_GETX_INDEX].template_id;
-    para_struct = ((struct template_data*)private_data)[GYROSCOPE_GETX_INDEX].para_struct;
+    fetch_data(private_data, GYROSCOPE_GETX_INDEX);
 #if DEBUG
-    printf("gyroscope_getx is called\n");
-    printf("template_id: %d\n", template_id);
+    printf("gyroscope_getx is called with template_id: %d\n", template_id);
 #endif
     switch(template_id){
         case 0: gyroscope_getx_template0(para_struct, data);
@@ -78,20 +55,96 @@ static void gyroscope_getx(void* private_data, unsigned int* data)
 
 static void gyroscope_getx_template0(void* para_struct, unsigned int* data)
 {
-    struct getx_template0* getx_tpl0p = para_struct;
+    get_pattern0(para_struct, data);
+}
+
+
+static void gyroscope_gety(void* private_data, unsigned int* data)
+{
+    fetch_data(private_data, GYROSCOPE_GETY_INDEX);
 #if DEBUG
-    char reg_address = getx_tpl0p->reg_address;
-    int size = getx_tpl0p->size;
-    printf("address: 0x%02x size:%d\n", reg_address, size);
-    *data = 1;
+    printf("gyroscope_gety is called with template_id: %d\n", template_id);
 #endif
-    //i2c读寄存器函数
+    switch(template_id){
+        case 0: gyroscope_gety_template0(para_struct, data);
+                break;
+        default:break;
+    }
+}
+
+
+static void gyroscope_gety_template0(void* para_struct, unsigned int* data)
+{
+    get_pattern0(para_struct, data);
+}
+
+
+static void gyroscope_getz(void* private_data, unsigned int* data)
+{
+    fetch_data(private_data, GYROSCOPE_GETZ_INDEX);
+#if DEBUG
+    printf("gyroscope_getz is called with template_id: %d\n", template_id);
+#endif
+    switch(template_id){
+        case 0: gyroscope_getz_template0(para_struct, data);
+                break;
+        default:break;
+    }
+}
+
+
+static void gyroscope_getz_template0(void* para_struct, unsigned int* data)
+{
+    get_pattern0(para_struct, data);
+}
+
+
+static void gyroscope_getxyz(void* private_data, unsigned int* data)
+{
+    fetch_data(private_data, GYROSCOPE_GETXYZ_INDEX);
+#if DEBUG
+    printf("gyroscope_getxyz is called with template_id: %d\n", template_id);
+#endif
+    switch(template_id){
+        case 0: gyroscope_getxyz_template0(para_struct, data);
+                break;
+        default:break;
+    }
+}
+
+
+static void gyroscope_getxyz_template0(void* para_struct, unsigned int* data)
+{
+    get_pattern0(para_struct, data);
+}
+
+
+static void get_pattern0(void* para_struct, unsigned int* data)
+{
+    struct get_reg_pattern0* getreg_pat0p = para_struct;
+#if DEBUG
+    char reg_address = getreg_pat0p->reg_address;
+    int size = getreg_pat0p->size;
+    printf("address: 0x%02x size:%d\n", reg_address, size);
+    //模拟i2c读寄存器函数
+    *data = reg_address;
+#endif
+}
+
+
+static void fetch_data(void* private_data, int index)
+{
+    template_id = ((struct template_data*)private_data)[index].template_id;
+    para_struct = ((struct template_data*)private_data)[index].para_struct;
 }
 
 
 static struct gyroscope_device_operation gdo = {
     gyroscope_open,
-    gyroscope_getx
+    gyroscope_getx,
+    gyroscope_gety,
+    gyroscope_getz,
+    gyroscope_getxyz
 };
 
 static struct driver gyroscope_driver = {

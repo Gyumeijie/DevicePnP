@@ -15,6 +15,10 @@ int main()
    printf("gyroscope1 has fd: %d\n", fd);
    gyroscope_getx(fd, &data);
    printf("data read %d\n", data);
+   gyroscope_gety(fd, &data);
+   printf("data read %d\n", data);
+   gyroscope_getz(fd, &data);
+   printf("data read %d\n", data);
 
    fd = analogsunsensor_open("analogsunsensor1");
    printf("analogsunsensor1 has fd: %d\n", fd);

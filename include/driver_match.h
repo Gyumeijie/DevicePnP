@@ -33,7 +33,7 @@ struct plain_array{
 };
 
 //定义收集设备配置文件中类型为struct的para_list的结构体
-struct st_member{
+struct struct_member{
     char* type;
     char* name;
     int index;
