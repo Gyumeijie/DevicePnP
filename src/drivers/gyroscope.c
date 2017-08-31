@@ -47,7 +47,6 @@ void gyroscope_gety(int index, unsigned int* data)
 void gyroscope_getz(int index, unsigned int* data)
 {
     get_para_struct(index, GYROSCOPE_GETZ_INDEX);
-    
     (para_struct == NULL)
        ? puts("gyroscope_getz not implemented\n")
        : gdop->general_gyroscope_getz(devop->private_data, data); 
