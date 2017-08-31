@@ -26,7 +26,7 @@ int analogsunsensor_open(char* lid)
     return index;
 }
 
-void analogsunsensor_read(int index)
+void analogsunsensor_read(int index, unsigned int* data)
 {
     devop = get_device_open_struct(index);
     adop = devop->device_operation;
@@ -34,7 +34,7 @@ void analogsunsensor_read(int index)
     para_struct = ((struct template_data*)devop->private_data)[ANALOGSUNSENSOR_READ_INDEX].para_struct;
     
     if(para_struct != NULL){
-        adop->general_analogsunsensor_read(devop->private_data);
+        adop->general_analogsunsensor_read(devop->private_data, data);
     }
 #if DEBUG
     else{

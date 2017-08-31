@@ -7,7 +7,7 @@
 #define MAX_TEMPLATE_NAME_LENGTH 64
 
 //定义填充结构体的函数类型
-typedef void (*fill_struct)(int, void*);
+typedef void (*struct_fill_func_ptr)(int, void*);
 
 //定义模板匹配函数类型
 typedef int (*match_func_ptr) (void);
@@ -29,6 +29,7 @@ struct reg_array{
 struct plain_array{
     int len;
     void* arr;
+    char* type;
 };
 
 //定义收集设备配置文件中类型为struct的para_list的结构体
@@ -98,4 +99,5 @@ extern void* get_template_data_table(void);
 extern struct match_info*
 init_match_info(struct template_match* match_funcs_table, int data_table_size, int match_funcs_num);
 
+extern const char* get_op_context();
 #endif

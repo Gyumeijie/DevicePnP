@@ -2,29 +2,29 @@
 #include "dev_t.h"
 #include "device_register.h"
 #include "device_attrs.h" 
+#include "error_report.h" 
 #include <string.h>
 #include <malloc.h>
 #include <stdio.h>
+
+static const char* file = "device_register.c";
+
 
 /**
  * 输入：无
  * 输出：无
  * 功能：注册设备结构体
  */
-void register_devices(void)
+int register_devices(void)
 {
        
        devno_t devno;
-       char* lid = NULL;
-       char* type = NULL;
-       char* interface = NULL;
-       void* attrs_item = NULL;
+       char *lid, *type, *interface;
+       void* attrs_item;
        unsigned int attrs_item_num;
-       int i;
+       const char* func = "register_devices";       
        
-#if DEBUG
-       printf("\n---------------Begin device registeration-------------\n\n");
-#endif
+       int i;
        attrs_item_num = get_attrs_item_num();
        for (i=0; i<attrs_item_num; i++){
            //获取设备的属性
@@ -38,6 +38,8 @@ void register_devices(void)
 
           //分配并初始化设备结构体
           struct device* devp = (struct device*)malloc(sizeof(struct device));
+          if(!check_null(file, func, "devp", devp)) return FAILURE;
+
           devp->devno = devno;
           strcpy(devp->interface, interface);
           strcpy(devp->lid, lid);
@@ -52,10 +54,7 @@ void register_devices(void)
           add_device(GET_MAJOR(devno), devp);
        }
 
-#if DEBUG
-       printf("\n-----------------End device registeration---------------\n");
-#endif
-
+        return SUCCESS;
 }
 
 

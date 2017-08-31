@@ -5,16 +5,21 @@
 
 int main()
 {
-   init();
-
+   if(!init()) return 1;
+  
    int fd;
 
+   unsigned int data;
    fd = gyroscope_open("gyroscope1");
    fd = gyroscope_open("gyroscope1");
    printf("gyroscope1 has fd: %d\n", fd);
-   gyroscope_getx(fd);
+   gyroscope_getx(fd, &data);
+   printf("data read %d\n", data);
 
    fd = analogsunsensor_open("analogsunsensor1");
    printf("analogsunsensor1 has fd: %d\n", fd);
-   analogsunsensor_read(fd);
+   analogsunsensor_read(fd, &data);
+   printf("data read %d\n", data);
+
+   return 0;
 }

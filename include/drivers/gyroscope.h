@@ -5,6 +5,6 @@
 
 extern int gyroscope_open(char* lid);
 
-extern void gyroscope_getx(int index);
+extern void gyroscope_getx(int index, unsigned int* data);
 
 #endif

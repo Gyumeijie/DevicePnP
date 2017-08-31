@@ -4,7 +4,7 @@
 
 struct gyroscope_device_operation{
   void (*general_gyroscope_open)(void*);
-  void (*general_gyroscope_getx)(void*);
+  void (*general_gyroscope_getx)(void*, unsigned int*);
 };
 
 #endif

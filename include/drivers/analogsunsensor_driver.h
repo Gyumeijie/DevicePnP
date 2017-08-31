@@ -3,13 +3,10 @@
 
 #include "analogsunsensor_match.h"
 
-//static int analogsunsensor_match(void);
-
 static void analogsunsensor_open(void* private_data);
-static void analogsunsensor_open_template0(void* para_struct);
 
-static void analogsunsensor_read(void* private_data);
-static void analogsunsensor_read_template0(void* para_struct);
+static void analogsunsensor_read(void* private_data, unsigned int* data);
+static void analogsunsensor_read_template0(void* para_struct, unsigned int* data);
 
 extern void analogsunsensor_driver_loader(void);
 #endif
