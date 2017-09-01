@@ -1,6 +1,5 @@
 #include "device_open.h"
 #include "analogsunsensor.h"
-#include "analogsunsensor_common.h"
 #include "analogsunsensor_match.h"
 #include <stdio.h>
 

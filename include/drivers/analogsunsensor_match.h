@@ -5,12 +5,6 @@
 
 #define ANALOGSUNSENSOR_TEMPLATE_NUM 10
 
-#define ANALOGSUNSENSOR_OP_NUM 2
-
-#define ANALOGSUNSENSOR_GLOBAL_INDEX 0
-#define ANALOGSUNSENSOR_OPEN_INDEX 1
-#define ANALOGSUNSENSOR_READ_INDEX 2
-
 //模板参数结构体表
 static struct template_data* template_data_table;
 

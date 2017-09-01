@@ -1,13 +1,13 @@
 #include "driver.h"
 #include "dev_t.h"
 #include "gyroscope_driver.h"
-#include "gyroscope_common.h"
+#include "gyroscope.h"
 #include <stdio.h>
 
 static int template_id;
 static void* para_struct;
 
-static void gyroscope_open(void* private_data)
+static void general_gyroscope_open(void* private_data)
 { 
     fetch_data(private_data, GYROSCOPE_OPEN_INDEX);
 #if DEBUG
@@ -39,7 +39,7 @@ static void gyroscope_open_template0(void* para_struct)
 }
 
 
-static int gyroscope_getx(void* private_data, unsigned int* data)
+static int general_gyroscope_getx(void* private_data, unsigned int* data)
 {
     int result;
 
@@ -63,7 +63,7 @@ static int gyroscope_getx_template0(void* para_struct, unsigned int* data)
 }
 
 
-static int gyroscope_gety(void* private_data, unsigned int* data)
+static int general_gyroscope_gety(void* private_data, unsigned int* data)
 {
     int result;
 
@@ -87,7 +87,7 @@ static int gyroscope_gety_template0(void* para_struct, unsigned int* data)
 }
 
 
-static int gyroscope_getz(void* private_data, unsigned int* data)
+static int general_gyroscope_getz(void* private_data, unsigned int* data)
 {
     int result;
 
@@ -111,7 +111,7 @@ static int gyroscope_getz_template0(void* para_struct, unsigned int* data)
 }
 
 
-static int gyroscope_getxyz(void* private_data, unsigned int* data)
+static int general_gyroscope_getxyz(void* private_data, unsigned int* data)
 {
     int result;
 
@@ -157,11 +157,11 @@ static void fetch_data(void* private_data, int index)
 
 
 static struct gyroscope_device_operation gdo = {
-    gyroscope_open,
-    gyroscope_getx,
-    gyroscope_gety,
-    gyroscope_getz,
-    gyroscope_getxyz
+    general_gyroscope_open,
+    general_gyroscope_getx,
+    general_gyroscope_gety,
+    general_gyroscope_getz,
+    general_gyroscope_getxyz
 };
 
 static struct driver gyroscope_driver = {

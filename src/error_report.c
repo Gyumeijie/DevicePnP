@@ -10,7 +10,7 @@ void report_error(const char* file, const char* func, const char* msg)
 
 #if DEBUG
     printf("<Error context=\"%s@%s\" position=\"%s@%s\">\n", 
-                                      device_context,op_context, func, file);
+                               op_context, device_context, func, file);
     printf("\t<Message>%s</Message>\n", msg);
     printf("</Error>\n");
 #endif

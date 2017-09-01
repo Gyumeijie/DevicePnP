@@ -7,16 +7,6 @@
 //支持不同接口的定义不同模板
 #define GYROSCOPE_TEMPLATE_NUM 10
 
-//定义gyroscope提供的操作
-#define GYROSCOPE_OP_NUM 6
-
-//
-#define GYROSCOPE_GLOBAL_INDEX 0
-#define GYROSCOPE_OPEN_INDEX 1
-#define GYROSCOPE_GETX_INDEX 2
-#define GYROSCOPE_GETY_INDEX 3
-#define GYROSCOPE_GETZ_INDEX 4
-#define GYROSCOPE_GETXYZ_INDEX 5
 
 //模板参数结构体表
 //static struct template_data* template_data_table;

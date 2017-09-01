@@ -1,16 +1,16 @@
 #include "driver.h"
 #include "dev_t.h"
 #include "analogsunsensor_driver.h"
-#include "analogsunsensor_common.h"
+#include "analogsunsensor.h"
 #include "adda_operation.h"
 
 static int template_id;
 static void* para_struct;
 
-static void analogsunsensor_open(void* private_data){}
+static void general_analogsunsensor_open(void* private_data){}
 
 
-static int analogsunsensor_read(void* private_data, unsigned int* data)
+static int general_analogsunsensor_read(void* private_data, unsigned int* data)
 {
     int result;
 
@@ -43,8 +43,8 @@ static void fetch_data(void* private_data, int index)
 
 
 static struct analogsunsensor_device_operation ado = {
-    analogsunsensor_open,
-    analogsunsensor_read
+    general_analogsunsensor_open,
+    general_analogsunsensor_read
 };
 
 

@@ -1,4 +1,5 @@
 #include "gyroscope_match.h"
+#include "gyroscope.h"
 #include "xml_operation.h"
 #include <malloc.h>
 #include <string.h>

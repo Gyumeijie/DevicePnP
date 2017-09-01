@@ -1,6 +1,5 @@
 #include "device_open.h"
 #include "gyroscope.h"
-#include "gyroscope_common.h"
 #include "gyroscope_match.h"
 #include <stdio.h>
 
