@@ -100,4 +100,6 @@ extern struct match_info*
 init_match_info(struct template_match* match_funcs_table, int data_table_size, int match_funcs_num);
 
 extern const char* get_op_context();
+
+extern int has_op_complemented(struct template_data* private_data, int op_idx);
 #endif

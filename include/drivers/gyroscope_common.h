@@ -3,11 +3,11 @@
 
 
 struct gyroscope_device_operation{
-  void (*general_gyroscope_open)(void*);
-  void (*general_gyroscope_getx)(void*, unsigned int*);
-  void (*general_gyroscope_gety)(void*, unsigned int*);
-  void (*general_gyroscope_getz)(void*, unsigned int*);
-  void (*general_gyroscope_getxyz)(void*, unsigned int*);
+ void (*general_gyroscope_open)(void*);
+ int (*general_gyroscope_getx)(void*, unsigned int*);
+ int (*general_gyroscope_gety)(void*, unsigned int*);
+ int (*general_gyroscope_getz)(void*, unsigned int*);
+ int (*general_gyroscope_getxyz)(void*, unsigned int*);
 };
 
 #endif

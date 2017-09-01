@@ -9,19 +9,19 @@ static void gyroscope_open(void* private_data);
 
 static void gyroscope_open_template0(void* para_struct);
 
-static void get_pattern0(void* para_struct, unsigned int* data);
+static int get_pattern0(void* para_struct, unsigned int* data);
 
-static void gyroscope_getx(void* private_data, unsigned int* data);
-static void gyroscope_getx_template0(void* para_struct, unsigned int* data);
+static int gyroscope_getx(void* private_data, unsigned int* data);
+static int gyroscope_getx_template0(void* para_struct, unsigned int* data);
 
-static void gyroscope_gety(void* private_data, unsigned int* data);
-static void gyroscope_gety_template0(void* para_struct, unsigned int* data);
+static int gyroscope_gety(void* private_data, unsigned int* data);
+static int gyroscope_gety_template0(void* para_struct, unsigned int* data);
 
-static void gyroscope_getz(void* private_data, unsigned int* data);
-static void gyroscope_getz_template0(void* para_struct, unsigned int* data);
+static int gyroscope_getz(void* private_data, unsigned int* data);
+static int gyroscope_getz_template0(void* para_struct, unsigned int* data);
 
-static void gyroscope_getxyz(void* private_data, unsigned int* data);
-static void gyroscope_getxyz_template0(void* para_struct, unsigned int* data);
+static int gyroscope_getxyz(void* private_data, unsigned int* data);
+static int gyroscope_getxyz_template0(void* para_struct, unsigned int* data);
 
 static void fetch_data(void* private_data, int index);
 

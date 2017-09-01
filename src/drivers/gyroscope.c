@@ -6,7 +6,6 @@
 
 static struct device_open* devop = NULL;
 static struct gyroscope_device_operation* gdop = NULL;
-static void* para_struct = NULL;
 
 int gyroscope_open(char* lid)
 {
@@ -19,53 +18,67 @@ int gyroscope_open(char* lid)
     //如果已经打开
     if(os == ALREADY_OPEN) return index;
 
-    devop = get_device_open_struct(index);
-    gdop = devop->device_operation;    
-    gdop->general_gyroscope_open(devop->private_data);
+    devop = get_device_open_struct(index); 
+    if (has_op_complemented(devop->private_data, GYROSCOPE_OPEN_INDEX)){
+        gdop = devop->device_operation;
+        gdop->general_gyroscope_open(devop->private_data);
+    }
 
     return index;
 }
 
-void gyroscope_getx(int index, unsigned int* data)
+int gyroscope_getx(int index, unsigned int* data)
 {
-    get_para_struct(index, GYROSCOPE_GETX_INDEX);
-    (para_struct == NULL) 
-       ? puts("gyroscope_getx not implemented\n")
-       : gdop->general_gyroscope_getx(devop->private_data, data); 
+    return gyroscope_get_helpler(index, GYROSCOPE_GETX_INDEX, __func__, data);
 }
 
 
-void gyroscope_gety(int index, unsigned int* data)
+int gyroscope_gety(int index, unsigned int* data)
 {
-    get_para_struct(index, GYROSCOPE_GETY_INDEX);
-    (para_struct == NULL)
-       ? puts("gyroscope_gety not implemented\n")
-       : gdop->general_gyroscope_gety(devop->private_data, data); 
+    return gyroscope_get_helpler(index, GYROSCOPE_GETY_INDEX, __func__, data);
 }
 
 
-void gyroscope_getz(int index, unsigned int* data)
+int gyroscope_getz(int index, unsigned int* data)
 {
-    get_para_struct(index, GYROSCOPE_GETZ_INDEX);
-    (para_struct == NULL)
-       ? puts("gyroscope_getz not implemented\n")
-       : gdop->general_gyroscope_getz(devop->private_data, data); 
+    return gyroscope_get_helpler(index, GYROSCOPE_GETZ_INDEX, __func__, data);
 }
 
 
-void gyroscope_getxyz(int index, unsigned int* data)
+int gyroscope_getxyz(int index, unsigned int* data)
 {
-    get_para_struct(index, GYROSCOPE_GETXYZ_INDEX); 
-    (para_struct == NULL)
-       ? puts("gyroscope_getxyz not implemented\n")
-       : gdop->general_gyroscope_getxyz(devop->private_data, data); 
+    return gyroscope_get_helpler(index, GYROSCOPE_GETXYZ_INDEX, __func__, data);
 }
 
 
-static void* get_para_struct(int dev_open_idx, int op_idx)
+static int gyroscope_get_helpler(int dev_open_idx, int op_idx, const char* func_name, unsigned int * data)
 {
-    devop = get_device_open_struct(dev_open_idx);
+    int result = -1;
+ 
+    devop = get_device_open_struct(dev_open_idx); 
     gdop = devop->device_operation;
-    //需要根据匹配情况，判断该操作是否有配置
-    para_struct = ((struct template_data*)devop->private_data)[op_idx].para_struct;
+
+    if (has_op_complemented(devop->private_data, op_idx)){
+         switch (op_idx){
+               case GYROSCOPE_GETX_INDEX: 
+                    result =  gdop->general_gyroscope_getx(devop->private_data, data); 
+                    break;
+               case GYROSCOPE_GETY_INDEX: 
+                    result =  gdop->general_gyroscope_gety(devop->private_data, data); 
+                    break;
+               case GYROSCOPE_GETZ_INDEX: 
+                    result =  gdop->general_gyroscope_getz(devop->private_data, data); 
+                    break;
+               case GYROSCOPE_GETXYZ_INDEX: 
+                    result =  gdop->general_gyroscope_getxyz(devop->private_data, data); 
+                    break;
+               default:
+                    break;
+         }
+    }else{
+
+	printf("%s not configured in xml file\n", func_name);
+    }
+
+    return result;
 }

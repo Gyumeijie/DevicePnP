@@ -13,12 +13,18 @@ int main()
    fd = gyroscope_open("gyroscope1");
    fd = gyroscope_open("gyroscope1");
    printf("gyroscope1 has fd: %d\n", fd);
-   gyroscope_getx(fd, &data);
-   printf("data read %d\n", data);
-   gyroscope_gety(fd, &data);
-   printf("data read %d\n", data);
-   gyroscope_getz(fd, &data);
-   printf("data read %d\n", data);
+   if (gyroscope_getx(fd, &data) != -1){
+     printf("data read %d\n", data);
+   }
+   
+  
+   if(gyroscope_gety(fd, &data) != -1){
+      printf("data read %d\n", data);
+   }
+   
+   if(gyroscope_getz(fd, &data) != -1){
+      printf("data read %d\n", data);
+   }
 
    fd = analogsunsensor_open("analogsunsensor1");
    printf("analogsunsensor1 has fd: %d\n", fd);

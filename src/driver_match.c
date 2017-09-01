@@ -76,9 +76,12 @@ static int try_match(char* template_name)
 static void init_template_data_table(int dtsize)
 {   
     const char func[] = "init_template_data_table";
+    int memsize = sizeof(struct template_data)*dtsize; 
 
-    g_mip->template_data_table = malloc(sizeof(struct template_data)*dtsize); 
+    g_mip->template_data_table = malloc(memsize);
     check_null(file, func, "template_data_table", g_mip->template_data_table);
+
+    memset(g_mip->template_data_table, 0, memsize);
 }
 
 
@@ -174,4 +177,12 @@ const char* get_op_context()
 {   
     //为了调试方便加入的
     return op_context;
+}
+
+
+int has_op_complemented(struct template_data* private_data, int op_idx)
+{
+   void* para_struct  = private_data[op_idx].para_struct;
+   
+   return (para_struct == NULL) ? 0 : 1;
 }

@@ -39,87 +39,103 @@ static void gyroscope_open_template0(void* para_struct)
 }
 
 
-static void gyroscope_getx(void* private_data, unsigned int* data)
+static int gyroscope_getx(void* private_data, unsigned int* data)
 {
+    int result;
+
     fetch_data(private_data, GYROSCOPE_GETX_INDEX);
 #if DEBUG
     printf("gyroscope_getx is called with template_id: %d\n", template_id);
 #endif
     switch(template_id){
-        case 0: gyroscope_getx_template0(para_struct, data);
+        case 0: result = gyroscope_getx_template0(para_struct, data);
                 break;
         default:break;
     }
+  
+   return result;
 }
 
 
-static void gyroscope_getx_template0(void* para_struct, unsigned int* data)
+static int gyroscope_getx_template0(void* para_struct, unsigned int* data)
 {
-    get_pattern0(para_struct, data);
+    return get_pattern0(para_struct, data);
 }
 
 
-static void gyroscope_gety(void* private_data, unsigned int* data)
+static int gyroscope_gety(void* private_data, unsigned int* data)
 {
+    int result;
+
     fetch_data(private_data, GYROSCOPE_GETY_INDEX);
 #if DEBUG
     printf("gyroscope_gety is called with template_id: %d\n", template_id);
 #endif
     switch(template_id){
-        case 0: gyroscope_gety_template0(para_struct, data);
+        case 0: result = gyroscope_gety_template0(para_struct, data);
                 break;
         default:break;
     }
+    
+   return result;
 }
 
 
-static void gyroscope_gety_template0(void* para_struct, unsigned int* data)
+static int gyroscope_gety_template0(void* para_struct, unsigned int* data)
 {
-    get_pattern0(para_struct, data);
+    return get_pattern0(para_struct, data);
 }
 
 
-static void gyroscope_getz(void* private_data, unsigned int* data)
+static int gyroscope_getz(void* private_data, unsigned int* data)
 {
+    int result;
+
     fetch_data(private_data, GYROSCOPE_GETZ_INDEX);
 #if DEBUG
     printf("gyroscope_getz is called with template_id: %d\n", template_id);
 #endif
     switch(template_id){
-        case 0: gyroscope_getz_template0(para_struct, data);
+        case 0: result = gyroscope_getz_template0(para_struct, data);
                 break;
         default:break;
     }
+    
+   return result;
 }
 
 
-static void gyroscope_getz_template0(void* para_struct, unsigned int* data)
+static int gyroscope_getz_template0(void* para_struct, unsigned int* data)
 {
-    get_pattern0(para_struct, data);
+    return get_pattern0(para_struct, data);
 }
 
 
-static void gyroscope_getxyz(void* private_data, unsigned int* data)
+static int gyroscope_getxyz(void* private_data, unsigned int* data)
 {
+    int result;
+
     fetch_data(private_data, GYROSCOPE_GETXYZ_INDEX);
 #if DEBUG
     printf("gyroscope_getxyz is called with template_id: %d\n", template_id);
 #endif
     switch(template_id){
-        case 0: gyroscope_getxyz_template0(para_struct, data);
+        case 0: result = gyroscope_getxyz_template0(para_struct, data);
                 break;
         default:break;
     }
+
+   return result;
 }
 
 
-static void gyroscope_getxyz_template0(void* para_struct, unsigned int* data)
+static int gyroscope_getxyz_template0(void* para_struct, unsigned int* data)
 {
-    get_pattern0(para_struct, data);
+    return get_pattern0(para_struct, data);
 }
 
 
-static void get_pattern0(void* para_struct, unsigned int* data)
+static int get_pattern0(void* para_struct, unsigned int* data)
 {
     struct get_reg_pattern0* getreg_pat0p = para_struct;
 #if DEBUG
@@ -128,6 +144,7 @@ static void get_pattern0(void* para_struct, unsigned int* data)
     printf("address: 0x%02x size:%d\n", reg_address, size);
     //模拟i2c读寄存器函数
     *data = reg_address;
+    return size;
 #endif
 }
 

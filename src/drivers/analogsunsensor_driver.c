@@ -12,33 +12,37 @@ static void* para_struct;
 static void analogsunsensor_open(void* private_data){}
 
 
-static void analogsunsensor_read(void* private_data, unsigned int* data)
+static int analogsunsensor_read(void* private_data, unsigned int* data)
 {
-    template_id = ((struct template_data*)private_data)[ANALOGSUNSENSOR_READ_INDEX].template_id;
-    para_struct = ((struct template_data*)private_data)[ANALOGSUNSENSOR_READ_INDEX].para_struct;
+    int result;
 
+    fetch_data(private_data, ANALOGSUNSENSOR_READ_INDEX);
     switch (template_id){
-        case 0 : analogsunsensor_read_template0(para_struct, data);
+        case 0 : result = analogsunsensor_read_template0(para_struct, data);
                  break;
         default: break;
     }
+
+    return result;
 }
 
 
-static void analogsunsensor_read_template0(void* para_struct, unsigned int* data) 
+static int analogsunsensor_read_template0(void* para_struct, unsigned int* data) 
 {
     struct plain_array* open_template0 = para_struct;
     unsigned int len = open_template0->len;
     unsigned int* arr = open_template0->arr;
 
-    ad_devices_read(data, len, arr);
-#if DEBUG
-    int i;
-    for (i=0; i<len; i++){
-       printf("channel: %d  data: %d\n", arr[i], data[i]);
-    }
-#endif 
+    return ad_devices_read(data, len, arr);
 }
+
+
+static void fetch_data(void* private_data, int index)
+{
+    template_id = ((struct template_data*)private_data)[index].template_id;
+    para_struct = ((struct template_data*)private_data)[index].para_struct;
+}
+
 
 static struct analogsunsensor_device_operation ado = {
     analogsunsensor_open,
