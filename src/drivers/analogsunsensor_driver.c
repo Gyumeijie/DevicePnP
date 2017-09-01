@@ -3,8 +3,6 @@
 #include "analogsunsensor_driver.h"
 #include "analogsunsensor_common.h"
 #include "adda_operation.h"
-#include <stdio.h>
-
 
 static int template_id;
 static void* para_struct;
@@ -57,7 +55,7 @@ static struct driver analogsunsensor_driver = {
 };
 
 
-extern void analogsunsensor_driver_loader(void)
+void analogsunsensor_driver_loader(void)
 {
     int major = type2major("analogsunsensor");
     add_driver(major, &analogsunsensor_driver);

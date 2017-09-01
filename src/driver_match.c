@@ -132,7 +132,7 @@ static match_func_ptr find_match_func(char* name)
 }
 
 
-extern int check_match(int status, int index, int template_id, void* template_data)
+int check_match(int status, int index, int template_id, void* template_data)
 {
     struct template_data* template_data_table;
     template_data_table = g_mip->template_data_table; 

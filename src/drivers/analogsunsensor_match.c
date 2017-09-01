@@ -35,7 +35,7 @@ static struct template_match match_funcs_table[ANALOGSUNSENSOR_TEMPLATE_NUM] = {
 static int match_funcs_num = 2;
 
 
-extern int analogsunsensor_match(void)
+int analogsunsensor_match(void)
 {
     struct match_info* mip;
     mip = init_match_info(match_funcs_table, (ANALOGSUNSENSOR_OP_NUM+1), match_funcs_num);

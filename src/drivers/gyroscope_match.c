@@ -88,7 +88,7 @@ static int match_funcs_num = 5;
 
 
 //根据lid唯一标识的的设备配置信息去匹配
-extern int gyroscope_match(void)
+int gyroscope_match(void)
 {  
     struct match_info* mip;
     mip = init_match_info(match_funcs_table, (GYROSCOPE_OP_NUM+1), match_funcs_num);
