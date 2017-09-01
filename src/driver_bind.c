@@ -6,8 +6,6 @@
 #include "error_report.h"
 #include <stdio.h>
 
-static const char* file = "driver_bind.c";
-
 int bind_drivers(void)
 {
     struct device* devp = NULL;
@@ -15,7 +13,6 @@ int bind_drivers(void)
     unsigned int device_num;
     devno_t devno;
     int exec_status;
-    const char* func = "bind_drivers";
 
     device_num = get_device_num();
    
@@ -27,7 +24,7 @@ int bind_drivers(void)
 
         //根据设备接口类型获取设备驱动索引表中的相应驱动结构体
         drip = get_driver(GET_MAJOR(devno), devp->interface);
-        if(!check_null(file, func, "drip", drip)){
+        if(!check_null(__FILE__, __func__, "drip", drip)){
             printf("Detail: can't not find driver for %s of %s\n", 
                               major2type(GET_MAJOR(devno)), devp->interface);
             continue;

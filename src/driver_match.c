@@ -5,7 +5,6 @@
 #include <string.h>
 #include <malloc.h>
 
-static const char file[] = "driver_match.c";
 static const char* op_context = NULL;
 
 /** 
@@ -21,9 +20,8 @@ int do_match(struct match_info* mip)
     int template_id;
     char template_name[MAX_TEMPLATE_NAME_LENGTH];
     int exec_status;
-    const char func[] = "do_match";
    
-    if(!check_null(file, func, "mip", mip)) return UNMATCH;
+    if(!check_null(__FILE__, __func__, "mip", mip)) return UNMATCH;
     g_mip = mip;
     
     //初始化设备的模板参数结构体表
@@ -75,11 +73,10 @@ static int try_match(char* template_name)
 
 static void init_template_data_table(int dtsize)
 {   
-    const char func[] = "init_template_data_table";
     int memsize = sizeof(struct template_data)*dtsize; 
 
     g_mip->template_data_table = malloc(memsize);
-    check_null(file, func, "template_data_table", g_mip->template_data_table);
+    check_null(__FILE__, __func__, "template_data_table", g_mip->template_data_table);
 
     memset(g_mip->template_data_table, 0, memsize);
 }
@@ -95,11 +92,9 @@ static void undo_match(void)
 
 static int find_and_exec_match_func(char* name)
 {
-    const char func[] = "find_and_exec_match_func";
-
     //查找匹配函数，如果没有找到则返回不匹配，并给出具体的原因
     match_func_ptr match_func = find_match_func(name);
-    if (!check_null(file, func, "match_func", match_func)){
+    if (!check_null(__FILE__, __func__, "match_func", match_func)){
         printf("Detail: can't not find matching function of template '%s'\n", name);
         return UNMATCH;
     }
@@ -158,11 +153,10 @@ void* get_template_data_table(void)
 struct match_info*
 init_match_info(struct template_match* match_funcs_table, int data_table_size, int match_funcs_num)
 {
-    const char func[] = "init_match_info";
     struct match_info* mip;
 
     mip = (struct match_info*)malloc(sizeof(struct match_info));
-    if (!check_null(file, func, "mip", mip)) return NULL;
+    if (!check_null(__FILE__, __func__, "mip", mip)) return NULL;
 
     mip->template_data_table = NULL;
     mip->match_funcs_table = match_funcs_table;

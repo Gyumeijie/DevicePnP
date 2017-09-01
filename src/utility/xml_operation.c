@@ -4,18 +4,15 @@
 #include <malloc.h>
 #include <stdio.h>
 
-static const char* file = "xml_operation.c";
-
 int xml_operation_init(void)
 { 
    fp = NULL;
    tree = NULL;
    device_context = NULL;
-   const char* func = "xml_operation_init";
 
    //在系统初始化文件init.c中被调用
    fp = fopen("device.xml", "r");
-   if (!check_null(file, func, "fp", fp)){
+   if (!check_null(__FILE__, __func__, "fp", fp)){
        printf("Detail: can't open xml file\n");
        return FAILURE;
    }
@@ -32,12 +29,10 @@ int xml_operation_init(void)
  */
 int establish_device_context(char* lid)
 {
-    const char* func = "establish_device_context";
-
     if (device_context == NULL){
         //建立设备上下文，如果没有在配置文件中找到相应的项，则返回不匹配
         device_context =  mxmlFindElement(tree, tree, "device", "id", lid, MXML_DESCEND);
-        if (!check_null(file, func, "device_context", device_context)){
+        if (!check_null(__FILE__, __func__, "device_context", device_context)){
             printf("Detail: can't find configuration info for %s in xml file\n", lid);
         
             return FAILURE;
@@ -145,7 +140,6 @@ int fill_reg_array(char* op_name, char* para_name, struct reg_array* regap)
 {
    mxml_node_t *op, *para_list, *para;
    struct reg *regp;
-   const char* func = "fill_reg_array";
 
    find_op(op_name, &op);
 
@@ -171,11 +165,10 @@ static int
 find_para(mxml_node_t* op, mxml_node_t* para_list, mxml_node_t** pp, const char* name)
 {
     char* attr = (name == NULL) ?  NULL : "name";
-    const char* func = "find_para";
     const char* value = name;
 
     *pp = mxmlFindElement(para_list, op, "para", attr, value, MXML_DESCEND);
-    if (!check_null(file, func, "para", *pp)){
+    if (!check_null(__FILE__, __func__, "para", *pp)){
        (name == NULL) ? printf("Detail: can't find para child in xml file\n")
                       : printf("Detail: can't find para named '%s' in xml file\n", name);
        return FAILURE;
@@ -188,11 +181,10 @@ find_para(mxml_node_t* op, mxml_node_t* para_list, mxml_node_t** pp, const char*
 static int alloc_reg_array(int len, struct reg_array** rega2p)
 {
    struct reg *regp;
-   const char* func = "alloc_reg_array";
 
    (*rega2p)->len = len;
    regp = (struct reg*)malloc(sizeof(struct reg)*len);  
-   if (!check_null(file, func, "regp", regp)) return FAILURE;
+   if (!check_null(__FILE__, __func__, "regp", regp)) return FAILURE;
    (*rega2p)->regp = regp;
 
     return SUCCESS;
@@ -204,16 +196,15 @@ static int do_fill_reg_array(mxml_node_t* para, struct reg_array* regap)
    int i, len;
    struct reg *regp;
    const char *value, *address;
-   const char* func = "do_fill_reg_array";
 
    len = regap->len;
    regp = regap->regp;
    for (i=0; i<len; i++){
        address  = mxmlElementGetAttr(para, "address");
-       if(!check_null(file, func, "address", address)) return FAILURE;
+       if(!check_null(__FILE__, __func__, "address", address)) return FAILURE;
 
        value = mxmlGetText(para, NULL);
-       if(!check_null(file, func, "value", value)) return FAILURE;
+       if(!check_null(__FILE__, __func__, "value", value)) return FAILURE;
 
        regp[i].addr = strtol(address, NULL, 16);
        regp[i].val = strtol(value, NULL, 16);
@@ -235,12 +226,10 @@ static void find_op(char* op_name, mxml_node_t** opp)
 
 static int find_para_list(char* para_name, mxml_node_t* op, mxml_node_t** plp)
 {
-   const char* func = "find_para_list";
-
    //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
    *plp = mxmlFindElement(op, device_context, "para_list",
                                               "name", para_name, MXML_DESCEND);  
-   if (!check_null(file, func, "para_list", *plp)){
+   if (!check_null(__FILE__, __func__, "para_list", *plp)){
        printf("Detail: can't find para_list item named '%s' in xml file\n", para_name);
        return FAILURE;
    }
@@ -288,7 +277,6 @@ int fill_plain_struct(char* op_name, char* para_name, struct struct_member st[],
    mxml_node_t *op, *para_list, *para;
    void* data;
    const char *value, *type;
-   const char* func = "fill_plain_struct";
 
    find_op(op_name, &op);
 
@@ -308,7 +296,6 @@ static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* op, int len
 
    void* data;
    const char *name, *value;
-   const char* func = "do_fill_plain_struct";
    mxml_node_t* para;
 
    //依次处理st中的成员
@@ -337,16 +324,15 @@ static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* op, int len
 static int check_data_type(mxml_node_t* para, char* name, char* type)
 {
    const char* config_type;
-   const char* func = "check_data_type";
 
    config_type = mxmlElementGetAttr(para, "type");
-   if (!check_null(file, func, "type", config_type)){
+   if (!check_null(__FILE__, __func__, "type", config_type)){
        printf("Detail: can't resolve the type of '%s'\n", name);
        return FAILURE;
    }
 
    if (strcmp(config_type, type)){
-       report_error(file, func, "bad type!");
+       report_error(__FILE__, __func__, "bad type!");
        printf("Detail: the type of '%s' should be '%s', but not '%s'\n",
                                            name, type, config_type);
        return FAILURE;
@@ -447,11 +433,10 @@ do_fill_plain_array(mxml_node_t* para, struct plain_array* plainap)
 static int alloc_plain_array(int len, struct plain_array** plaina2p)
 {
    void* arr;
-   const char* func = "alloc_reg_array";
 
    (*plaina2p)->len = len;
    arr = malloc(sizeof(long int)*len);  
-   if (!check_null(file, func, "arr", arr)) return FAILURE;
+   if (!check_null(__FILE__, __func__, "arr", arr)) return FAILURE;
    (*plaina2p)->arr = arr;
    
    return SUCCESS;

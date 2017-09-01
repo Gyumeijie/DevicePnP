@@ -2,9 +2,6 @@
 #include "error_report.h"
 #include <malloc.h>
 #include <string.h>
-
-static const char* file = "driver.c";
-
  
 void driver_init(void)
 {
@@ -44,13 +41,12 @@ void add_driver_node(struct driver_node** head, struct driver_node* node)
  */
 int add_driver(int index, struct driver* drip)
 {
-     const char* func = "add_driver";
      struct driver_node** head;
      struct driver_node* node;
 
      head = &driver_index_table[index];
      node = malloc(sizeof(struct driver_node));
-     if(!check_null(file, func, "node", node)) return FAILURE;
+     if(!check_null(__FILE__, __func__, "node", node)) return FAILURE;
 
      node->drip = drip;
      node->next = NULL;

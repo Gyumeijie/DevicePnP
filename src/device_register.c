@@ -7,8 +7,6 @@
 #include <malloc.h>
 #include <stdio.h>
 
-static const char* file = "device_register.c";
-
 
 /**
  * 输入：无
@@ -22,7 +20,6 @@ int register_devices(void)
        char *lid, *type, *interface;
        void* attrs_item;
        unsigned int attrs_item_num;
-       const char* func = "register_devices";       
        
        int i;
        attrs_item_num = get_attrs_item_num();
@@ -38,7 +35,7 @@ int register_devices(void)
 
           //分配并初始化设备结构体
           struct device* devp = (struct device*)malloc(sizeof(struct device));
-          if(!check_null(file, func, "devp", devp)) return FAILURE;
+          if(!check_null(__FILE__, __func__, "devp", devp)) return FAILURE;
 
           devp->devno = devno;
           strcpy(devp->interface, interface);
