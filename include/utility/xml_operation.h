@@ -31,7 +31,7 @@ static void* convert_type(const char* value, const char* type);
 
 static mxml_node_t* skip_text_node(mxml_node_t* node, char* attr);
 
-static void find_para_parent(char* para_parent_name, mxml_node_t** para_parent);
+static int find_para_parent(char* para_parent_name, mxml_node_t** para_parent);
 
 static int find_para_list(char* para_name, mxml_node_t* para_parent, mxml_node_t** plp);
 
