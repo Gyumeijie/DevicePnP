@@ -9,11 +9,11 @@ struct device_attrs{
    char interface[10];
 };
 
-static struct device_attrs attrs_items[2] = {
+static struct device_attrs attrs_items[3] = {
   {"gyroscope1", "gyroscope", "i2c"},
   {"analogsunsensor1", "analogsunsensor","ad"},
+  {"gyroscope2", "gyroscope", "i2c"},
 #if 0
-  {"gyroscope3", "gyroscope", "i2c"},
   {"gyroscope4", "gyroscope", "i2c"},
   {"gyroscope5", "gyroscope", "i2c"},
   {"gyroscope6", "gyroscope", "i2c"},
@@ -24,7 +24,7 @@ static struct device_attrs attrs_items[2] = {
 #endif
 };
 
-static unsigned int attrs_item_num = 2;
+static unsigned int attrs_item_num = 3;
 
 extern unsigned int get_attrs_item_num(void);
 
