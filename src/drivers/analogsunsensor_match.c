@@ -5,6 +5,12 @@
 #include <stdio.h>
 #include <string.h>
 
+static int global_match(void)
+{
+   return MATCH;
+}
+
+
 static int open_template0_match(void) 
 {
    return MATCH;
@@ -30,10 +36,11 @@ static int read_template0_match(void)
 
 //模板匹配函数表
 static struct template_match match_funcs_table[ANALOGSUNSENSOR_TEMPLATE_NUM] = {
+    {"global", global_match},
     {"analogsunsensor_open_template0", open_template0_match},
     {"analogsunsensor_read_template0", read_template0_match},
 }; 
-static int match_funcs_num = 2;
+static int match_funcs_num = 3;
 
 
 int analogsunsensor_match(void)

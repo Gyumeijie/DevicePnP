@@ -18,11 +18,12 @@ extern int get_op_template_id(char* op_name);
 
 extern int xml_operation_init(void);
 
-extern int fill_reg_array(char* op_name, char* para_name, struct reg_array* regap);
+int fill_reg_array(char* para_parent_name, char* para_name, struct reg_array* regap);
 
-extern int fill_plain_struct(char* op_name, char* para_name, struct struct_member st[], struct_fill_func_ptr do_fill);
+extern int fill_plain_struct(char* para_parent_name, char* para_name, 
+              struct struct_member st[], struct_fill_func_ptr do_fill);
 
-extern int fill_plain_array(char* op_name, char* para_name, struct plain_array* plainap);
+extern int fill_plain_array(char* para_parent_name, char* para_name, struct plain_array* plainap);
 
 static void create_op_name_list(void);
 
@@ -30,11 +31,11 @@ static void* convert_type(const char* value, const char* type);
 
 static mxml_node_t* skip_text_node(mxml_node_t* node, char* attr);
 
-static void find_op(char* op_name, mxml_node_t** opp);
+static void find_para_parent(char* para_parent_name, mxml_node_t** para_parent);
 
-static int find_para_list(char* para_name, mxml_node_t* op, mxml_node_t** plp);
+static int find_para_list(char* para_name, mxml_node_t* para_parent, mxml_node_t** plp);
 
-static int find_para(mxml_node_t* op, mxml_node_t* para_list, mxml_node_t** pp, const char* name);
+static int find_para(mxml_node_t* para_parent, mxml_node_t* para_list, mxml_node_t** pp, const char* name);
 
 static int do_fill_reg_array(mxml_node_t* para, struct reg_array* regap);
 
@@ -42,7 +43,7 @@ static int alloc_reg_array(int len, struct reg_array** rega2p);
 
 static int check_data_type(mxml_node_t* para, char* name, char* type);
 
-static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* op, int len,
+static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* para_parent, int len,
                                 struct struct_member st[], struct_fill_func_ptr do_fill);
 
 static int do_fill_plain_array(mxml_node_t* para, struct plain_array* plainap);

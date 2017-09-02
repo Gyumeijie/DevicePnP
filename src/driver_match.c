@@ -26,10 +26,11 @@ int do_match(struct match_info* mip)
     
     //初始化设备的模板参数结构体表
     init_template_data_table(mip->data_table_size);
-#if 0
+
     //先通过全局变量匹配函数来匹配以及收集全局的参数信息
-    if (!try_match(template_name)) return UNMATCH;
-#endif 
+    op_context = "global";
+    if (!try_match("global")) return UNMATCH;
+
     //然后依次匹配以及收集每个模板的参数
     int i;
     length = get_op_list_length();
@@ -116,7 +117,7 @@ static match_func_ptr find_match_func(char* name)
   
     match_funcs_num = g_mip->match_funcs_num;
     match_funcs_table = g_mip->match_funcs_table;
-    for (i=0; i<match_funcs_num; i++){
+    for (i=0; i<match_funcs_num; i++){ 
         if (strcmp(match_funcs_table[i].name, name) == 0){
             return match_funcs_table[i].match_func;
         }

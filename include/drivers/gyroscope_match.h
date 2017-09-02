@@ -13,17 +13,22 @@
 static struct match_info* mip;
 
 //具体模板参数结构体
-#if 0
-struct global{
-    char slave_address;
+struct gyroscope_global{
+  unsigned char slave_address;
 };
-static struct global* gyro_global;
-#endif
+
+
+static struct gyroscope_global* gyro_globalp;
+
+static struct struct_member gyro_global[1] = {
+   {"char","slave_address", 0},
+};
 
 struct get_reg_pattern0{
-    char reg_address;
+    unsigned char reg_address;
     int size;
 };
+
 static struct get_reg_pattern0* getreg_pat0p;
 
 static struct struct_member getreg_pat0[2] = {
@@ -41,6 +46,9 @@ static struct getx_template0* getx_tpl0p;
 
 static int getreg_pat0_match(char* op_name, char* para_name, int index);
 static void getreg_pat0_do_fill(int index, void* data);
+
+static int global_match(void);
+static void gyro_global_do_fill(int index, void* data);
 
 //open相关的模板匹配函数
 static int open_template0_match(void);

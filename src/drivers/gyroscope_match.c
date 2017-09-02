@@ -5,6 +5,16 @@
 #include <string.h>
 #include <stdio.h>
 
+static int global_match(void)
+{
+    int exec_status;
+
+    gyro_globalp = malloc(sizeof(struct gyroscope_global));
+    exec_status = fill_plain_struct("global", "global",
+                                    &gyro_global[0], gyro_global_do_fill);
+
+    return check_match(exec_status, GYROSCOPE_GLOBAL_INDEX, 0, (void*)gyro_globalp);
+}
 
 static int open_template0_match(void)
 {
@@ -60,6 +70,18 @@ static int getreg_pat0_match(char* op_name, char* para_name, int index)
 }
 
 
+static void gyro_global_do_fill(int index, void* data)
+{
+    switch(index){
+        case 0: 
+               gyro_globalp->slave_address = *(char*)data;
+               break;
+        default:
+               break;
+    }
+}
+
+
 static void getreg_pat0_do_fill(int index, void* data)
 {
      switch(index){
@@ -77,14 +99,14 @@ static void getreg_pat0_do_fill(int index, void* data)
 
 //模板匹配函数表
 static struct template_match match_funcs_table[GYROSCOPE_TEMPLATE_NUM] = {
-//    {"gyroscope_global", global_match},
+    {"global", global_match},
     {"gyroscope_open_template0", open_template0_match},
     {"gyroscope_getx_template0", getx_template0_match},
     {"gyroscope_gety_template0", gety_template0_match},
     {"gyroscope_getz_template0", getz_template0_match},
     {"gyroscope_getxyz_template0", getxyz_template0_match}
 }; 
-static int match_funcs_num = 5;
+static int match_funcs_num = 6;
 
 
 

@@ -136,15 +136,15 @@ static void create_op_name_list(void)
  *　输出：填充类型为reg_array的模板参数是否成功
  *　功能：为给定操作名填充类型为reg_array的模板参数
  */
-int fill_reg_array(char* op_name, char* para_name, struct reg_array* regap)
+int fill_reg_array(char* para_parent_name, char* para_name, struct reg_array* regap)
 {
-   mxml_node_t *op, *para_list, *para;
+   mxml_node_t *para_parent, *para_list, *para;
    struct reg *regp;
 
-   find_op(op_name, &op);
+   find_para_parent(para_parent_name, &para_parent);
 
    //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
-   if(!find_para_list(para_name, op, &para_list)) return UNMATCH;
+   if(!find_para_list(para_name, para_parent, &para_list)) return UNMATCH;
    int len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10);
  
 
@@ -152,7 +152,7 @@ int fill_reg_array(char* op_name, char* para_name, struct reg_array* regap)
    if(!alloc_reg_array(len, &regap)) return UNMATCH;
 
    //获取para_list的第一个para
-   if(!find_para(op, para_list, &para, NULL)) return UNMATCH;
+   if(!find_para(para_parent, para_list, &para, NULL)) return UNMATCH;
 
    //填充reg_array类型的模板参数
    do_fill_reg_array(para, regap);
@@ -162,12 +162,12 @@ int fill_reg_array(char* op_name, char* para_name, struct reg_array* regap)
 
 
 static int
-find_para(mxml_node_t* op, mxml_node_t* para_list, mxml_node_t** pp, const char* name)
+find_para(mxml_node_t* para_parent, mxml_node_t* para_list, mxml_node_t** pp, const char* name)
 {
     char* attr = (name == NULL) ?  NULL : "name";
     const char* value = name;
 
-    *pp = mxmlFindElement(para_list, op, "para", attr, value, MXML_DESCEND);
+    *pp = mxmlFindElement(para_list, para_parent, "para", attr, value, MXML_DESCEND);
     if (!check_null(__FILE__, __func__, "para", *pp)){
        (name == NULL) ? printf("Detail: can't find para child in xml file\n")
                       : printf("Detail: can't find para named '%s' in xml file\n", name);
@@ -216,18 +216,20 @@ static int do_fill_reg_array(mxml_node_t* para, struct reg_array* regap)
 }
 
 
-static void find_op(char* op_name, mxml_node_t** opp)
+static void find_para_parent(char* para_parent_name, mxml_node_t** para_parent)
 {
-   //没有必要检测oop, driver_match的find_and_exec_match_func会检测
-   *opp = mxmlFindElement(device_context, tree, "op","name", op_name, MXML_DESCEND);
+   //没有必要检测para_parent, driver_match的find_and_exec_match_func会检测
+   const  char* elem_name;
+   (strcmp(para_parent_name, "global") != 0) ? (elem_name = "op") : (elem_name = "global") ; 
+   *para_parent = mxmlFindElement(device_context, tree, elem_name, "name", para_parent_name, MXML_DESCEND);
 }
 
 
 
-static int find_para_list(char* para_name, mxml_node_t* op, mxml_node_t** plp)
+static int find_para_list(char* para_name, mxml_node_t* para_parent, mxml_node_t** plp)
 {
    //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
-   *plp = mxmlFindElement(op, device_context, "para_list",
+   *plp = mxmlFindElement(para_parent, device_context, "para_list",
                                               "name", para_name, MXML_DESCEND);  
    if (!check_null(__FILE__, __func__, "para_list", *plp)){
        printf("Detail: can't find para_list item named '%s' in xml file\n", para_name);
@@ -271,26 +273,26 @@ static mxml_node_t* skip_text_node(mxml_node_t* node, char* attr)
  *　输出：填充类型为struct的模板参数是否成功
  *　功能：为给定操作名填充类型为struct的模板参数
  */
-int fill_plain_struct(char* op_name, char* para_name, struct struct_member st[],
-                      struct_fill_func_ptr do_fill)
+int fill_plain_struct(char* para_parent_name, char* para_name, 
+              struct struct_member st[], struct_fill_func_ptr do_fill)
 {
-   mxml_node_t *op, *para_list, *para;
+   mxml_node_t *para_parent, *para_list, *para;
    void* data;
    const char *value, *type;
 
-   find_op(op_name, &op);
+   find_para_parent(para_parent_name, &para_parent);
 
    //然后在op下找到para_name对应的para_list项
-   if(!find_para_list(para_name, op, &para_list)) return UNMATCH;
+   if(!find_para_list(para_name, para_parent, &para_list)) return UNMATCH;
    int len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10);
  
-   if(!do_fill_plain_struct(para_list, op, len, st, do_fill)) return UNMATCH;
+   if(!do_fill_plain_struct(para_list, para_parent, len, st, do_fill)) return UNMATCH;
 
    return MATCH;
 }
 
 
-static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* op, int len,
+static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* para_parent, int len,
                                 struct struct_member st[], struct_fill_func_ptr do_fill)
 {
 
@@ -303,7 +305,7 @@ static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* op, int len
    for (i=0; i<len; i++){
        //检查是否有对应的结构体成员，如果没有则表示不匹配
        name = st[i].name;
-       if(!find_para(op, para_list, &para, name)) return FAILURE;
+       if(!find_para(para_parent, para_list, &para, name)) return FAILURE;
        
        //检查type是否一致，如果不是则表示不匹配
        if(!check_data_type(para, st[i].name, st[i].type)) return FAILURE;
@@ -352,7 +354,7 @@ static void* convert_type(const char* value, const char* type)
 {
       static long int data_i;
       static float data_f;
-      static char data_c;
+      static unsigned char data_c;
       void* data;
  
       if (strcmp(type, "char") == 0){
@@ -371,24 +373,24 @@ static void* convert_type(const char* value, const char* type)
 
 
 
-int fill_plain_array(char* op_name, char* para_name, struct plain_array* plainap)
+int fill_plain_array(char* para_parent_name, char* para_name, struct plain_array* plainap)
 {
 
-   mxml_node_t *op, *para_list, *para;
+   mxml_node_t *para_parent, *para_list, *para;
 
 
    //先查找到op_name对应的op项，如果找不到则返回不匹配
-   find_op(op_name, &op);
+   find_para_parent(para_parent_name, &para_parent);
 
    //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
-   if(!find_para_list(para_name, op, &para_list)) return UNMATCH;
+   if(!find_para_list(para_name, para_parent, &para_list)) return UNMATCH;
    int len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10);
 
    //分配存储空间，如果分配失败则返回错误
    if (!alloc_plain_array(len, &plainap)) return UNMATCH;
    
    //获取para_list的第一个para
-   if (!find_para(op, para_list, &para, NULL)) return UNMATCH;
+   if (!find_para(para_parent, para_list, &para, NULL)) return UNMATCH;
    
    //填充plain_array类型的模板参数
    if(!do_fill_plain_array(para, plainap)) return UNMATCH;
