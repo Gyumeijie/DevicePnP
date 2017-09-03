@@ -1,9 +1,12 @@
 #include "gyroscope_match.h"
-#include "gyroscope.h"
 #include "xml_operation.h"
+#include "error_report.h"
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
+
+
+static unsigned int complementation_record; 
 
 static int global_match(void)
 {
@@ -12,6 +15,8 @@ static int global_match(void)
     gyro_globalp = malloc(sizeof(struct gyroscope_global));
     exec_status = fill_plain_struct("global", "global",
                                     &gyro_global[0], gyro_global_do_fill);
+
+    complementation_record |= 1<<GYROSCOPE_GLOBAL_INDEX;
 
     return check_match(exec_status, GYROSCOPE_GLOBAL_INDEX, 0, (void*)gyro_globalp);
 }
@@ -26,6 +31,8 @@ static int open_template0_match(void)
     
     //获取信息
     exec_status = fill_reg_array("gyroscope_open","open_template0", open_template0); 
+
+    complementation_record |= 1<<GYROSCOPE_OPEN_INDEX;
 
     //返回不匹配或者匹配
     return check_match(exec_status, GYROSCOPE_OPEN_INDEX, 0, (void*)open_template0);
@@ -106,15 +113,20 @@ static struct template_match match_funcs_table[GYROSCOPE_TEMPLATE_NUM] = {
     {"gyroscope_getz_template0", getz_template0_match},
     {"gyroscope_getxyz_template0", getxyz_template0_match}
 }; 
-static int match_funcs_num = 6;
 
+static struct match_info gyro_match_info = {
+   (GYROSCOPE_OP_NUM+1),
+   match_funcs_table,
+   MATCH_FUNCS_NUM,
+   &gyro_mfs,
+   &complementation_record
+};
 
 
 //根据lid唯一标识的的设备配置信息去匹配
 int gyroscope_match(void)
 {  
-    struct match_info* mip;
-    mip = init_match_info(match_funcs_table, (GYROSCOPE_OP_NUM+1), match_funcs_num);
-
-    return  do_match(mip);
+    return  do_match(&gyro_match_info);
 }
+
+

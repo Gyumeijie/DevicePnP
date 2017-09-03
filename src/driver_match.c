@@ -44,6 +44,10 @@ int do_match(struct match_info* mip)
         if (!try_match(template_name)) return UNMATCH;
     }
 
+    if (mip->mfsp != NULL){
+       return has_all_required_ops_complemented();
+   }
+
     //返回匹配
     return MATCH;
 }
@@ -65,7 +69,7 @@ static int try_match(char* template_name)
     if (!exec_status){
         //释放掉匹配以及收集前面模板所分配的数据结构并返回不匹配
         undo_match();
-        g_mip->template_data_table = NULL;
+        template_data_table = NULL;
     }
 
     return exec_status;
@@ -76,18 +80,18 @@ static void init_template_data_table(int dtsize)
 {   
     int memsize = sizeof(struct template_data)*dtsize; 
 
-    g_mip->template_data_table = malloc(memsize);
-    check_null(__FILE__, __func__, "template_data_table", g_mip->template_data_table);
+    template_data_table = malloc(memsize);
+    check_null(__FILE__, __func__, "template_data_table", template_data_table);
 
-    memset(g_mip->template_data_table, 0, memsize);
+    memset(template_data_table, 0, memsize);
 }
 
 
 //释放模板对应的数据结构
 static void undo_match(void)
 {
-    free(g_mip->template_data_table);
-    g_mip->template_data_table = NULL;
+    free(template_data_table);
+    template_data_table = NULL;
 }
 
 
@@ -130,9 +134,6 @@ static match_func_ptr find_match_func(char* name)
 
 int check_match(int status, int index, int template_id, void* template_data)
 {
-    struct template_data* template_data_table;
-    template_data_table = g_mip->template_data_table; 
-    
     //返回不匹配
     if (!status) return UNMATCH;
 
@@ -147,25 +148,9 @@ int check_match(int status, int index, int template_id, void* template_data)
 
 void* get_template_data_table(void)
 {
-    return (void*)g_mip->template_data_table;
+    return (void*)template_data_table;
 }
 
-
-struct match_info*
-init_match_info(struct template_match* match_funcs_table, int data_table_size, int match_funcs_num)
-{
-    struct match_info* mip;
-
-    mip = (struct match_info*)malloc(sizeof(struct match_info));
-    if (!check_null(__FILE__, __func__, "mip", mip)) return NULL;
-
-    mip->template_data_table = NULL;
-    mip->match_funcs_table = match_funcs_table;
-    mip->data_table_size = data_table_size;
-    mip->match_funcs_num = match_funcs_num;
-
-    return mip;
-}
 
 
 const char* get_op_context()
@@ -180,4 +165,29 @@ int has_op_complemented(struct template_data* private_data, int op_idx)
    void* para_struct  = private_data[op_idx].para_struct;
    
    return (para_struct == NULL) ? 0 : 1;
+}
+
+
+static int has_all_required_ops_complemented(void)
+{
+    unsigned int record = *(g_mip->complementation_record);
+    struct min_function_set* mfsp = g_mip->mfsp;
+    char msg[64];
+    *(g_mip->complementation_record) = 0; 
+
+    op_context = "required_ops_check";
+    if (record != mfsp->required_ops ){
+        int i, index;
+        for (i=0; i< mfsp->required_ops_num; i++){
+           index = mfsp->required_ops_index[i];
+           if (!(record & (1<<index))){
+              sprintf(msg, "'%s' is required", mfsp->required_ops_name[index]);
+              report_error(__FILE__, __func__, msg); 
+           }
+        }
+
+        return UNMATCH;
+    }
+
+    return MATCH;
 }

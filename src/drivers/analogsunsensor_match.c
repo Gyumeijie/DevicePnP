@@ -40,13 +40,16 @@ static struct template_match match_funcs_table[ANALOGSUNSENSOR_TEMPLATE_NUM] = {
     {"analogsunsensor_open_template0", open_template0_match},
     {"analogsunsensor_read_template0", read_template0_match},
 }; 
-static int match_funcs_num = 3;
 
+static struct match_info analongsunsensor_match_info = {
+   (ANALOGSUNSENSOR_OP_NUM+1),
+   match_funcs_table,
+   MATCH_FUNCS_NUM,
+   NULL,
+   NULL
+};
 
 int analogsunsensor_match(void)
 {
-    struct match_info* mip;
-    mip = init_match_info(match_funcs_table, (ANALOGSUNSENSOR_OP_NUM+1), match_funcs_num);
-
-    return  do_match(mip);
+    return  do_match(&analongsunsensor_match_info);
 }

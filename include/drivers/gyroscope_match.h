@@ -2,15 +2,31 @@
 #define GYROSCOPE_MATCH_H
 
 #include "driver_match.h"
-
+#include "gyroscope.h"
 
 //支持不同接口的定义不同模板
 #define GYROSCOPE_TEMPLATE_NUM 10
+#define MATCH_FUNCS_NUM  6
+
+#define REQUIRED_OPS  \
+           ((1<<GYROSCOPE_GLOBAL_INDEX) | (1<<GYROSCOPE_OPEN_INDEX))
+           
+#define  REQUIRED_OP_NUM  2
+static unsigned int required_ops_index[REQUIRED_OP_NUM] = {GYROSCOPE_GLOBAL_INDEX, GYROSCOPE_OPEN_INDEX};
+static const char* required_ops_name[REQUIRED_OP_NUM] = {"global", "open"};
+
+static struct min_function_set gyro_mfs = {
+   REQUIRED_OPS,
+   REQUIRED_OP_NUM,
+   required_ops_index,
+   required_ops_name
+};
+
+
 
 
 //模板参数结构体表
 //static struct template_data* template_data_table;
-static struct match_info* mip;
 
 //具体模板参数结构体
 struct gyroscope_global{
@@ -59,6 +75,7 @@ static int gety_template0_match(void);
 static int getz_template0_match(void);
 static int getxyz_template0_match(void);
 
+static int has_all_required_ops_complemented(void);
 extern int gyroscope_match(void);
 
 #endif

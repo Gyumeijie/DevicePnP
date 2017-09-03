@@ -4,6 +4,7 @@
 #include "driver_match.h"
 
 #define ANALOGSUNSENSOR_TEMPLATE_NUM 10
+#define MATCH_FUNCS_NUM  3
 
 //模板参数结构体表
 static struct template_data* template_data_table;

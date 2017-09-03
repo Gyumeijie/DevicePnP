@@ -46,6 +46,12 @@ struct template_match{
 };
 
 
+struct min_function_set{
+  int required_ops;
+  int required_ops_num;
+  int* required_ops_index;
+  const char** required_ops_name;
+};
 
 #if 0
 //定义模板匹配函数结构体表
@@ -64,12 +70,15 @@ struct template_data{
 
 //匹配信息结构体
 struct match_info{
- struct template_data* template_data_table;
- struct template_match* match_funcs_table;
  int data_table_size;
+ struct template_match* match_funcs_table;
  int match_funcs_num;
+ struct min_function_set* mfsp;
+ int* complementation_record;
 };
+
 static struct match_info* g_mip; 
+static struct template_data* template_data_table;
 
 #if 0
 extern int do_match(void* (*init_template_data_table)(void),
@@ -90,14 +99,13 @@ construct_template_name(char* template_name, char* op_name, int template_id);
 
 static int try_match(char* template_name);
 
+static int has_all_required_ops_complemented(void);
+
 extern int check_match(int status, int index, int template_id, void* template_data);
 
 extern int do_match(struct match_info* mip); 
 
 extern void* get_template_data_table(void);
-
-extern struct match_info*
-init_match_info(struct template_match* match_funcs_table, int data_table_size, int match_funcs_num);
 
 extern const char* get_op_context();
 
