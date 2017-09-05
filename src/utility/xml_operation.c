@@ -1,4 +1,4 @@
-#include "utility/xml_operation.h"
+#include "xml_operation.h"
 #include "error_report.h"
 #include <string.h>
 #include <malloc.h>
@@ -31,13 +31,14 @@ int establish_device_context(char* lid)
 {
     if (device_context == NULL){
         //建立设备上下文，如果没有在配置文件中找到相应的项，则返回不匹配
-        device_context =  mxmlFindElement(tree, tree, "device", "id", lid, MXML_DESCEND);
+        device_context =  mxmlFindElement(tree, tree, "device_entity", 
+                                          "lid", lid, MXML_DESCEND);
         if (!check_null(__FILE__, __func__, "device_context", device_context)){
-            printf("Detail: can't find configuration info for %s in xml file\n", lid);
-        
+           printf("Detail: can't find configuration info for %s in xml file\n", 
+                  lid);
             return FAILURE;
          }
-  }
+    }
     
     //与设备context相关的全局变量的初始化
     counter = 0;
@@ -64,9 +65,30 @@ void destroy_device_context(void)
 }
 
 
-const char* get_device_context()
+/**
+ *　输入：无
+ *　输出：当前处理的设备逻辑名
+ *　功能：返回当前处理的设备逻辑名，该函数是为了方便调试在设备驱动匹配过程中出
+ *　　　　现的错误
+ */
+const char* get_device_context(void)
 {
-   return mxmlElementGetAttr(device_context, "id");
+   return mxmlElementGetAttr(device_context, "lid");
+}
+
+
+/**
+ *　输入：无
+ *　输出：返回一个整数表示条件是否满足
+ *　功能：判断设备的配置信息中是否含有global项，该函数在驱动匹配模块中被调用
+ */
+int has_global_config_item(void)
+{
+   mxml_node_t* element;
+   element = mxmlFindElement(device_context, device_context, "global", 
+                           NULL, NULL, MXML_DESCEND);
+
+   return (element == NULL) ? 0 : 1;
 }
 
 
@@ -75,7 +97,8 @@ int get_op_list_length(void)
    mxml_node_t* node = NULL;
    const char* value = NULL;
 
-   node = mxmlFindElement(device_context, device_context, "op_list", NULL, NULL, MXML_DESCEND);
+   node = mxmlFindElement(device_context, device_context, "op_list",
+                          NULL, NULL, MXML_DESCEND);
    if(!check_null(__FILE__, __func__, "node", node)) {
       printf("Detail: can't not find para_list item in xml file\n");
       return -1;
@@ -91,7 +114,8 @@ int get_op_template_id(char* op_name)
    mxml_node_t* node = NULL;
    const char* value = NULL;
 
-   node = mxmlFindElement(device_context, device_context, "op", "name", op_name, MXML_DESCEND);
+   node = mxmlFindElement(device_context, device_context, "op", "name",
+                          op_name, MXML_DESCEND);
    value = mxmlElementGetAttr(node, "template_id");
 
    return strtoul(value, NULL, 10);
@@ -121,7 +145,8 @@ static void create_op_name_list(void)
    op_list_length = get_op_list_length();
    
    //先查找到op_name对应的op项
-   op = mxmlFindElement(device_context, device_context, "op", NULL, NULL, MXML_DESCEND);
+   op = mxmlFindElement(device_context, device_context, "op", NULL,
+                        NULL, MXML_DESCEND);
    
    op_name_list =(char**) malloc(sizeof(char*)*op_list_length);
    
@@ -134,51 +159,89 @@ static void create_op_name_list(void)
 }
 
 
-/**
- *　输入：操作名op_name，模板参数para_list的名字para_name以及一个reg_array数据结构
- *        的指针
- *　输出：填充类型为reg_array的模板参数是否成功
- *　功能：为给定操作名填充类型为reg_array的模板参数
- */
-int fill_reg_array(char* para_parent_name, char* para_name, struct reg_array* regap)
-{
-   mxml_node_t *para_parent, *para_list, *para;
-   struct reg *regp;
-
-   if(!find_para_parent(para_parent_name, &para_parent)) return UNMATCH;
-
-   //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
-   if(!find_para_list(para_name, para_parent, &para_list)) return UNMATCH;
-   int len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10);
- 
-
-   //分配存储空间，如果分配失败则返回错误
-   if(!alloc_reg_array(len, &regap)) return UNMATCH;
-
-   //获取para_list的第一个para
-   if(!find_para(para_parent, para_list, &para, NULL)) return UNMATCH;
-
-   //填充reg_array类型的模板参数
-   do_fill_reg_array(para, regap);
-
-   return MATCH;
-}
-
-
-static int
-find_para(mxml_node_t* para_parent, mxml_node_t* para_list, mxml_node_t** pp, const char* name)
+static int find_para(mxml_node_t* global_or_op, mxml_node_t* para_list,
+                     mxml_node_t** pp, const char* name)
 {
     char* attr = (name == NULL) ?  NULL : "name";
     const char* value = name;
 
-    *pp = mxmlFindElement(para_list, para_list, "para", attr, value, MXML_DESCEND);
+    *pp = mxmlFindElement(para_list, para_list, "para", 
+                          attr, value, MXML_DESCEND);
     if (!check_null(__FILE__, __func__, "para", *pp)){
-       (name == NULL) ? printf("Detail: can't find para child in xml file\n")
-                      : printf("Detail: can't find para named '%s' in xml file\n", name);
+          (name == NULL) 
+             ? printf("Detail: can't find para child in xml file\n")
+             : printf("Detail: can't find para named '%s' in xml file\n", name);
        return FAILURE;
    }
 
    return SUCCESS;
+}
+
+
+static int 
+find_para_list(char* para_name, mxml_node_t* global_or_op, mxml_node_t** plp)
+{
+   //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
+   *plp = mxmlFindElement(global_or_op, global_or_op, "para_list",
+                          "name", para_name, MXML_DESCEND);  
+   if (!check_null(__FILE__, __func__, "para_list", *plp)){
+       printf("Detail: can't find para_list item named '%s' in xml file\n",
+              para_name);
+       return FAILURE;
+   }
+
+   return SUCCESS;
+}
+
+
+static int find_global_or_op(char* global_or_op_name, mxml_node_t** global_or_op)
+{
+   const  char* elem_name;
+
+   (strcmp(global_or_op_name, "global") != 0) 
+         ? (elem_name = "op") 
+         : (elem_name = "global"); 
+   *global_or_op = mxmlFindElement(device_context, device_context, elem_name,
+                                  "name", global_or_op_name, MXML_DESCEND);
+   if (!check_null(__FILE__, __func__, "global_or_op", *global_or_op)){
+       printf("Detail: can't find global_or_op named '%s' in xml file\n", 
+               global_or_op_name);
+       return FAILURE;
+   }
+   
+   return SUCCESS;
+}
+
+
+/**
+ *　输入：表示操作名或者是global的global_or_op_name，模板参数para_list的名字
+ *　　　　para_name以及一个reg_array数据结构 的指针
+ *　输出：填充类型为reg_array的模板参数是否成功
+ *　功能：为给定操作名填充类型为reg_array的模板参数
+ */
+int 
+fill_reg_array(char* global_or_op_name, char* para_name, struct reg_array* regap)
+{
+   mxml_node_t *global_or_op, *para_list, *para;
+   struct reg *regp;
+    
+   //查找配置信息中是否有相关的global或op配置项
+   if(!find_global_or_op(global_or_op_name, &global_or_op)) return UNMATCH;
+
+   //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
+   if(!find_para_list(para_name, global_or_op, &para_list)) return UNMATCH;
+   int len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10);
+ 
+   //分配存储空间，如果分配失败则返回错误
+   if(!alloc_reg_array(len, &regap)) return UNMATCH;
+
+   //获取para_list的第一个para
+   if(!find_para(global_or_op, para_list, &para, NULL)) return UNMATCH;
+
+   //填充reg_array类型的模板参数
+   if(!do_fill_reg_array(para, regap)) return UNMATCH;
+
+   return MATCH;
 }
 
 
@@ -220,36 +283,6 @@ static int do_fill_reg_array(mxml_node_t* para, struct reg_array* regap)
 }
 
 
-static int find_para_parent(char* para_parent_name, mxml_node_t** para_parent)
-{
-   const  char* elem_name;
-   (strcmp(para_parent_name, "global") != 0) ? (elem_name = "op") : (elem_name = "global") ; 
-   *para_parent = mxmlFindElement(device_context, device_context, elem_name, "name", para_parent_name, MXML_DESCEND);
-   if (!check_null(__FILE__, __func__, "para_parent", *para_parent)){
-       printf("Detail: can't find para_parent named '%s' in xml file\n", para_parent_name);
-       return FAILURE;
-   }
-   
-   return SUCCESS;
-}
-
-
-
-static int find_para_list(char* para_name, mxml_node_t* para_parent, mxml_node_t** plp)
-{
-   //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
-   *plp = mxmlFindElement(para_parent, para_parent, "para_list",
-                                              "name", para_name, MXML_DESCEND);  
-   if (!check_null(__FILE__, __func__, "para_list", *plp)){
-       printf("Detail: can't find para_list item named '%s' in xml file\n", para_name);
-       return FAILURE;
-   }
-
-   return SUCCESS;
-}
-
-
-
 /**
  *　输入：xml解析树中的一个节点node以及节点的属性attr
  *　输出：返回node的第一个非文本类型的兄弟节点指针
@@ -276,33 +309,36 @@ static mxml_node_t* skip_text_node(mxml_node_t* node, char* attr)
 
 
 /**
- *　输入：操作名op_name，模板参数para_list的名字para_name，包含驱动模板中待收集的
- *        类型为struct的模板参数的每个成员信息结构体数组st以及执行具体填充工作的
- *        函数func
+ *　输入：操作名op_name，模板参数para_list的名字para_name，包含驱动模板中待收集
+ *        的类型为struct的模板参数的每个成员信息结构体数组st以及执行具体填充工作
+ *        的函数do_fill
  *　输出：填充类型为struct的模板参数是否成功
  *　功能：为给定操作名填充类型为struct的模板参数
  */
-int fill_plain_struct(char* para_parent_name, char* para_name, 
+int fill_plain_struct(char* global_or_op_name, char* para_name, 
               struct struct_member st[], struct_fill_func_ptr do_fill)
 {
-   mxml_node_t *para_parent, *para_list, *para;
+   mxml_node_t *global_or_op, *para_list, *para;
    void* data;
    const char *value, *type;
 
-   if(!find_para_parent(para_parent_name, &para_parent)) return UNMATCH;
+   if(!find_global_or_op(global_or_op_name, &global_or_op)) return UNMATCH;
 
    //然后在op下找到para_name对应的para_list项
-   if(!find_para_list(para_name, para_parent, &para_list)) return UNMATCH;
+   if(!find_para_list(para_name, global_or_op, &para_list)) return UNMATCH;
    int len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10);
  
-   if(!do_fill_plain_struct(para_list, para_parent, len, st, do_fill)) return UNMATCH;
+   if(!do_fill_plain_struct(para_list, global_or_op, len, st, do_fill)){
+       return UNMATCH;
+   }
 
    return MATCH;
 }
 
 
-static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* para_parent, int len,
-                                struct struct_member st[], struct_fill_func_ptr do_fill)
+static int
+do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* global_or_op, int len,
+                     struct struct_member st[], struct_fill_func_ptr do_fill)
 {
 
    void* data;
@@ -314,7 +350,7 @@ static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* para_parent
    for (i=0; i<len; i++){
        //检查是否有对应的结构体成员，如果没有则表示不匹配
        name = st[i].name;
-       if(!find_para(para_parent, para_list, &para, name)) return FAILURE;
+       if(!find_para(global_or_op, para_list, &para, name)) return FAILURE;
        
        //检查type是否一致，如果不是则表示不匹配
        if(!check_data_type(para, st[i].name, st[i].type)) return FAILURE;
@@ -331,7 +367,11 @@ static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* para_parent
     return SUCCESS;
 }
 
-
+/**
+ *　输入：参数名name, 配置信息中参数项指针para以及设备驱动中要求的类型type
+ *　输出：返回一个整数表示配置的参数类型是否与设备驱动要求的参数类型相同
+ *　功能：检查配置信息中参数的类型
+ */
 static int check_data_type(mxml_node_t* para, char* name, char* type)
 {
    const char* config_type;
@@ -345,7 +385,7 @@ static int check_data_type(mxml_node_t* para, char* name, char* type)
    if (strcmp(config_type, type)){
        report_error(__FILE__, __func__, "bad type!");
        printf("Detail: the type of '%s' should be '%s', but not '%s'\n",
-                                           name, type, config_type);
+               name, type, config_type);
        return FAILURE;
     }
 
@@ -382,24 +422,23 @@ static void* convert_type(const char* value, const char* type)
 
 
 
-int fill_plain_array(char* para_parent_name, char* para_name, struct plain_array* plainap)
+int fill_plain_array(char* global_or_op_name, char* para_name,
+                     struct plain_array* plainap)
 {
+   mxml_node_t *global_or_op, *para_list, *para;
 
-   mxml_node_t *para_parent, *para_list, *para;
-
-
-   //先查找到op_name对应的op项，如果找不到则返回不匹配
-   if(!find_para_parent(para_parent_name, &para_parent)) return UNMATCH;
+   //先查找到对应的op项或global，如果找不到则返回不匹配
+   if(!find_global_or_op(global_or_op_name, &global_or_op)) return UNMATCH;
 
    //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
-   if(!find_para_list(para_name, para_parent, &para_list)) return UNMATCH;
+   if(!find_para_list(para_name, global_or_op, &para_list)) return UNMATCH;
    int len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10);
 
    //分配存储空间，如果分配失败则返回错误
    if (!alloc_plain_array(len, &plainap)) return UNMATCH;
    
    //获取para_list的第一个para
-   if (!find_para(para_parent, para_list, &para, NULL)) return UNMATCH;
+   if (!find_para(global_or_op, para_list, &para, NULL)) return UNMATCH;
    
    //填充plain_array类型的模板参数
    if(!do_fill_plain_array(para, plainap)) return UNMATCH;
