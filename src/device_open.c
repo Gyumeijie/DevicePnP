@@ -1,5 +1,6 @@
 #include "device_open.h"
 #include "device.h"
+#include "error_report.h"
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
@@ -12,7 +13,7 @@ void device_open_init(void)
 }
 
 
-int open_device(char* lid, open_status* os)
+int open_device(char* lid, open_status* os, const char* dev_type)
 {
     int already_open;
     int index;
@@ -37,7 +38,10 @@ int open_device(char* lid, open_status* os)
     devop->lid = lid;
    
     //建立设备打开结构体与设备结构体之间的联系
-    attatch_device(devop);
+    if(!attatch_device(devop, dev_type)) {
+       free(devop);
+       return -1;
+    }
 
     //将设备打开结构体指针填入到设备打开索引表中
     device_open_index_table[index] = devop;
@@ -63,19 +67,31 @@ void release_device(int index)
     free(devop);
 }
 
+
 /**
  *　输入：设备打开结构体指针devop
  *　输出：无
  *　功能：将设备打开结构体与设备索引表中的设备结构体建立连接
  */
-static void attatch_device(struct device_open* devop)
+static int attatch_device(struct device_open* devop, const char* dev_type)
 {
     struct device* devp = NULL;
     //根据设备逻辑号找到相应的设备结构体
     devp = find_device(devop->lid);
+    if(!check_null(__FILE__, __func__, "devp", devp)){
+       printf("Detail: can't find device named '%s' in register table\n",
+                                                devop->lid);   
+       return FAILURE;
+    } 
     
+    devop->type = devp->type;
+    if (!check_device_type(devop, dev_type)) return FAILURE;
+
     devop->device_operation = devp->device_operation;
     devop->private_data = devp->private_data;
+    
+
+    return SUCCESS;
 }
 
 
@@ -117,7 +133,7 @@ static void lid2idx_mapping(const char* lid, int index)
 }
 
 
-static int get_index_by_lid(char* lid)
+static int get_index_by_lid(const char* lid)
 {
     int index;
     struct hash_item* hip;
@@ -132,5 +148,19 @@ static int get_index_by_lid(char* lid)
 
 struct device_open* get_device_open_struct(int index)
 {
-   return device_open_index_table[index];
+   return  device_open_index_table[index];
+}
+
+
+int check_device_type(struct device_open* devop, const char* dev_type)
+{
+    if (strcmp(devop->type, dev_type)){
+       char msg[256];
+       sprintf(msg, "can't not use %s operation to operate %s with type %s",
+                     dev_type, devop->lid, devop->type);
+       report_error(__FILE__, __func__, msg);
+       return FAILURE;
+    }
+    
+    return SUCCESS;
 }

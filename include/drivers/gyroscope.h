@@ -1,7 +1,6 @@
 #ifndef GYROSCOPE_H
 #define GYROSCOPE_H
 
-#define NULL (void*)0
 
 //定义gyroscope提供的操作
 #define GYROSCOPE_OP_NUM 6
@@ -31,5 +30,7 @@ extern int gyroscope_getz(int index, unsigned int* data);
 
 extern int gyroscope_getxyz(int index, unsigned int* data);
 
-static int gyroscope_get_helpler(int dev_open_idx, int op_idx, const char* func_name, unsigned int * data);
+static int gyroscope_get_helpler(int dev_open_idx, int op_idx, 
+                                 const char* func_name, unsigned int * data);
+
 #endif
