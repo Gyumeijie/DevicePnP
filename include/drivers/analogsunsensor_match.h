@@ -11,7 +11,6 @@ static struct template_data* template_data_table;
 
 static struct plain_array* read_template0;
 
-
 static int global_match(void);
 
 //open相关的模板匹配函数
@@ -21,4 +20,5 @@ static int open_template0_match(void);
 static int read_template0_match(void);
 
 extern int analogsunsensor_match(void);
+
 #endif

@@ -9,8 +9,15 @@ void report_error(const char* file, const char* func, const char* msg)
     const char* op_context = get_op_context();
 
 #if DEBUG
-    printf("<Error context=\"%s@%s\" position=\"%s@%s\">\n", 
+    if (op_context != NULL && device_context != NULL){
+        printf("<Error context=\"%s@%s\" position=\"%s@%s\">\n", 
                                op_context, device_context, func, file);
+    }else if(device_context != NULL){
+        printf("<Error context=\"%s\" position=\"%s@%s\">\n", 
+                               device_context, func, file);
+    }else{
+        printf("<Error position=\"%s@%s\">\n", func, file);
+    }
     printf("\t<Message>%s</Message>\n", msg);
     printf("</Error>\n");
 #endif

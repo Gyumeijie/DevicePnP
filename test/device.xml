@@ -1,67 +1,173 @@
-<root>
-<device id="gyroscope1"> 
-  <global name="global">
-     <para_list length="1" name="global">
-       <para name="slave_address" type="char">0xD2</para>
-     </para_list>
-  </global>
-  <op_list length="4">
-    <op name="gyroscope_open" template_id="0">
-       <para_list length="5" name="open_template0">
-          <para address="0x20">0x00</para>
-          <para address="0x21">0x00</para>
-          <para address="0x22">0x08</para>
-          <para address="0x23">0x03</para>
-          <para address="0x24">0x00</para>
-       </para_list>
-    </op>
-    <op name="gyroscope_getx" template_id="0">
-       <para_list length="2" name="getx_template0">
-          <para name="reg_address" type="char">0x28</para> 
-          <para name="size" type="int">2</para>
-       </para_list>
-    </op>
-    <op name="gyroscope_gety" template_id="0">
-       <para_list length="2" name="gety_template0">
-          <para name="reg_address" type="char">0x2c</para> 
-          <para name="size" type="int">2</para>
-       </para_list>
-    </op>
-    <op name="gyroscope_getz" template_id="0">
-       <para_list length="2" name="getz_template0">
-          <para name="reg_address" type="char">0x2f</para> 
-          <para name="size" type="int">2</para>
-       </para_list>
-    </op>
-  </op_list>
-</device>
-<device id="gyroscope2"> 
-  <global name="global">
-     <para_list length="1" name="global">
-       <para name="slave_address"  type="char">0x68</para>
-     </para_list>
-  </global>
-  <op_list length="2">
-    <op name="gyroscope_open" template_id="0"> 
-       <para_list length="1" name="open_template0">
-          <para address="0x6B">0x00</para>
-       </para_list>
-    </op>
-    <op name="gyroscope_getx" template_id="0">
-       <para_list length="2" name="getx_template0">
-          <para name="reg_address" type="char">0x38</para> 
-          <para name="size" type="int">2</para>
-       </para_list>
-    </op>
-  </op_list>
- </device>
- <device id="analogsunsensor1"> 
-  <op_list length="1">
-    <op name="analogsunsensor_read" template_id="0"> 
-       <para_list length="1" name="read_template0">
-          <para type="int">3</para>
-       </para_list>
-    </op>
-  </op_list>
- </device>
-</root>
+<?xml version="1.0" encoding="utf-8"?>
+<machine architecture="sparc" >
+	<device_description>
+		<device_entity type="gyroscope" lid="gyroscope1">
+			<description>
+				<model>XM1</model>
+				<dataSize>2</dataSize>
+			</description>
+			<operation>
+				 <global name="global">
+				     <para_list length="1" name="global">
+				       <para name="slave_address" type="char">0xD2</para>
+				     </para_list>
+				 </global>
+				 <op_list length="4">
+				    <op name="gyroscope_open" template_id="0">
+				       <para_list length="5" name="open_template0">
+					  <para address="0x20">0x00</para>
+					  <para address="0x21">0x00</para>
+					  <para address="0x22">0x08</para>
+					  <para address="0x23">0x03</para>
+					  <para address="0x24">0x00</para>
+				       </para_list>
+				    </op>
+				    <op name="gyroscope_getx" template_id="0">
+				       <para_list length="2" name="getx_template0">
+					  <para name="reg_address" type="char">0x28</para> 
+					  <para name="size" type="int">2</para>
+				       </para_list>
+				    </op>
+				    <op name="gyroscope_gety" template_id="0">
+				       <para_list length="2" name="gety_template0">
+					  <para name="reg_address" type="char">0x2c</para> 
+					  <para name="size" type="int">2</para>
+				       </para_list>
+				    </op>
+				    <op name="gyroscope_getz" template_id="0">
+				       <para_list length="2" name="getz_template0">
+					  <para name="reg_address" type="char">0x2f</para> 
+					  <para name="size" type="int">2</para>
+				       </para_list>
+				    </op>
+				</op_list>
+			</operation>
+			<dependence>i2c:001</dependence>
+		</device_entity>
+		<device_entity type="gyroscope" lid="gyroscope2">
+			<description>
+				<model>XM</model>
+				<dataSize>4</dataSize>
+				<voltage>2.0v</voltage>
+			</description>
+             <operation>
+				   <global name="global">
+				     <para_list length="1" name="global">
+				       <para name="slave_address"  type="char">0x68</para>
+				     </para_list>
+				  </global>
+				  <op_list length="2">
+				    <op name="gyroscope_open" template_id="0"> 
+				       <para_list length="1" name="open_template0">
+					  <para address="0x6B">0x00</para>
+				       </para_list>
+				    </op>
+				    <op name="gyroscope_getx" template_id="0">
+				       <para_list length="2" name="getx_template0">
+					  <para name="reg_address" type="char">0x38</para> 
+					  <para name="size" type="int">2</para>
+				       </para_list>
+				    </op>
+				  </op_list>
+            </operation>
+			<dependence>i2c:002</dependence>
+		</device_entity>
+		<device_entity type="analogsunsensor" lid="analogsunsensor1">
+			<description>
+				<model>XM</model>
+				<dataSize>4</dataSize>
+				<voltage>3.0v</voltage>
+			</description>
+            <operation>
+				  <op_list length="1">
+				    <op name="analogsunsensor_read" template_id="0"> 
+				       <para_list length="1" name="read_template0">
+					  <para type="int">3</para>
+				       </para_list>
+				    </op>
+				  </op_list>
+            </operation>
+			<dependence>ad:002</dependence>
+		</device_entity>
+	</device_description>
+	<IO_description>
+		<bus>
+            <io_i2c_entity type="i2c" lid="001">
+					<description/>
+			</io_i2c_entity>
+            <io_i2c_entity type="i2c" lid="002">
+					<description/>
+			</io_i2c_entity>
+			<io_1553b_entity type="1553b" lid="001">
+				<description/>
+			</io_1553b_entity>
+			<io_uart_entity type="uart" lid="007">
+				<description/>
+			</io_uart_entity>
+		</bus>
+		<device_io>
+			<io_ad_entity type="ad" lid="002">
+				<description/>
+			</io_ad_entity>
+		</device_io>
+		<RT>
+			<io_RT_entity type="RT" lid="02">
+				<description/>
+				<tranData_description>
+					<send_priority>
+						<device lid="001">11</device>
+					</send_priority>
+					<send_blockSize>
+						<device lid="001">100</device>
+					</send_blockSize>
+					<receive_priority>
+						<device lid="001">22</device>
+					</receive_priority>
+					<receive_blockSize>
+						<device lid="001">100</device>
+					</receive_blockSize>
+				</tranData_description>
+			</io_RT_entity>
+			<io_RT_entity type="RT" lid="04">
+				<description/>
+				<tranData_description>
+					<send_priority>
+						<device lid="002">11</device>
+					</send_priority>
+					<send_blockSize>
+						<device lid="002">100</device>
+					</send_blockSize>
+					<receive_priority>
+						<device lid="002">22</device>
+					</receive_priority>
+					<receive_blockSize>
+						<device lid="002">100</device>
+					</receive_blockSize>
+				</tranData_description>
+			</io_RT_entity>
+		</RT>
+	</IO_description>
+	<config_description>
+		<io_i2c_config lid="001">
+			<parent>RT:02</parent>
+        </io_i2c_config>
+		<io_i2c_config lid="002">
+			<parent>RT:02</parent>
+		</io_i2c_config>
+		<io_RT_config lid="02">
+			<parent>1553b:001</parent>
+		</io_RT_config>
+		<io_1553b_config lid="001">
+			<parent>ROOT</parent>
+		</io_1553b_config>
+		<io_uart_config lid="007">
+			<parent>RT:04</parent>
+		</io_uart_config>
+		<io_RT_config lid="04">
+			<parent>1553b:001</parent>
+		</io_RT_config>
+		<io_ad_config lid="002">
+			<parent>ROOT</parent>
+		</io_ad_config>
+	</config_description>
+</machine>

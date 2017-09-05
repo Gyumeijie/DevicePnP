@@ -58,7 +58,7 @@ static void add_device_node(struct device_node** head, struct device_node* node)
 void add_device(int index, struct device* devp)
 {
      struct device_node** head = &device_index_table[index];
-     struct device_node* node = (struct device_node*)malloc(sizeof(struct device_node));
+     struct device_node* node = malloc(sizeof(struct device_node));
      node->devp = devp;
      node->next = NULL;
      

@@ -45,21 +45,13 @@ struct template_match{
     match_func_ptr match_func;
 };
 
-
+//定义描述设备驱动的最小功能集结构体
 struct min_function_set{
   int required_ops;
   int required_ops_num;
   int* required_ops_index;
   const char** required_ops_name;
 };
-
-#if 0
-//定义模板匹配函数结构体表
-struct match_func_table{
-     int size;
-     struct template_match* match_funcs_array;
-};
-#endif 
 
 
 //定义模板参数结构体
@@ -78,13 +70,8 @@ struct match_info{
 };
 
 static struct match_info* g_mip; 
-static struct template_data* template_data_table;
 
-#if 0
-extern int do_match(void* (*init_template_data_table)(void),
-                    int (*find_and_exec_match_func)(char* func_name),
-                    void (*undo_match)(void));
-#endif 
+static struct template_data* template_data_table;
 
 static int find_and_exec_match_func(char* name);
 
@@ -110,4 +97,5 @@ extern void* get_template_data_table(void);
 extern const char* get_op_context();
 
 extern int has_op_complemented(struct template_data* private_data, int op_idx);
+
 #endif

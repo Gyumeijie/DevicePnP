@@ -17,6 +17,7 @@ struct device{
   devno_t devno;   
   interface_t interface;
   char lid[32];
+  char type[32];
   void* device_operation;
   void* private_data;
 };

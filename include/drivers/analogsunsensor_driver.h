@@ -8,7 +8,8 @@ static void general_analogsunsensor_open(void* private_data);
 static int general_analogsunsensor_read(void* private_data, unsigned int* data);
 static int analogsunsensor_read_template0(void* para_struct, unsigned int* data);
 
-static void fetch_data(void* private_data, int index);
+static void fetch_data(void* private_data, int op_idx);
 
 extern void analogsunsensor_driver_loader(void);
+
 #endif
