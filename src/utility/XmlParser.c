@@ -1,4 +1,3 @@
-//
 #include <stdio.h>
 #include <stdlib.h>
 #include "XmlParser.h"
@@ -23,7 +22,6 @@ void parseXml(mxml_node_t* root){
     mxml_node_t* io_descrip_tmp_p=NULL;
     char dev_lid[DESCRIPTION_ITEM_MAX_LEN];
     char dev_type[DESCRIPTION_ITEM_MAX_LEN];
-    char interface[DESCRIPTION_ITEM_MAX_LEN];
     char dev_attr_name[DESCRIPTION_ITEM_MAX_LEN];
     char dev_attr_value[DESCRIPTION_ITEM_MAX_LEN];
     UINT device_id_tmp=0;
@@ -35,23 +33,18 @@ void parseXml(mxml_node_t* root){
         mxml_node_t* dev_dependence=mxmlFindElement(dev_node_p,root,"dependence",NULL,NULL,MXML_DESCEND);
         strcpy(dev_lid,mxmlElementGetAttr(dev_node_p,"lid"));
         strcpy(dev_type,mxmlElementGetAttr(dev_node_p,"type"));
-        strcpy(interface,getInterface(mxmlGetText(dev_dependence,NULL),strlen(mxmlGetText(dev_dependence,NULL))));
         strcpy(dev_node->descrip.lid,dev_lid);
         strcpy(dev_node->descrip.type,dev_type);
-        strcpy(dev_node->descrip.interface,interface);
+        strcpy(dev_node->descrip.interface,getInterface(mxmlGetText(dev_dependence,NULL),strlen(mxmlGetText(dev_dependence,NULL))));
         dev_node->device_id=device_id_tmp++;
         //添加设备属性并找到第一个io_entity和io_config
         dev_node->descrip.attr_len=0;
         mxml_node_t* descrip=mxmlFindElement(dev_node_p,root,"description",NULL,NULL,MXML_DESCEND);
         for(dev_attr_node_p=mxmlFindElement(descrip,root,NULL,NULL,NULL,MXML_DESCEND);dev_attr_node_p!=NULL;dev_attr_node_p=mxmlFindElement(dev_attr_node_p,descrip,NULL,NULL,NULL,MXML_NO_DESCEND)){
-            strcpy(dev_node->descrip.attrs.attr_name[dev_node->descrip.attr_len],dev_attr_node_p->value.element.name);
-            strcpy(dev_node->descrip.attrs.attr_value[dev_node->descrip.attr_len],mxmlGetText(dev_attr_node_p,NULL));
-            dev_node->descrip.attr_len++;
-            //printf("test\n");
-            //printf("%d\n",dev_node->descrip.attr_len);
+                strcpy(dev_node->descrip.attrs.attr_name[dev_node->descrip.attr_len],dev_attr_node_p->value.element.name);
+                strcpy(dev_node->descrip.attrs.attr_value[dev_node->descrip.attr_len],mxmlGetText(dev_attr_node_p,NULL));
+                dev_node->descrip.attr_len++;
         }
-        //printf("out for\n");
-        //找到第一个io
         const char *dev_content_tmp=mxmlGetText(dev_dependence,NULL);
         UINT dev_content_tmp_len=strlen(dev_content_tmp);
         io_node_p=findDependedNode(dev_content_tmp,dev_content_tmp_len,root,false);
@@ -88,7 +81,6 @@ void parseXml(mxml_node_t* root){
                 io_lid=mxmlElementGetAttr(io_node_p,"lid");
                 io_type=mxmlElementGetAttr(io_node_p,"type");
             }
-            printf("sssss %s %s\n",io_lid,io_type);
             strcpy(io_node->descrip.lid,io_lid);
             strcpy(io_node->descrip.type,io_type);
             io_node->descrip.io_attr_len=0;
@@ -109,7 +101,6 @@ void parseXml(mxml_node_t* root){
                         //
                         UINT RTTransPos=0;
                         char* name_tmp=io_attr_node_p->value.element.name;
-                        //printf("name_tmp:%s\n",name_tmp);
                         if(strcmp(name_tmp,"send_priority")==0){
                             RTTransPos=0;
                         }
@@ -126,18 +117,18 @@ void parseXml(mxml_node_t* root){
                             printf("RTTransPos wrong!\n");
                             return;
                         }
-                        io_node->descrip.io_attrs.RTTrans[RTTransPos].len=0;
+                        io_node->descrip.io_attrs.RTTrans.len=0;
                         UINT pos_tmp=0;
                         for(;p_tmp!=NULL;p_tmp=mxmlFindElement(p_tmp,io_attr_node_p,NULL,NULL,NULL,MXML_NO_DESCEND)){
-                            strcpy(io_node->descrip.io_attrs.RTTrans[RTTransPos].dev_lid[pos_tmp],mxmlElementGetAttr(p_tmp,"lid"));
-                            if(RTTransPos==0)strcpy(io_node->descrip.io_attrs.RTTrans[RTTransPos].info.send_priority[pos_tmp++],mxmlGetText(p_tmp,NULL));
+                            strcpy(io_node->descrip.io_attrs.RTTrans.dev_lid[pos_tmp],mxmlElementGetAttr(p_tmp,"lid"));
+                            if(RTTransPos==0)strcpy(io_node->descrip.io_attrs.RTTrans.info[RTTransPos].send_priority[pos_tmp++],mxmlGetText(p_tmp,NULL));
 
-                            else if(RTTransPos==1)strcpy(io_node->descrip.io_attrs.RTTrans[RTTransPos].info.receive_priority[pos_tmp++],mxmlGetText(p_tmp,NULL));
+                            else if(RTTransPos==1)strcpy(io_node->descrip.io_attrs.RTTrans.info[RTTransPos].receive_priority[pos_tmp++],mxmlGetText(p_tmp,NULL));
 
-                            else if(RTTransPos==2)strcpy(io_node->descrip.io_attrs.RTTrans[RTTransPos].info.send_block_size[pos_tmp++],mxmlGetText(p_tmp,NULL));
+                            else if(RTTransPos==2)strcpy(io_node->descrip.io_attrs.RTTrans.info[RTTransPos].send_block_size[pos_tmp++],mxmlGetText(p_tmp,NULL));
 
-                            else if(RTTransPos==3)strcpy(io_node->descrip.io_attrs.RTTrans[RTTransPos].info.receive_block_size[pos_tmp++],mxmlGetText(p_tmp,NULL));
-                           io_node->descrip.io_attrs.RTTrans[RTTransPos].len++;
+                            else if(RTTransPos==3)strcpy(io_node->descrip.io_attrs.RTTrans.info[RTTransPos].receive_block_size[pos_tmp++],mxmlGetText(p_tmp,NULL));
+                           io_node->descrip.io_attrs.RTTrans.len++;
                             }
                     }
                     else{
@@ -157,13 +148,15 @@ void parseXml(mxml_node_t* root){
         }
     }
     DeviceListLen=DeviceListPos;
+    DeviceListPos=0; //初始化DeviceList入口为第一个deviceNOde
 }
+//改为从interface标签中获取interface
 char* getInterface(const char* dev_content,UINT dev_content_len){
-    char* t=content;
+    char* t=interface;
     for(int i=0;i<dev_content_len;i++){
-        content[i]=dev_content[i];
+        interface[i]=dev_content[i];
         if(dev_content[i]==':'){
-            content[i]='\0';
+            interface[i]='\0';
             break;
         }
     }
@@ -171,18 +164,14 @@ char* getInterface(const char* dev_content,UINT dev_content_len){
 }
 mxml_node_t* findDependedNode(const char* content,UINT content_len,mxml_node_t* root,bool isConfig){
     ///处理字符串
-    //content="   sss_   ";
-    //printf("enter findDependedNode()\n");
-    //printf("content:%s,size:%d\n",content,content_len);
     mxml_node_t* t=NULL;
     char content_tmp[CONTENT_MAX_LEN];
-    strcpy(content_tmp,content);
     char ROUTE[ROUTE_MAX_LEN][ROUTE_VALUE_MAX_LEN];
     memset(ROUTE[ROUTE_CHANNEL_NAME_POS],0,ROUTE_VALUE_MAX_LEN);
     memset(ROUTE[ROUTE_CHANNEL_LID_VALUE_POS],0,ROUTE_VALUE_MAX_LEN);
     int j=0;
     int k=0;
-    UINT content_tmp_len=content_len;
+    UINT content_tmp_len=0;
     UINT ROUTE_pos=0;
     UINT ROUTE_VALUE_pos=0;
     bool isHaveChannel=false;
@@ -194,7 +183,6 @@ mxml_node_t* findDependedNode(const char* content,UINT content_len,mxml_node_t* 
     char channel_tag_name[TAG_NAME_MAX_LEN];
     char channel_lid[TAG_NAME_MAX_LEN];
     //删掉content的前后空字符
-    /*
     for(int i=0;i<content_len;i++){
         if(j==0){
             if(content[i]==' '){
@@ -210,9 +198,8 @@ mxml_node_t* findDependedNode(const char* content,UINT content_len,mxml_node_t* 
                 k=i;
                 bool isLastWordsEmpty=true;
                 for(int l=k;l<content_len;l++){
-                    if(content[l]!=' '&&content[l]!='\0'){
+                    if(content[l]!=' '){
                         isLastWordsEmpty=false;
-                        printf("s %c\n",content[l]);
                     }
                  }
                 if(isLastWordsEmpty==true){
@@ -226,8 +213,7 @@ mxml_node_t* findDependedNode(const char* content,UINT content_len,mxml_node_t* 
         }
       content_tmp[j]='\0';
     }//处理完前后空字符
-    */
-    //printf("content_tmp:%s,size:%d\n",content_tmp,content_tmp_len);
+
     if(strcmp(content_tmp,"ROOT")==0)return NULL;
     ///放入ROUTE
     j=0;
@@ -240,7 +226,6 @@ mxml_node_t* findDependedNode(const char* content,UINT content_len,mxml_node_t* 
                 *(ROUTE[ROUTE_pos]+ROUTE_VALUE_pos++)=*(content_tmp+l);
             }
             *(ROUTE[ROUTE_pos]+ROUTE_VALUE_pos)='\0';
-            //printf("%s\n",ROUTE[ROUTE_pos]);//
             ROUTE_pos++;
             ROUTE_VALUE_pos=0;
             j=i+1;
@@ -249,9 +234,7 @@ mxml_node_t* findDependedNode(const char* content,UINT content_len,mxml_node_t* 
             continue;
         }
     }
-    //printf("tttttest\n");
     ///查找Node
-    //printf("%d %d\n",strlen(ROUTE[ROUTE_CHANNEL_NAME_POS]),strlen(ROUTE[ROUTE_CHANNEL_LID_VALUE_POS]));
     if(strlen(ROUTE[ROUTE_CHANNEL_NAME_POS])>0&&strlen(ROUTE[ROUTE_CHANNEL_LID_VALUE_POS])>0){
         isHaveChannel=true;
     }
@@ -261,8 +244,6 @@ mxml_node_t* findDependedNode(const char* content,UINT content_len,mxml_node_t* 
     strcpy(io_lid,ROUTE[ROUTE_IO_LID_VALUE]);
     strcpy(channel_tag_name,ROUTE[ROUTE_CHANNEL_NAME_POS]);
     strcpy(channel_lid,ROUTE[ROUTE_CHANNEL_LID_VALUE_POS]);
-    //printf("%s %s %s %s\n",io_tag_name_tmp,io_lid,channel_tag_name,channel_lid);
-    //printf("isHaveChannel: %d\n",isHaveChannel);
     if(isConfig==false){
          t=mxmlFindElement(root,root,io_tag_name_tmp,"lid",io_lid,MXML_DESCEND);
          if(isHaveChannel==true){
@@ -272,7 +253,6 @@ mxml_node_t* findDependedNode(const char* content,UINT content_len,mxml_node_t* 
     else{
         mxml_node_t* t_tmp=NULL;
         for(t_tmp=mxmlFindElement(root,root,io_tag_name_tmp,"lid",io_lid,MXML_DESCEND);t_tmp!=NULL;t_tmp=mxmlFindElement(t,root,io_tag_name_tmp,"lid",io_lid,MXML_DESCEND)){
-            //printf("lid:%s\n",mxmlElementGetAttr(t,"lid"));
             t=t_tmp;
             if(isHaveChannel==true){
                 if(strcmp(mxmlElementGetAttr(t,"channel"),channel_lid)==0){
@@ -281,9 +261,6 @@ mxml_node_t* findDependedNode(const char* content,UINT content_len,mxml_node_t* 
             }
         }
     }
-
-    //printf("name:%s\n",t->value.element.name);
-    //while(true);
     return t;
 }
 
@@ -291,7 +268,7 @@ void printList(){
 printf("enter print...\n\n");
     for(int i=0;i<get_devices_descrip_item_num();i++){
     printf("____________________________\n");
-    printf("enterpos: %d\n",entryPos);
+    printf("enterpos: %d\n",DescripEntryPos);
         void* dev_p=get_devices_descrip_item();
         printf("device lid:%s\n",get_device_lid(dev_p));
         printf("device type:%s\n",get_device_type(dev_p));
@@ -307,22 +284,26 @@ printf("enter print...\n\n");
             printf("io lid:%s\n",io_tmp->descrip.lid);
             if(strcmp(io_tmp->descrip.type,"RT")==0){
                 //RT_trans
-                printf("___send priority_____\n");
-                for(int k=0;k<io_tmp->descrip.io_attrs.RTTrans[0].len;k++){
-                    printf("device lid:%s",io_tmp->descrip.io_attrs.RTTrans[0].dev_lid[k]);
-                    printf("weight:%s\n",io_tmp->descrip.io_attrs.RTTrans[0].info.send_priority[k]);
+                printf("_____tran data_____\n");
+                for(int k=0;k<io_tmp->descrip.io_attrs.RTTrans.len;k++){
+                    printf("_____tran data_____\n");
+                    printf("device lid:%s",io_tmp->descrip.io_attrs.RTTrans.dev_lid[k]);
+                    printf("weight:%s\n",io_tmp->descrip.io_attrs.RTTrans.info[SEND_PRIORITY_POS].send_priority[k]);
                 }
-                for(int k=0;k<io_tmp->descrip.io_attrs.RTTrans[1].len;k++){
-                    printf("device lid:%s",io_tmp->descrip.io_attrs.RTTrans[1].dev_lid[k]);
-                    printf("weight:%s\n",io_tmp->descrip.io_attrs.RTTrans[1].info.send_priority[k]);
+                for(int k=0;k<io_tmp->descrip.io_attrs.RTTrans.len;k++){
+                    printf("_____tran data_____\n");
+                    printf("device lid:%s",io_tmp->descrip.io_attrs.RTTrans.dev_lid[k]);
+                    printf("weight:%s\n",io_tmp->descrip.io_attrs.RTTrans.info[SEND_BLOCK_POS].send_priority[k]);
                 }
-                for(int k=0;k<io_tmp->descrip.io_attrs.RTTrans[2].len;k++){
-                    printf("device lid:%s",io_tmp->descrip.io_attrs.RTTrans[2].dev_lid[k]);
-                    printf("weight:%s\n",io_tmp->descrip.io_attrs.RTTrans[2].info.send_priority[k]);
+                for(int k=0;k<io_tmp->descrip.io_attrs.RTTrans.len;k++){
+                    printf("_____tran data_____\n");
+                    printf("device lid:%s",io_tmp->descrip.io_attrs.RTTrans.dev_lid[k]);
+                    printf("weight:%s\n",io_tmp->descrip.io_attrs.RTTrans.info[RECEIVE_PRIORITY_POS].send_priority[k]);
                 }
-                for(int k=0;k<io_tmp->descrip.io_attrs.RTTrans[3].len;k++){
-                    printf("device lid:%s",io_tmp->descrip.io_attrs.RTTrans[3].dev_lid[k]);
-                    printf("weight:%s\n",io_tmp->descrip.io_attrs.RTTrans[3].info.send_priority[k]);
+                for(int k=0;k<io_tmp->descrip.io_attrs.RTTrans.len;k++){
+                    printf("_____tran data_____\n");
+                    printf("device lid:%s",io_tmp->descrip.io_attrs.RTTrans.dev_lid[k]);
+                    printf("weight:%s\n",io_tmp->descrip.io_attrs.RTTrans.info[RECEIVE_BLOCK_POS].send_priority[k]);
                 }
 
             }
@@ -338,9 +319,10 @@ printf("enter print...\n\n");
         }
     }
 }
+//for direct trans Model
 void* get_devices_descrip_item(void){
-    entryPos=entryPos%DeviceListLen;
-    return (void*)(&DeviceList[entryPos++]->descrip);
+    DescripEntryPos=DescripEntryPos%DeviceListLen;
+    return (void*)(&DeviceList[DescripEntryPos++]->descrip);
 }
 UINT get_devices_descrip_item_num(void){
     return DeviceListLen;
@@ -354,3 +336,66 @@ char* get_device_type(void* descrip){
 char* get_device_interface(void* descrip){
     return ((dev_descrip*)descrip)->interface;
 }
+///for irdirect dataTrans Model
+void* get_device_list_items(void){
+    DeviceListPos=DeviceListPos%DeviceListLen;
+    return (void*)(DeviceList[DeviceListPos++]);
+}
+UINT get_device_attr_len(void* dev_item){
+    return ((DeviceNode*)dev_item)->descrip.attr_len;
+}
+char* get_device_attrs_name(void* dev_item){
+    dev_attr_name_pos=dev_attr_name_pos%((DeviceNode*)dev_item)->descrip.attr_len;
+    return ((DeviceNode*)dev_item)->descrip.attrs.attr_name[dev_attr_name_pos++];
+}
+char* get_device_attrs_value(void* dev_item){
+    dev_attr_value_pos=dev_attr_value_pos%((DeviceNode*)dev_item)->descrip.attr_len;
+    return ((DeviceNode*)dev_item)->descrip.attrs.attr_name[dev_attr_value_pos++];
+}
+void* get_device_io_item(void* dev_item){
+    return ((DeviceNode*)dev_item)->next;
+}
+void* get_io_lid(void* io_item){
+    return ((IONode*)io_item)->descrip.lid;
+}
+char* get_io_type(void* io_item){
+    return ((IONode*)io_item)->descrip.lid;
+}
+UINT get_io_attr_len(void* io_item){
+    return ((IONode*)io_item)->descrip.io_attr_len;
+}//
+char* get_io_attrs_name(void* io_item){
+    io_attr_name_pos=io_attr_name_pos%((IONode*)io_item)->descrip.io_attr_len;
+    return ((IONode*)io_item)->descrip.io_attrs.attrs.attr_name[io_attr_name_pos++];
+}
+char* get_io_attrs_value(void* io_item){
+    io_attr_value_pos=io_attr_value_pos%((IONode*)io_item)->descrip.io_attr_len;
+    return ((IONode*)io_item)->descrip.io_attrs.attrs.attr_value[io_attr_value_pos++];
+}
+UINT get_RT_trans_device_num(void* io_item){
+    return ((IONode*)io_item)->descrip.io_attrs.RTTrans.len;
+}//
+void* get_RT_trans_devices_lid(void* io_item){
+    RT_trans_device_lid_pos=RT_trans_device_lid_pos%((IONode*)io_item)->descrip.io_attrs.RTTrans.len;
+    return ((IONode*)io_item)->descrip.io_attrs.RTTrans.dev_lid[RT_trans_device_lid_pos++];
+}
+char* get_RT_trans_devices_send_priority(void* io_item){        
+    RT_trans_device_s_p_pos=RT_trans_device_s_p_pos%((IONode*)io_item)->descrip.io_attrs.RTTrans.len;
+    return ((IONode*)io_item)->descrip.io_attrs.RTTrans.info[SEND_PRIORITY_POS].send_priority[RT_trans_device_s_p_pos++];
+}
+char* get_RT_trans_devices_send_block_size(void* io_item){
+    RT_trans_device_s_b_pos=RT_trans_device_s_b_pos%((IONode*)io_item)->descrip.io_attrs.RTTrans.len;
+    return ((IONode*)io_item)->descrip.io_attrs.RTTrans.info[SEND_BLOCK_POS].send_block_size[RT_trans_device_s_b_pos++];
+}
+char* get_RT_trans_devices_receive_priority(void* io_item){
+    RT_trans_device_r_p_pos=RT_trans_device_r_p_pos%((IONode*)io_item)->descrip.io_attrs.RTTrans.len;
+    return ((IONode*)io_item)->descrip.io_attrs.RTTrans.info[RECEIVE_PRIORITY_POS].receive_priority[RT_trans_device_r_p_pos++];
+}
+char* get_RT_trans_devices_receive_block_size(void* io_item){
+    RT_trans_device_r_b_pos=RT_trans_device_r_b_pos%((IONode*)io_item)->descrip.io_attrs.RTTrans.len;
+    return ((IONode*)io_item)->descrip.io_attrs.RTTrans.info[RECEIVE_BLOCK_POS].receive_block_size[RT_trans_device_r_b_pos++];
+}
+void* get_io_next_item(void* io_item){
+    return (void*)(((IONode*)io_item)->next);
+}
+
