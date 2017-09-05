@@ -1,6 +1,6 @@
 #include "analogsunsensor_match.h"
 #include "analogsunsensor.h"
-#include "xml_operation.h"
+#include "config_info_collect.h"
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>

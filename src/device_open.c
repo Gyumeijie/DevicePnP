@@ -38,7 +38,7 @@ int open_device(char* lid, open_status* os, const char* dev_type)
     devop->lid = lid;
    
     //建立设备打开结构体与设备结构体之间的联系
-    if(!attatch_device(devop, dev_type)) {
+    if(!attach_device(devop, dev_type)) {
        free(devop);
        return -1;
     }
@@ -73,7 +73,7 @@ void release_device(int index)
  *　输出：无
  *　功能：将设备打开结构体与设备索引表中的设备结构体建立连接
  */
-static int attatch_device(struct device_open* devop, const char* dev_type)
+static int attach_device(struct device_open* devop, const char* dev_type)
 {
     struct device* devp = NULL;
     //根据设备逻辑号找到相应的设备结构体

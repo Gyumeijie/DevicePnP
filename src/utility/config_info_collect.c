@@ -1,22 +1,14 @@
-#include "xml_operation.h"
+#include "config_info_collect.h"
 #include "error_report.h"
+#include "load_xml.h"
 #include <string.h>
 #include <malloc.h>
 #include <stdio.h>
 
-int xml_operation_init(void)
+int config_info_collect_init(void)
 { 
-   fp = NULL;
-   tree = NULL;
    device_context = NULL;
-
-   //在系统初始化文件init.c中被调用
-   fp = fopen("device.xml", "r");
-   if (!check_null(__FILE__, __func__, "fp", fp)){
-       printf("Detail: can't open xml file\n");
-       return FAILURE;
-   }
-   tree = mxmlLoadFile(NULL, fp, MXML_NO_CALLBACK);
+   tree = get_xml_tree(); 
    
    return SUCCESS;
 }

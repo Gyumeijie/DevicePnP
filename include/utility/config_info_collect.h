@@ -19,7 +19,7 @@ extern int get_op_list_length(void);
 
 extern int get_op_template_id(char* op_name);
 
-extern int xml_operation_init(void);
+extern int config_info_collect_init(void);
 
 int fill_reg_array(char* global_or_op_name, char* para_name, 
                    struct reg_array* regap);
@@ -60,8 +60,6 @@ static int do_fill_plain_array(mxml_node_t* para, struct plain_array* plainap);
 static int alloc_plain_array(int len, struct plain_array** plaina2p);
 
 //全局变量
-FILE *fp;
-
 static mxml_node_t *tree;
 
 static mxml_node_t *device_context;

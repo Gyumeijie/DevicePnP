@@ -35,7 +35,7 @@ static int  get_index_by_lid(const char* lid);
 
 static int get_unused_index(void);
 
-static int attatch_device(struct device_open* devop, const char* dev_type);
+static int attach_device(struct device_open* devop, const char* dev_type);
 
 static int has_already_open(char* lid);
 
