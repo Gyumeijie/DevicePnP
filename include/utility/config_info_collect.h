@@ -1,5 +1,5 @@
-#ifndef XML_OPERATION_H
-#define XML_OPERATION_H
+#ifndef CONFIG_INFO_COLLECT_H
+#define CONFIG_INFO_COLLECT_H
 
 #include <mxml.h>
 #include "driver_match.h"
