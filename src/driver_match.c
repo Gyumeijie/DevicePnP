@@ -179,6 +179,11 @@ const char* get_op_context()
  */
 int has_op_complemented(struct template_data* private_data, int op_idx)
 {
+   if (!check_null(__FILE__, __func__, "private_data", private_data)){
+      printf("Detail: may be no corresponding driver being loaded\n");
+      return 0;
+   }
+
    void* para_struct  = private_data[op_idx].para_struct;
    
    return (para_struct == NULL) ? 0 : 1;
