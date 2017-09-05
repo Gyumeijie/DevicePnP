@@ -30,7 +30,7 @@ extern int gyroscope_getz(int index, unsigned int* data);
 
 extern int gyroscope_getxyz(int index, unsigned int* data);
 
-static int gyroscope_get_helpler(int dev_open_idx, int op_idx, 
+static int gyroscope_get_helper(int dev_open_idx, int op_idx, 
                                  const char* func_name, unsigned int * data);
 
 #endif

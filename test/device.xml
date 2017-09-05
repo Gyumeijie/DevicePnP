@@ -72,17 +72,34 @@
             </operation>
 			<dependence>i2c:002</dependence>
 		</device_entity>
-		<device_entity type="analogsunsensor" lid="analogsunsensor1">
+		<device_entity type="magnetometer" lid="magnetometer1">
 			<description>
 				<model>XM</model>
 				<dataSize>4</dataSize>
 				<voltage>3.0v</voltage>
 			</description>
             <operation>
-				  <op_list length="1">
-				    <op name="analogsunsensor_read" template_id="0"> 
-				       <para_list length="1" name="read_template0">
-					  <para type="int">3</para>
+				  <op_list length="4">
+				    <op name="magnetometer_getx" template_id="0"> 
+				       <para_list length="1" name="getx_template0">
+					     <para type="int">4</para>
+				       </para_list>
+				    </op>
+				    <op name="magnetometer_gety" template_id="0"> 
+				       <para_list length="1" name="gety_template0">
+					     <para type="int">6</para>
+				       </para_list>
+				    </op>
+				    <op name="magnetometer_getz" template_id="0"> 
+				       <para_list length="1" name="getz_template0">
+					     <para type="int">9</para>
+				       </para_list>
+				    </op>
+				    <op name="magnetometer_getxyz" template_id="0"> 
+				       <para_list length="3" name="getxyz_template0">
+					     <para type="int">4</para>
+					     <para type="int">6</para>
+					     <para type="int">9</para>
 				       </para_list>
 				    </op>
 				  </op_list>
