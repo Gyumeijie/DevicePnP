@@ -9,6 +9,7 @@ TEST_DEVICE_OPEN_OBJ  = test_device_open.o driver.o driver_register.o \
 					   device_register.o XmlParser.o analogsunsensor.o \
 					   device_open.o gyroscope.o analogsunsensor_match.o \
 					   magnetometer.o magnetometer_driver.o magnetometer_match.o \
+					   magnetorquer.o magnetorquer_driver.o magnetorquer_match.o \
                        analogsunsensor_driver.o adda_operation.o error_report.o
                   
 

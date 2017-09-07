@@ -72,7 +72,7 @@
             </operation>
 			<dependence>i2c:002</dependence>
 		</device_entity>
-		<device_entity type="magnetometer" lid="magnetometer1">
+		<device_entity type="magnetorquer" lid="magnetorquer1">
 			<description>
 				<model>XM</model>
 				<dataSize>4</dataSize>
@@ -80,23 +80,23 @@
 			</description>
             <operation>
 				  <op_list length="4">
-				    <op name="magnetometer_getx" template_id="0"> 
-				       <para_list length="1" name="getx_template0">
+				    <op name="magnetorquer_setx" template_id="0"> 
+				       <para_list length="1" name="setx_template0">
 					     <para type="int">4</para>
 				       </para_list>
 				    </op>
-				    <op name="magnetometer_gety" template_id="0"> 
-				       <para_list length="1" name="gety_template0">
+				    <op name="magnetorquer_sety" template_id="0"> 
+				       <para_list length="1" name="sety_template0">
 					     <para type="int">6</para>
 				       </para_list>
 				    </op>
-				    <op name="magnetometer_getz" template_id="0"> 
-				       <para_list length="1" name="getz_template0">
+				    <op name="magnetorquer_setz" template_id="0"> 
+				       <para_list length="1" name="setz_template0">
 					     <para type="int">9</para>
 				       </para_list>
 				    </op>
-				    <op name="magnetometer_getxyz" template_id="0"> 
-				       <para_list length="3" name="getxyz_template0">
+				    <op name="magnetorquer_setxyz" template_id="0"> 
+				       <para_list length="3" name="setxyz_template0">
 					     <para type="int">4</para>
 					     <para type="int">6</para>
 					     <para type="int">9</para>
@@ -104,7 +104,7 @@
 				    </op>
 				  </op_list>
             </operation>
-			<dependence>ad:002</dependence>
+			<dependence>da:002</dependence>
 		</device_entity>
 	</device_description>
 	<IO_description>
@@ -123,9 +123,9 @@
 			</io_uart_entity>
 		</bus>
 		<device_io>
-			<io_ad_entity type="ad" lid="002">
+			<io_da_entity type="ad" lid="002">
 				<description/>
-			</io_ad_entity>
+			</io_da_entity>
 		</device_io>
 		<RT>
 			<io_RT_entity type="RT" lid="02">
@@ -183,8 +183,8 @@
 		<io_RT_config lid="04">
 			<parent>1553b:001</parent>
 		</io_RT_config>
-		<io_ad_config lid="002">
+		<io_da_config lid="002">
 			<parent>ROOT</parent>
-		</io_ad_config>
+		</io_da_config>
 	</config_description>
 </machine>
