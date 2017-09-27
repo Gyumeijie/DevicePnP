@@ -32,12 +32,35 @@ struct plain_array{
     char* type;
 };
 
+
+//定义命令序列描述结构体
+struct extra_command_description{
+   short int size;
+   //TODO 为computed_id取一个更好名
+   short int computed_id;
+};
+
+struct command_description{    
+    char occupied_by[12];
+    struct extra_command_description extra_cmd_desc;
+};
+
+
+//定义收集设备配置文件中类型为command_sequence的para_list的结构体
+struct command_sequence{
+    int bytes_size;
+    unsigned char* bytes_value;
+    struct command_description* cmd_seq_desc;
+};
+
+
 //定义收集设备配置文件中类型为struct的para_list的结构体
 struct struct_member{
     char* type;
     char* name;
     int index;
 };
+
 
 //定义模板匹配结构体
 struct template_match{

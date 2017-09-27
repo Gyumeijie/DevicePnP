@@ -21,9 +21,7 @@ int main()
   
    fd1 = gyroscope_open("gyroscope1");
    fd3 = magnetorquer_open("magnetorquer1");
-   fd2 = gyroscope_open("gyroscope2");
    printf("gyroscope1 has fd: %d\n", fd1);
-   printf("gyroscope2 has fd: %d\n", fd2);
    printf("magnetorquer1 has fd: %d\n", fd3);
 
 
@@ -31,9 +29,6 @@ int main()
      printf("data read %d\n", data);
    }
   
-   if (gyroscope_getx(fd2, &data) != -1){
-     printf("data read %d\n", data);
-   }
 
    if(gyroscope_gety(fd1, &data) != -1){
       printf("data read %d\n", data);

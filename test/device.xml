@@ -44,34 +44,6 @@
 			</operation>
 			<dependence>i2c:001</dependence>
 		</device_entity>
-		<device_entity type="gyroscope" lid="gyroscope2">
-			<description>
-				<model>XM</model>
-				<dataSize>4</dataSize>
-				<voltage>2.0v</voltage>
-			</description>
-             <operation>
-				   <global name="global">
-				     <para_list length="1" name="global">
-				       <para name="slave_address"  type="char">0x68</para>
-				     </para_list>
-				  </global>
-				  <op_list length="2">
-				    <op name="gyroscope_open" template_id="0"> 
-				       <para_list length="1" name="open_template0">
-					  <para address="0x6B">0x00</para>
-				       </para_list>
-				    </op>
-				    <op name="gyroscope_getx" template_id="0">
-				       <para_list length="2" name="getx_template0">
-					  <para name="reg_address" type="char">0x38</para> 
-					  <para name="size" type="int">2</para>
-				       </para_list>
-				    </op>
-				  </op_list>
-            </operation>
-			<dependence>i2c:002</dependence>
-		</device_entity>
 		<device_entity type="magnetorquer" lid="magnetorquer1">
 			<description>
 				<model>XM</model>
@@ -105,6 +77,29 @@
 				  </op_list>
             </operation>
 			<dependence>da:002</dependence>
+		</device_entity>
+        <!-->测试RS422 <-->
+		<device_entity type="gyroscope" lid="gyroscope2">
+			<description>
+				<model>XM</model>
+				<dataSize>4</dataSize>
+				<voltage>2.0v</voltage>
+			</description>
+             <operation>
+				  <op_list length="1">
+				    <op name="flywheel_set" template_id="0">
+				      <para_list length="6" name="flywheel_set_template0">
+					    <para occupied_by="constant">0xD3</para> 
+					    <para occupied_by="constant">2</para>
+					    <para occupied_by="computed" size="4" computed_id="0"></para>
+					    <para occupied_by="constant">0x5B</para>
+					    <para occupied_by="checksum"></para>
+					    <para occupied_by="computed" size="3" computed_id="1"></para>
+				     </para_list>
+				    </op>
+				  </op_list>
+            </operation>
+			<dependence>i2c:002</dependence>
 		</device_entity>
 	</device_description>
 	<IO_description>
