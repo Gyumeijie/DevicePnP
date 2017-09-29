@@ -36,7 +36,7 @@ struct plain_array{
 //定义命令序列描述结构体
 struct extra_command_description{
    short int size;
-   //TODO 为computed_id取一个更好名
+   //TODO 为computed_id取一个更好的名字
    short int computed_id;
 };
 

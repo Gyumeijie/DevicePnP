@@ -151,15 +151,15 @@ static void create_op_name_list(void)
 }
 
 
-static int find_para(mxml_node_t* global_or_op, mxml_node_t* para_list,
-                     mxml_node_t** pp, const char* name)
+static int get_first_para(mxml_node_t* global_or_op, mxml_node_t* para_list,
+                          mxml_node_t** first_para2p, const char* name)
 {
     char* attr = (name == NULL) ?  NULL : "name";
     const char* value = name;
 
-    *pp = mxmlFindElement(para_list, para_list, "para", 
-                          attr, value, MXML_DESCEND);
-    if (!check_null(__FILE__, __func__, "para", *pp)){
+    (*first_para2p)= mxmlFindElement(para_list, para_list, "para", 
+                                     attr, value, MXML_DESCEND);
+    if (!check_null(__FILE__, __func__, "first_para", (*first_para2p))){
           (name == NULL) 
              ? printf("Detail: can't find para child in xml file\n")
              : printf("Detail: can't find para named '%s' in xml file\n", name);
@@ -211,10 +211,10 @@ static int find_global_or_op(char* global_or_op_name, mxml_node_t** global_or_op
  *　输出：填充类型为reg_array的模板参数是否成功
  *　功能：为给定操作名填充类型为reg_array的模板参数
  */
-int 
-fill_reg_array(char* global_or_op_name, char* para_name, struct reg_array* regap)
+int fill_reg_array(char* global_or_op_name, char* para_name,
+                   struct reg_array* regap)
 {
-   mxml_node_t *global_or_op, *para_list, *para;
+   mxml_node_t *global_or_op, *para_list, *first_para;
    struct reg *regp;
     
    //查找配置信息中是否有相关的global或op配置项
@@ -224,14 +224,11 @@ fill_reg_array(char* global_or_op_name, char* para_name, struct reg_array* regap
    if(!find_para_list(para_name, global_or_op, &para_list)) return UNMATCH;
    int len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10);
  
-   //分配存储空间，如果分配失败则返回错误
-   if(!alloc_reg_array(len, &regap)) return UNMATCH;
-
    //获取para_list的第一个para
-   if(!find_para(global_or_op, para_list, &para, NULL)) return UNMATCH;
+   if(!get_first_para(global_or_op, para_list, &first_para, NULL)) return UNMATCH;
 
    //填充reg_array类型的模板参数
-   if(!do_fill_reg_array(para, regap)) return UNMATCH;
+   if(!do_fill_reg_array(first_para, len, &regap)) return UNMATCH;
 
    return MATCH;
 }
@@ -250,14 +247,16 @@ static int alloc_reg_array(int len, struct reg_array** rega2p)
 }
 
 
-static int do_fill_reg_array(mxml_node_t* para, struct reg_array* regap)
+static int do_fill_reg_array(mxml_node_t* para, int len, struct reg_array** rega2p)
 {
-   int i, len;
    struct reg *regp;
    const char *value, *address;
 
-   len = regap->len;
-   regp = regap->regp;
+   //分配存储空间，如果分配失败则返回错误
+   if(!alloc_reg_array(len, rega2p)) return FAILURE;
+   regp = (*rega2p)->regp;
+
+   int i;
    for (i=0; i<len; i++){
        address  = mxmlElementGetAttr(para, "address");
        if(!check_null(__FILE__, __func__, "address", address)) return FAILURE;
@@ -328,9 +327,8 @@ int fill_plain_struct(char* global_or_op_name, char* para_name,
 }
 
 
-static int
-do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* global_or_op, int len,
-                     struct struct_member st[], struct_fill_func_ptr do_fill)
+static int do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* global_or_op, int len,
+                                struct struct_member st[], struct_fill_func_ptr do_fill)
 {
 
    void* data;
@@ -342,7 +340,7 @@ do_fill_plain_struct(mxml_node_t* para_list, mxml_node_t* global_or_op, int len,
    for (i=0; i<len; i++){
        //检查是否有对应的结构体成员，如果没有则表示不匹配
        name = st[i].name;
-       if(!find_para(global_or_op, para_list, &para, name)) return FAILURE;
+       if(!get_first_para(global_or_op, para_list, &para, name)) return FAILURE;
        
        //检查type是否一致，如果不是则表示不匹配
        if(!check_data_type(para, st[i].name, st[i].type)) return FAILURE;
@@ -412,11 +410,16 @@ static void* convert_type(const char* value, const char* type)
        return data;
 }
 
+static int is_equal(const char* str1, const char* str2)
+{
+    return (!strcmp(str1, str2));
+}
+
 
 int fill_plain_array(char* global_or_op_name, char* para_name,
                      struct plain_array* plainap)
 {
-   mxml_node_t *global_or_op, *para_list, *para;
+   mxml_node_t *global_or_op, *para_list, *first_para;
 
    //先查找到对应的op项或global，如果找不到则返回不匹配
    if(!find_global_or_op(global_or_op_name, &global_or_op)) return UNMATCH;
@@ -424,63 +427,67 @@ int fill_plain_array(char* global_or_op_name, char* para_name,
    //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
    if(!find_para_list(para_name, global_or_op, &para_list)) return UNMATCH;
    int len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10);
-
-   //分配存储空间，如果分配失败则返回错误
-   if (!alloc_plain_array(len, &plainap)) return UNMATCH;
    
    //获取para_list的第一个para
-   if (!find_para(global_or_op, para_list, &para, NULL)) return UNMATCH;
+   if (!get_first_para(global_or_op, para_list, &first_para, NULL)) return UNMATCH;
    
    //填充plain_array类型的模板参数
-   if(!do_fill_plain_array(para, plainap)) return UNMATCH;
+   if(!do_fill_plain_array(first_para, len, &plainap)) return UNMATCH;
 
    return MATCH;
 }
 
 
-static int 
-do_fill_plain_array(mxml_node_t* para, struct plain_array* plainap)
+static int do_fill_plain_array(mxml_node_t* para, int len, 
+                               struct plain_array** plaina2p)
 {
+   void* data;
+   const char* value;
+   mxml_node_t* next_para = para;
+
+   //分配存储空间，如果分配失败则返回错误
+   if (!alloc_plain_array(len, plaina2p)) return UNMATCH;
+   void* arr = (*plaina2p)->arr;
+   char* type = (*plaina2p)->type;
 
    int i;
-   const char* value;
-   void* arr = plainap->arr;
-   int len = plainap->len;
-   char* type = plainap->type;
-   void* data;
-
    for (i=0; i<len; i++){
-       value = mxmlGetText(para, NULL);
+       value = mxmlGetText(next_para, NULL);
 
        //检查type是否一致，如果不是则表示不匹配
        if(!check_data_type(para, "plain_array", type)) return FAILURE;
        
        //TODO 将判断的语句提炼成一个函数
        data = convert_type(value, type);
-       if (!strcmp(type, "char")){
-           ((char*)arr)[i] = *(char*)data;
-       }else if(!strcmp(type, "int")){
-           ((int*)arr)[i] = *(int*)data;
-       }else{
-           ((float*)arr)[i] = *(float*)data;
-       }
-      
+       store_data_in_array(arr, i, data, type);
+
        //TODO 改变传递进来的参数不是很好   
-       para = skip_text_node(para, "type");
+       next_para = skip_text_node(next_para, "type");
    }
 
    return SUCCESS;
 }
 
-//TODO 二级指针可以去掉的
+
+static void store_data_in_array(void* array, int idx, void* data, char* type)
+{
+   if (is_equal(type, "char")){
+        ((char*)array)[idx] = *(char*)data;
+    }else if(is_equal(type, "int")){
+        ((int*)array)[idx] = *(int*)data;
+    }else{
+        ((float*)array)[idx] = *(float*)data;
+    }
+}
+
+
 static int alloc_plain_array(int len, struct plain_array** plaina2p)
 {
-   void* arr;
-
-   (*plaina2p)->len = len;
-   arr = malloc(sizeof(long int)*len);  
+   void* arr = malloc(sizeof(long int)*len);  
    if (!check_null(__FILE__, __func__, "arr", arr)) return FAILURE;
+
    (*plaina2p)->arr = arr;
+   (*plaina2p)->len = len;
    
    return SUCCESS;
 }
@@ -489,28 +496,20 @@ static int alloc_plain_array(int len, struct plain_array** plaina2p)
 int fill_command_sequence(char* global_or_op_name, char* para_name,
                           struct command_sequence* cmd_seqp)
 {
-   mxml_node_t *global_or_op, *para_list, *para;
+   mxml_node_t *global_or_op, *para_list, *first_para;
 
-   //TODO 将前面的两个子问题提取成一个get_para_count
    //先查找到对应的op项或global，如果找不到则返回不匹配
    if(!find_global_or_op(global_or_op_name, &global_or_op)) return UNMATCH;
 
    //然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
    if(!find_para_list(para_name, global_or_op, &para_list)) return UNMATCH;
-   int len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10);
- 
+   int len  = strtoul(mxmlElementGetAttr(para_list, "length"), NULL, 10); 
 
-   //TODO
-   //将find_para改为get_first_para意思更明确，或者将这条语句移到具体的遍历函数中  
    //获取para_list的第一个para
-   if (!find_para(global_or_op, para_list, &para, NULL)) return UNMATCH;
-   
-   //分配存储空间，如果分配失败则返回错误
-   int bytes_size =  get_cmd_seq_size(len, para);
-   if (!alloc_cmd_seq(bytes_size, &cmd_seqp)) return UNMATCH;
+   if (!get_first_para(global_or_op, para_list, &first_para, NULL)) return UNMATCH;
    
    //填充cmd_seq类型的模板参数
-   if(!do_fill_cmd_seq(para, cmd_seqp)) return UNMATCH;
+   if(!do_fill_cmd_seq(first_para, len, &cmd_seqp)) return UNMATCH;
 
    return MATCH;
 }
@@ -524,12 +523,14 @@ int get_cmd_seq_size(int len, mxml_node_t* para)
     int i;
     for (i=0; i<len; i++){ 
          occupied_by  = mxmlElementGetAttr(para, "occupied_by");
-       if (!strcmp(occupied_by, "constant") || !strcmp(occupied_by, "checksum")){
+       if (is_equal(occupied_by, "constant") ||
+           is_equal(occupied_by, "checksum")){
            bytes_size++;
        }else{
            int size = strtoul(mxmlElementGetAttr(para, "size"), NULL, 10);
            bytes_size += size; 
        }
+
        //TODO 当para_list的length大于实际的para项的话会报错，应当对此进行检测
        para = skip_text_node(para, "occupied_by");
     }
@@ -538,7 +539,7 @@ int get_cmd_seq_size(int len, mxml_node_t* para)
 }
 
 
-int alloc_cmd_seq(int bytes_size, struct command_sequence** cmd_seq2p)
+static int alloc_cmd_seq(int bytes_size, struct command_sequence** cmd_seq2p)
 {
    char* bytes_value;
    struct command_description* cmd_seq_desc;
@@ -562,32 +563,38 @@ int alloc_cmd_seq(int bytes_size, struct command_sequence** cmd_seq2p)
 }
 
 
-int
-do_fill_cmd_seq(mxml_node_t* para, struct command_sequence* cmd_seqp)
+int do_fill_cmd_seq(mxml_node_t* para, int len, 
+                    struct command_sequence** cmd_seq2p)
 {
-    const char *occupied_by;
-    int size, computed_id;
-    int bytes_size = cmd_seqp->bytes_size;
+    struct command_description* cmd_seq_desc; 
+    unsigned char* bytes_value; 
+
+    //分配存储空间，如果分配失败则返回错误
+    int bytes_size =  get_cmd_seq_size(len, para);
+    if (!alloc_cmd_seq(bytes_size, cmd_seq2p)) return FAILURE;
+
+    //缩短访问路径
+    cmd_seq_desc = (*cmd_seq2p)->cmd_seq_desc;
+    bytes_value = (*cmd_seq2p)->bytes_value;
 
     int i;
     for (i=0; i<bytes_size;){
-       occupied_by = mxmlElementGetAttr(para, "occupied_by");
-       strcpy(cmd_seqp->cmd_seq_desc[i].occupied_by, occupied_by);
+       const char* occupied_by = mxmlElementGetAttr(para, "occupied_by");
+       strcpy(cmd_seq_desc[i].occupied_by, occupied_by);
        
-       if (!strcmp(occupied_by, "constant")){ 
-          cmd_seqp->bytes_value[i] = strtol(mxmlGetText(para, NULL), NULL, 16);
-          i = i + 1;
-        //  TODO 将!strcmp替换成is_equal，读起来更明确
-       }else if(!strcmp(occupied_by, "computed")){
-          size = strtoul(mxmlElementGetAttr(para, "size"), NULL, 10);
-          cmd_seqp->cmd_seq_desc[i].extra_cmd_desc.size = size;
+       if (is_equal(occupied_by, "constant")){ 
+           bytes_value[i] = strtol(mxmlGetText(para, NULL), NULL, 16);
+           i = i + 1;
+       }else if(is_equal(occupied_by, "computed")){
+           int size = strtoul(mxmlElementGetAttr(para, "size"), NULL, 10);
+           cmd_seq_desc[i].extra_cmd_desc.size = size;
            
-          computed_id = strtoul(mxmlElementGetAttr(para, "computed_id"), NULL, 10);
-          cmd_seqp->cmd_seq_desc[i].extra_cmd_desc.computed_id = computed_id;
+           int computed_id = strtoul(mxmlElementGetAttr(para, "computed_id"), NULL, 10);
+           cmd_seq_desc[i].extra_cmd_desc.computed_id = computed_id;
           
-          i = i + size; 
+           i = i + size; 
        }else{
-          i = i + 1;
+           i = i + 1;
        }
        
        para = skip_text_node(para, "occupied_by");
