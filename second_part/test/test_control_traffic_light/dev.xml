@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<machine architecture="sparc" >
+	<device_description>
+		<device_entity type="XM" lid="001">
+			<description>
+				<interface>i2c</interface>	
+				<model>XM1</model>
+				<dataSize>2</dataSize>
+			</description>
+			<operation>
+				<global name="global">
+					<para_list length="1" name="global">
+						<para name="slave_address" type="char">0xD2</para>
+					</para_list>
+				</global>
+				<op_list length="2">
+					<op name="gyroscope_open" template_id="0">
+						<para_list length="5" name="open_template0">
+							<para address="0x20">0x4F</para>
+							<para address="0x21">0x00</para>
+							<para address="0x22">0x08</para>
+							<para address="0x23">0x00</para>
+							<para address="0x24">0x00</para>
+						</para_list>
+					</op>
+					<op name="gyroscope_getx" template_id="0">
+						<para_list length="2" name="getx_template0">
+							<para name="reg_address" type="char">0x28</para> 
+							<para name="size" type="int">2</para>
+						</para_list>
+					</op>
+				</op_list>
+			</operation>
+			<dependence>i2c:003;channel:2</dependence>
+		</device_entity>
+		<device_entity type="XM2" lid="002">
+			<description>
+				<interface>uart</interface>
+				<model>XM</model>
+				<dataSize>4</dataSize>
+				<voltage>2.0v</voltage>
+			</description>
+			<dependence>uart:007</dependence>
+		</device_entity>
+		<device_entity type="XM2" lid="003">
+			<description>
+				<interface>ad</interface>
+				<model>XM</model>
+				<dataSize>4</dataSize>
+				<voltage>3.0v</voltage>
+			</description>
+			<dependence>ad:002</dependence>
+		</device_entity>
+	</device_description>
+	<IO_description>
+		<bus>
+			<io_i2c_entity type="i2c" lid="003">
+				<channel lid="2">
+					<description/>
+				</channel>
+			</io_i2c_entity>
+			<io_1553b_entity type="1553b" lid="001">
+				<description/>
+			</io_1553b_entity>
+			<io_uart_entity type="uart" lid="007">
+				<description/>
+			</io_uart_entity>
+		</bus>
+		<device_io>
+			<io_ad_entity type="ad" lid="002">
+				<description/>
+			</io_ad_entity>
+		</device_io>
+		<RT>
+			<io_RT_entity type="RT" lid="02">
+				<description>
+					<dev_map_subAddr_list>
+						<device lid="001">1:9000:8000</device>
+					</dev_map_subAddr_list>
+				</description>
+				<tranData_description>
+					<send_priority>
+						<device lid="001">11</device>
+					</send_priority>
+					<send_blockSize>
+						<device lid="001">32</device>
+					</send_blockSize>
+					<receive_priority>
+						<device lid="001">22</device>
+					</receive_priority>
+					<receive_blockSize>
+						<device lid="001">16</device>
+					</receive_blockSize>
+				</tranData_description>
+			</io_RT_entity>
+			<io_RT_entity type="RT" lid="04">
+				<description>
+					<dev_map_subAddr_list>
+						<device lid="002">1:9050:8050</device>
+					</dev_map_subAddr_list>
+				</description>
+				<tranData_description>
+					<send_priority>
+						<device lid="002">11</device>
+					</send_priority>
+					<send_blockSize>
+						<device lid="002">100</device>
+					</send_blockSize>
+					<receive_priority>
+						<device lid="002">22</device>
+					</receive_priority>
+					<receive_blockSize>
+						<device lid="002">100</device>
+					</receive_blockSize>
+				</tranData_description>
+			</io_RT_entity>
+		</RT>
+	</IO_description>
+	<config_description>
+		<io_i2c_config lid="003" channel="2">
+			<parent>RT:02</parent>
+		</io_i2c_config>
+		<io_RT_config lid="02">
+			<parent>1553b:001</parent>
+		</io_RT_config>
+		<io_1553b_config lid="001">
+			<parent>ROOT</parent>
+		</io_1553b_config>
+		<io_uart_config lid="007">
+			<parent>RT:04</parent>
+		</io_uart_config>
+		<io_RT_config lid="04">
+			<parent>1553b:001</parent>
+		</io_RT_config>
+		<io_ad_config lid="002">
+			<parent>ROOT</parent>
+		</io_ad_config>
+	</config_description>
+</machine>
