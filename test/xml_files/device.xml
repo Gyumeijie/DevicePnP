@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<machine architecture="sparc" >
+	<device_description>
+		<device_entity type="gyroscope" lid="gyroscope1">
+			<description>
+				<model>XM1</model>
+				<dataSize>2</dataSize>
+			</description>
+			<operation>
+                include gyroscope1.xml
+			</operation>
+			<dependence>i2c:001</dependence>
+		</device_entity>
+		<device_entity type="magnetorquer" lid="magnetorquer1">
+			<description>
+				<model>XM</model>
+				<dataSize>4</dataSize>
+				<voltage>3.0v</voltage>
+			</description>
+            <operation>
+                include magnetorquer1.xml
+            </operation>
+			<dependence>da:002</dependence>
+		</device_entity>
+		<device_entity type="flywheel" lid="flywheel1">
+			<description>
+				<model>XM</model>
+				<dataSize>4</dataSize>
+				<voltage>2.0v</voltage>
+			</description>
+            <operation>
+                include flywheel1.xml
+            </operation>
+			<dependence>i2c:002</dependence>
+		</device_entity>
+	</device_description>
+	<IO_description>
+		<bus>
+            <io_i2c_entity type="i2c" lid="001">
+					<description/>
+			</io_i2c_entity>
+            <io_i2c_entity type="i2c" lid="002">
+					<description/>
+			</io_i2c_entity>
+			<io_1553b_entity type="1553b" lid="001">
+				<description/>
+			</io_1553b_entity>
+			<io_uart_entity type="uart" lid="007">
+				<description/>
+			</io_uart_entity>
+		</bus>
+		<device_io>
+			<io_da_entity type="ad" lid="002">
+				<description/>
+			</io_da_entity>
+		</device_io>
+		<RT>
+			<io_RT_entity type="RT" lid="02">
+				<description/>
+				<tranData_description>
+					<send_priority>
+						<device lid="001">11</device>
+					</send_priority>
+					<send_blockSize>
+						<device lid="001">100</device>
+					</send_blockSize>
+					<receive_priority>
+						<device lid="001">22</device>
+					</receive_priority>
+					<receive_blockSize>
+						<device lid="001">100</device>
+					</receive_blockSize>
+				</tranData_description>
+			</io_RT_entity>
+			<io_RT_entity type="RT" lid="04">
+				<description/>
+				<tranData_description>
+					<send_priority>
+						<device lid="002">11</device>
+					</send_priority>
+					<send_blockSize>
+						<device lid="002">100</device>
+					</send_blockSize>
+					<receive_priority>
+						<device lid="002">22</device>
+					</receive_priority>
+					<receive_blockSize>
+						<device lid="002">100</device>
+					</receive_blockSize>
+				</tranData_description>
+			</io_RT_entity>
+		</RT>
+	</IO_description>
+	<config_description>
+		<io_i2c_config lid="001">
+			<parent>RT:02</parent>
+        </io_i2c_config>
+		<io_i2c_config lid="002">
+			<parent>RT:02</parent>
+		</io_i2c_config>
+		<io_RT_config lid="02">
+			<parent>1553b:001</parent>
+		</io_RT_config>
+		<io_1553b_config lid="001">
+			<parent>ROOT</parent>
+		</io_1553b_config>
+		<io_uart_config lid="007">
+			<parent>RT:04</parent>
+		</io_uart_config>
+		<io_RT_config lid="04">
+			<parent>1553b:001</parent>
+		</io_RT_config>
+		<io_da_config lid="002">
+			<parent>ROOT</parent>
+		</io_da_config>
+	</config_description>
+</machine>

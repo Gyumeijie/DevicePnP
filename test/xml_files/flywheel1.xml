@@ -1,0 +1,26 @@
+<!-->
+
+<-->
+<op_list length="2">
+  <op name="flywheel_set_speed" template_id="0">
+    <para_list length="6" name="flywheel_set_speed_template0">
+      <para occupied_by="constant">0xD3</para> 
+      <para occupied_by="constant">2</para>
+      <para occupied_by="computed" size="4" compute_id="0"></para>
+      <para occupied_by="constant">0x5B</para>
+      <para occupied_by="checksum"></para>
+      <para occupied_by="computed" size="3" compute_id="3"></para>
+    </para_list>
+  </op>
+
+  <op name="flywheel_receive" template_id="0">
+     <para_list length="6" name="flywheel_receive_template0">
+       <para start="0" num_byte="4"></para> 
+       <para start="4" num_byte="4"></para> 
+       <para start="8" num_byte="3"></para> 
+       <para start="11" num_byte="3"></para> 
+       <para start="14" num_byte="1"></para> 
+       <para start="15" num_byte="1"></para> 
+     </para_list>
+  </op>
+</op_list>
