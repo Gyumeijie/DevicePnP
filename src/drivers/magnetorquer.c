@@ -24,35 +24,35 @@ int magnetorquer_open(char* lid)
     devop = get_device_open_struct(index);
     if (has_op_complemented(devop->private_data, MAGNETORQUER_OPEN_INDEX)){
        mdop = devop->device_operation;   
-       mdop->general_magnetorquer_open(devop->private_data);
+       mdop->general_magnetorquer_open(devop->private_data, NULL);
     }
 
     return index;
 }
 
 
-int magnetorquer_setx(int index, unsigned int* data)
+int magnetorquer_setx(int index, void* data)
 {
     return magnetorquer_set_helper(index, MAGNETORQUER_SETX_INDEX,
                                            __func__, data);
 }
 
 
-int magnetorquer_sety(int index, unsigned int* data)
+int magnetorquer_sety(int index, void* data)
 {
     return magnetorquer_set_helper(index, MAGNETORQUER_SETY_INDEX,
                                            __func__, data);
 }
 
 
-int magnetorquer_setz(int index, unsigned int* data)
+int magnetorquer_setz(int index, void* data)
 {
     return magnetorquer_set_helper(index, MAGNETORQUER_SETZ_INDEX, 
                                             __func__, data);
 }
 
 
-int magnetorquer_setxyz(int index, unsigned int* data)
+int magnetorquer_setxyz(int index, void* data)
 {
     return magnetorquer_set_helper(index, MAGNETORQUER_SETXYZ_INDEX,
                                             __func__, data);
@@ -60,7 +60,7 @@ int magnetorquer_setxyz(int index, unsigned int* data)
 
 
 static int magnetorquer_set_helper(int dev_open_idx, int op_idx, 
-                                   const char* func_name, unsigned int* data)
+                                   const char* func_name, void* data)
 {
     int result = -1;
     void* private_data;
@@ -106,4 +106,3 @@ static int magnetorquer_set_helper(int dev_open_idx, int op_idx,
 
     return result;
 }
-

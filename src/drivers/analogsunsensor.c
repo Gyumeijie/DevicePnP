@@ -24,14 +24,14 @@ int analogsunsensor_open(char* lid)
     devop = get_device_open_struct(index);
     if (has_op_complemented(devop->private_data, ANALOGSUNSENSOR_OPEN_INDEX)){
        adop = devop->device_operation;    
-       adop->general_analogsunsensor_open(devop->private_data);
+       adop->general_analogsunsensor_open(devop->private_data, NULL);
     }
 
     return index;
 }
 
 
-int analogsunsensor_read(int index, unsigned int* data)
+int analogsunsensor_read(int index, void* data)
 {
     int result = -1;
 

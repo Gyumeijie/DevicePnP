@@ -50,6 +50,8 @@
 				<dataSize>4</dataSize>
 				<voltage>3.0v</voltage>
 			</description>
+            <!-->配置信息的模块化<-->
+            <!--使用paste 命令>paste "magnetorquer.xml"<-->
             <operation>
 				  <op_list length="4">
 				    <op name="magnetorquer_setx" template_id="0"> 
@@ -79,24 +81,114 @@
 			<dependence>da:002</dependence>
 		</device_entity>
         <!-->测试RS422 <-->
-		<device_entity type="gyroscope" lid="gyroscope2">
+		<device_entity type="flywheel" lid="flywheel1">
 			<description>
 				<model>XM</model>
 				<dataSize>4</dataSize>
 				<voltage>2.0v</voltage>
 			</description>
              <operation>
-				  <op_list length="1">
-				    <op name="flywheel_set" template_id="0">
-				      <para_list length="6" name="flywheel_set_template0">
+				  <op_list length="2">
+				    <op name="flywheel_set_speed" template_id="0">
+                        <!-->
+                             写一个事先校验配置信息相应字段是否完整
+                             而不是在运行阶段再来检验
+                        <-->
+				      <para_list length="6" name="flywheel_set_speed_template0">
 					    <para occupied_by="constant">0xD3</para> 
 					    <para occupied_by="constant">2</para>
-					    <para occupied_by="computed" size="4" computed_id="0"></para>
+					    <para occupied_by="computed" size="4" compute_id="0"></para>
 					    <para occupied_by="constant">0x5B</para>
 					    <para occupied_by="checksum"></para>
-					    <para occupied_by="computed" size="3" computed_id="1"></para>
+					    <para occupied_by="computed" size="3" compute_id="3"></para>
+                        <compute_functions length="1">
+                            <!-->
+                                 定义一些简单的表达式结构，这些结构都是固定的
+                                 3部分组成
+                            <-->
+                            <compute_function id="3">
+                               <!--定义一个特殊的变量用于保存上一步的操作><-->
+                               <!-->根据op类型推出表达式是一元还是二元的<-->
+                               <!-->后期根据$有无区分常量和变量<-->
+                               <!-->根据一定的规则去编写<-->
+                               <!-->面向表达式<-->
+                               <expr op="cast" to="float">
+                                   $asm_val
+                               </expr>
+                               <expr op="mul" letf="v_float" right="c_float">
+                                   $$ * 0.05
+                               </expr>
+                               <expr op="add" left="v_float" right="c_int">
+                                   $$ + 1
+                               </expr>
+                               <expr op="assign" left="v_float" right="c_float">
+                                   $speed_code = $$
+                               </expr>
+                               <!-->
+                               <exp type="deref" to="int">para</exp> 
+                               <exp left="speed_code" op="+" right="0.05"></exp>
+                               <-->
+                            </compute_function>
+                        </compute_functions>
 				     </para_list>
 				    </op>
+				    <op name="flywheel_receive" template_id="0">
+				      <para_list length="6" name="flywheel_receive_template0">
+                        <!--
+					    <para start="0" num_byte="2"></para> 
+					    <para start="2" num_byte="2"></para> 
+					    <para start="4" num_byte="2"></para> 
+					    <para start="6" num_byte="4"></para> 
+					    <para start="10" num_byte="1"></para> 
+					    <para start="11" num_byte="1"></para> 
+                        -->
+					    <para start="0" num_byte="4"></para> 
+					    <para start="4" num_byte="4"></para> 
+					    <para start="8" num_byte="3"></para> 
+					    <para start="11" num_byte="3"></para> 
+					    <para start="14" num_byte="1"></para> 
+					    <para start="15" num_byte="1"></para> 
+				      </para_list>
+                      <!--能否将这些分开写>通过脚步后期拼接起来<-->
+
+                      <!-->
+                       通过配置信息配置的话，如果配置配置错误，
+                       程序变得难以调试，可能的话在配置信息中给出一个或多个
+                       debug选项来帮助调试
+                      <debug_option>
+                          <print_detail></print_detail>
+                      </debug_option>
+                      <-->
+
+                      <pre_function>
+                          <!-->TODO<-->
+                          <code>
+                            
+                          </code>
+                      </pre_function>
+                      <post_functions length="2">
+                           <post_function id="2">
+                               <if>
+                                 <condition>
+                                     <!-->
+                                      编写时需要参考相关函数push到环境中的变量名称，这里除了dollar系列符号
+                                      其它变量都要与相关函数push的变量名称一样
+                                     <-->
+                                    <!--怎样处理条件之间的关系><-->
+                                    <expr>$var_len != 16</expr>
+                                 </condition>
+                               <then>
+                                  <expr type="add">"$var + 1"</expr>
+                                  <expr type="assign">"$var = $$"</expr>
+                                  <return>false</return>
+                               </then>
+                               <else>
+                                  <return>True</return>
+                               </else>
+                               </if>
+                           </post_function>
+                     </post_functions>
+                    </op>
 				  </op_list>
             </operation>
 			<dependence>i2c:002</dependence>

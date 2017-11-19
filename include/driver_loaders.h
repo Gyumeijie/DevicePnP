@@ -11,14 +11,16 @@ extern void gyroscope_driver_loader(void);
 extern void analogsunsensor_driver_loader(void);
 extern void magnetometer_driver_loader(void);
 extern void magnetorquer_driver_loader(void);
+extern void flywheel_driver_loader(void);
 
 static driver_loader driver_loaders_table[MAX_DRIVER_LOADER] = {
      gyroscope_driver_loader,
      analogsunsensor_driver_loader,
      magnetometer_driver_loader,
-     magnetorquer_driver_loader
+     magnetorquer_driver_loader,
+     flywheel_driver_loader
 };
-static unsigned int driver_loader_num = 4;
+static unsigned int driver_loader_num = 5;
 
 extern unsigned int get_driver_loader_num(void);
 

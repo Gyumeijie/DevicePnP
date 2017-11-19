@@ -2,46 +2,26 @@
 #include "dev_t.h"
 #include "analogsunsensor_driver.h"
 #include "analogsunsensor.h"
-#include "adda_operation.h"
-#include <stdio.h>
+#include "driver_supported_interface.h"
 
 static int template_id;
 static void* para_struct;
 
-static void general_analogsunsensor_open(void* private_data){}
-
-static int general_analogsunsensor_read(void* private_data, unsigned int* data)
+static int general_analogsunsensor_open(void* private_data, void* data)
 {
-    int result;
+    //没有实际的初始化工作
+    fetch_data(private_data, ANALOGSUNSENSOR_OPEN_INDEX);
+    return  analogsunsensor_open_templates[template_id](para_struct, data);
+}
 
+
+static int general_analogsunsensor_read(void* private_data, void* data)
+{
     fetch_data(private_data, ANALOGSUNSENSOR_READ_INDEX);
-#if DEBUG
-    printf("analogsunsensor_read is called with template_id: %d\n", template_id);
-#endif
-    switch (template_id){
-        case 0 : result = analogsunsensor_read_template0(para_struct, data);
-                 break;
-        default: break;
-    }
-
-    return result;
+    return  analogsunsensor_open_templates[template_id](para_struct, data);
 }
 
 
-static int analogsunsensor_read_template0(void* para_struct, unsigned int* data) 
-{
-    struct plain_array* open_template0 = para_struct;
-    unsigned int len = open_template0->len;
-    unsigned int* arr = open_template0->arr;
-
-    return ad_devices_read(data, len, arr);
-}
-
-/**
- *　输入：配置信息结构体指针private以及设备操作的索引号op_idx
- *　输出：无
- *　功能：根据设备操作的索引号将设备操作的配置信息取出来
- */
 static void fetch_data(void* private_data, int op_idx)
 {
     template_id = ((struct template_data*)private_data)[op_idx].template_id;
@@ -55,8 +35,9 @@ static struct analogsunsensor_device_operation ado = {
 };
 
 
+static interface_t driver_supported_interfaces;
 static struct driver analogsunsensor_driver = {
-    "ad",
+     &driver_supported_interfaces,
      (void*)&ado,
      analogsunsensor_match
 };
@@ -65,5 +46,7 @@ static struct driver analogsunsensor_driver = {
 void analogsunsensor_driver_loader(void)
 {
     int major = type2major("analogsunsensor");
+    
+    add_supported_interface(&driver_supported_interfaces, "ad"); 
     add_driver(major, &analogsunsensor_driver);
 }

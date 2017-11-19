@@ -1,6 +1,7 @@
 #include "magnetometer_match.h"
 #include "magnetometer.h"
-#include "config_info_collect.h"
+#include "fill_plain_array.h"
+//#include "config_info_collect.h"
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>

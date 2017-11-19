@@ -24,38 +24,43 @@ int gyroscope_open(char* lid)
     devop = get_device_open_struct(index); 
     if (has_op_complemented(devop->private_data, GYROSCOPE_OPEN_INDEX)){
         gdop = devop->device_operation;
-        gdop->general_gyroscope_open(devop->private_data);
+        gdop->general_gyroscope_open(devop->private_data, NULL);
     }
 
     return index;
 }
 
-int gyroscope_getx(int index, unsigned int* data)
+int gyroscope_getx(int index, void* data)
 {
     return gyroscope_get_helper(index, GYROSCOPE_GETX_INDEX, __func__, data);
 }
 
 
-int gyroscope_gety(int index, unsigned int* data)
+int gyroscope_gety(int index, void* data)
 {
     return gyroscope_get_helper(index, GYROSCOPE_GETY_INDEX, __func__, data);
 }
 
 
-int gyroscope_getz(int index, unsigned int* data)
+int gyroscope_getz(int index, void* data)
 {
     return gyroscope_get_helper(index, GYROSCOPE_GETZ_INDEX, __func__, data);
 }
 
 
-int gyroscope_getxyz(int index, unsigned int* data)
+int gyroscope_getxyz(int index, void* data)
 {
     return gyroscope_get_helper(index, GYROSCOPE_GETXYZ_INDEX, __func__, data);
 }
 
 
-static int gyroscope_get_helper(int dev_open_idx, int op_idx, 
-                                 const char* func_name, unsigned int * data)
+static int gyroscope_get_helper
+(
+   int dev_open_idx, 
+   int op_idx, 
+   const char* func_name,
+   void* data
+)
 {
     int result = -1;
     void* private_data;

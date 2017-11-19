@@ -61,7 +61,7 @@ int add_driver(int index, struct driver* drip)
  *　输出：设备驱动结构体指针
  *　功能：获取支持给定接口的设备驱动
  */
-struct driver* get_driver(int index, interface_t interface)
+struct driver* get_driver(int index, char* device_interface)
 {
     struct driver_node* drinodp = driver_index_table[index];
     struct driver* drip = NULL;
@@ -71,7 +71,16 @@ struct driver* get_driver(int index, interface_t interface)
     while (drinodp != NULL){
 
         drip = drinodp->drip;
-        if (strcmp(drip->interface, interface) == 0){
+        //TODO
+        //由于描述设备支持的接口的细节不同，可能是字符数组也可能是特定格式的
+        //字符串，需要专门的解析来 i2c:rs422:ad
+        //这里需要一个叫通用的接口查询函数将细节封装起来
+        //check_interface()
+        //is_supported_interface(driver, interface)
+        //下面的函数显然是暴露了实现的细节
+        //if (strcmp(drip->interface, interface) == 0){
+        if (is_supported_interface(drip->driver_supported_interfaces, 
+                                   device_interface)){
             return drip;
         }
 

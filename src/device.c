@@ -73,7 +73,7 @@ void add_device(int index, struct device* devp)
  * 输出：设备结构体
  * 功能：通过设备逻辑标识符找到对应的设备结构体
  */ 
-struct device* find_device(char* lid)
+struct device* find_device(const char* lid)
 {
     struct device* devp;
     struct hash_item* hip;   

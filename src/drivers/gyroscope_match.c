@@ -1,5 +1,8 @@
 #include "gyroscope_match.h"
-#include "config_info_collect.h"
+#include "gyroscope_match.h"
+#include "fill_plain_struct.h"
+#include "fill_reg_array.h"
+//#include "config_info_collect.h"
 #include "error_report.h"
 #include <malloc.h>
 #include <string.h>
@@ -134,5 +137,3 @@ int gyroscope_match(void)
 {  
     return  do_match(&gyro_match_info);
 }
-
-

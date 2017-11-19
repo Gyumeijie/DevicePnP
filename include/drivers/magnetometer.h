@@ -11,19 +11,19 @@
 #define MAGNETOMETER_OP_NUM 5
 
 struct magnetometer_device_operation{
-    void (*general_magnetometer_open)(void*);
-    int (*general_magnetometer_getx)(void*, unsigned int*);
-    int (*general_magnetometer_gety)(void*, unsigned int*);
-    int (*general_magnetometer_getz)(void*, unsigned int*);
-    int (*general_magnetometer_getxyz)(void*, unsigned int*);
+    int (*general_magnetometer_open)(void*, void*);
+    int (*general_magnetometer_getx)(void*, void*);
+    int (*general_magnetometer_gety)(void*, void*);
+    int (*general_magnetometer_getz)(void*, void*);
+    int (*general_magnetometer_getxyz)(void*, void*);
 };
 
 static int magnetometer_get_helper(int dev_open_idx, int op_idx, 
-                                   const char* func_name, unsigned int* data);
+                                   const char* func_name, void* data);
 extern  int magnetometer_open(char* lid);
-extern  int magnetometer_getx(int index, unsigned int* data);
-extern  int magnetometer_gety(int index, unsigned int* data);
-extern  int magnetometer_getz(int index, unsigned int* data);
-extern  int magnetometer_getxyz(int index, unsigned int* data);
+extern  int magnetometer_getx(int index, void* data);
+extern  int magnetometer_gety(int index, void* data);
+extern  int magnetometer_getz(int index, void* data);
+extern  int magnetometer_getxyz(int index, void* data);
 
 #endif

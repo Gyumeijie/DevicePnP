@@ -1,10 +1,14 @@
 #ifndef DRIVER_MATCH_H
 #define DRIVER_MATCH_H
 
+#include "types.h"
+
 #define MATCH 1
 #define UNMATCH 0
 
 #define MAX_TEMPLATE_NAME_LENGTH 64
+
+//TODO 将不同类型的填充结构体分离出去
 
 //定义填充结构体的函数类型
 typedef void (*struct_fill_func_ptr)(int, void*);
@@ -36,8 +40,7 @@ struct plain_array{
 //定义命令序列描述结构体
 struct extra_command_description{
    short int size;
-   //TODO 为computed_id取一个更好的名字
-   short int computed_id;
+   short int compute_id;
 };
 
 struct command_description{    
@@ -51,6 +54,30 @@ struct command_sequence{
     int bytes_size;
     unsigned char* bytes_value;
     struct command_description* cmd_seq_desc;
+};
+
+
+typedef void (*post_process_function)(const char* start_addr, 
+                                      int num_byte, 
+                                      int asm_val, 
+                                      void* var_addr);
+
+typedef Boolean (*precondition_function)(const char* bytes_arr,
+                                         int arr_len); 
+
+//字节组装描述信息
+struct bytes_assembly_descriptor{
+   short int num_byte;
+   short int start;
+};
+
+
+//字节数组组装方案
+struct bytes_array_assembly_scheme{
+   short int num_para;
+   struct bytes_assembly_descriptor* bytes_asm_descs;
+   precondition_function precond_func;  
+   post_process_function* post_proc_funcs;
 };
 
 
@@ -77,8 +104,11 @@ struct min_function_set{
 };
 
 
+//typedef enum {plain_array reg_array, ...}para_struct_type;
 //定义模板参数结构体
 struct template_data{
+    //TODO 增加一个参数结构的标识符号， 有的操作只能面向特定的结构，操作之前
+    //需要判断
     int template_id;
     void* para_struct;
 };
@@ -104,14 +134,24 @@ static void init_template_data_table(int dtsize);
 
 static match_func_ptr find_match_func(char* name);
 
-static void 
-construct_template_name(char* template_name, char* op_name, int template_id);
+static void construct_template_name
+(  
+   char* template_name,
+   char* op_name, 
+   int template_id
+);
 
 static int try_match(char* template_name);
 
 static int has_all_required_ops_complemented(void);
 
-extern int check_match(int status, int index, int template_id, void* template_data);
+extern int check_match
+(
+   int status, 
+   int op_idx, 
+   int template_id,
+   void* template_data
+);
 
 extern int do_match(struct match_info* mip); 
 
@@ -119,6 +159,10 @@ extern void* get_template_data_table(void);
 
 extern const char* get_op_context();
 
-extern int has_op_complemented(struct template_data* private_data, int op_idx);
+extern int has_op_complemented
+(  
+    struct template_data* private_data, 
+    int op_idx
+);
 
 #endif

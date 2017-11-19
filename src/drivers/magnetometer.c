@@ -24,35 +24,35 @@ int magnetometer_open(char* lid)
     devop = get_device_open_struct(index);
     if (has_op_complemented(devop->private_data, MAGNETOMETER_OPEN_INDEX)){
        mdop = devop->device_operation;   
-       mdop->general_magnetometer_open(devop->private_data);
+       mdop->general_magnetometer_open(devop->private_data, NULL);
     }
 
     return index;
 }
 
 
-int magnetometer_getx(int index, unsigned int* data)
+int magnetometer_getx(int index, void* data)
 {
     return magnetometer_get_helper(index, MAGNETOMETER_GETX_INDEX,
                                            __func__, data);
 }
 
 
-int magnetometer_gety(int index, unsigned int* data)
+int magnetometer_gety(int index, void* data)
 {
     return magnetometer_get_helper(index, MAGNETOMETER_GETY_INDEX,
                                            __func__, data);
 }
 
 
-int magnetometer_getz(int index, unsigned int* data)
+int magnetometer_getz(int index, void* data)
 {
     return magnetometer_get_helper(index, MAGNETOMETER_GETZ_INDEX, 
                                             __func__, data);
 }
 
 
-int magnetometer_getxyz(int index, unsigned int* data)
+int magnetometer_getxyz(int index, void* data)
 {
     return magnetometer_get_helper(index, MAGNETOMETER_GETXYZ_INDEX,
                                             __func__, data);
@@ -60,7 +60,7 @@ int magnetometer_getxyz(int index, unsigned int* data)
 
 
 static int magnetometer_get_helper(int dev_open_idx, int op_idx, 
-                                   const char* func_name, unsigned int* data)
+                                   const char* func_name, void* data)
 {
     int result = -1;
     void* private_data;

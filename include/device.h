@@ -8,14 +8,11 @@
 #include "dev_t.h"
 #include "hashstr.h"
 
-//定义设备的接口类型
-typedef char interface_t[32];
-
 
 //定义设备结构体
 struct device{
   devno_t devno;   
-  interface_t interface;
+  char interface[32];
   char lid[32];
   char type[32];
   void* device_operation;
@@ -51,7 +48,7 @@ extern void lid2dev_mapping(const char* lid, struct device* devp);
 extern void add_device(int index, struct device* devp);
 
 //通过设备逻辑标识符查找给定的设备结构体(设备打开模块)
-extern struct device* find_device(char* lid);
+extern struct device* find_device(const char* lid);
 
 //遍历设备索引表(设备驱动绑定模块)
 extern struct device* get_device(void);

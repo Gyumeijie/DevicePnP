@@ -1,6 +1,7 @@
 #include "analogsunsensor_match.h"
 #include "analogsunsensor.h"
-#include "config_info_collect.h"
+#include "fill_plain_array.h"
+//#include "config_info_collect.h"
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
@@ -34,8 +35,7 @@ static int read_template0_match(void)
 
 
 //模板匹配函数表
-static
-struct template_match match_funcs_table[ANALOGSUNSENSOR_TEMPLATE_NUM] = {
+static struct template_match match_funcs_table[ANALOGSUNSENSOR_TEMPLATE_NUM] = {
     {"global", global_match},
     {"analogsunsensor_open_template0", open_template0_match},
     {"analogsunsensor_read_template0", read_template0_match},

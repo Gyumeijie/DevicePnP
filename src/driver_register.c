@@ -24,6 +24,3 @@ void register_drivers(void)
         loader();
     }
 }
-
-
-

@@ -94,12 +94,12 @@ static void init_template_data_table(int dtsize)
 
 static void undo_match(void)
 {
-    //释放模板对应的数据结构
     free(template_data_table);
     template_data_table = NULL;
 }
 
 
+//TODO 检查name是否为空
 static int find_and_exec_match_func(char* name)
 {
     //查找匹配函数，如果没有找到则返回不匹配，并给出具体的原因
@@ -122,6 +122,7 @@ static int find_and_exec_match_func(char* name)
  */
 static match_func_ptr find_match_func(char* name)
 {
+
     int i;
     struct template_match* match_funcs_table;
     int match_funcs_num;
@@ -129,6 +130,7 @@ static match_func_ptr find_match_func(char* name)
     match_funcs_num = g_mip->match_funcs_num;
     match_funcs_table = g_mip->match_funcs_table;
     for (i=0; i<match_funcs_num; i++){ 
+        //TODO match_funcs_table[i].name 可能为NULL
         if (strcmp(match_funcs_table[i].name, name) == 0){
             return match_funcs_table[i].match_func;
         }
@@ -139,14 +141,15 @@ static match_func_ptr find_match_func(char* name)
 }
 
 
-int check_match(int status, int index, int template_id, void* template_data)
+int check_match(int status, int op_idx, int template_id, void* template_data)
 {
     //返回不匹配
     if (!status) return UNMATCH;
 
     //否则将收集到的数据存放到template_data_table中供后面使用
-    template_data_table[index].para_struct = template_data;
-    template_data_table[index].template_id = template_id;
+    template_data_table[op_idx].para_struct = template_data;
+    template_data_table[op_idx].template_id = template_id;
+    //TODO 添加para_struct_type
     
     //返回匹配
     return MATCH;
