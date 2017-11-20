@@ -1,6 +1,6 @@
 #! /bin/bash
 
-if [[ $# < 2 ]];
+if [[ $# -lt 2 ]];
 then
    echo "usage: bulid.sh input_file output_file"
    exit 1
@@ -12,6 +12,8 @@ output=$2
 
 #clear the output file first
 rm -f $output
+
+touch temp_file
 
 #process the input file
 awk_stdout=`awk '
@@ -29,7 +31,7 @@ awk_stdout=`awk '
   $1 !~ /^[ ]*include/{
     # $0 should enclosed by double quotes
     system("echo " "\""  $0 "\""  " >> " output_file)
-  }' output_file=$output $input`
+  }' output_file=temp_file $input`
 
 
 #check the result
@@ -39,3 +41,10 @@ then
 else
     echo "bulid xml done."
 fi
+
+#escape the special characters and squash the code block
+./scripts/escape.sh temp_file $output
+
+
+#delete temp_file
+rm -f temp_file
