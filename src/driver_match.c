@@ -38,10 +38,12 @@ int do_match(struct match_info* mip)
         op_name = get_op_name();
         template_id = get_op_template_id(op_name);
         op_context = op_name;
-             
+         
         construct_template_name(template_name, op_name, template_id);
-        
-        if (!try_match(template_name)) return UNMATCH;
+   
+        if (!try_match(template_name)){
+            return UNMATCH;
+        }
     }
 
     

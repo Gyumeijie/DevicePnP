@@ -2,6 +2,7 @@
 #include "error_report.h"
 #include "miscellaneous.h"
 #include "fill_command_sequence.h"
+#include "collect_code_block.h"
 #include <string.h>
 #include <malloc.h>
 #include <stdio.h>
@@ -65,7 +66,8 @@ static int do_fill_cmd_seq
            i = i + 1;
        }
        
-       para = skip_text_node(para, "occupied_by");
+       //para = skip_text_node(para, "occupied_by");
+       para = skip_text_node(mxmlGetNextSibling(para), "occupied_by");
     }
 
     return SUCCESS;
@@ -90,7 +92,9 @@ static int get_cmd_seq_size(int len, mxml_node_t* para)
 
        //TODO 当para_list的length大于实际的para项的话会报错，应当对此进行检测
        //TODO 尽量屏蔽细节，用更通用的函数接口去代替
-       para = skip_text_node(para, "occupied_by");
+       //para = skip_text_node(para, "occupied_by");
+       //修改了skip_text_node的逻辑, 后面有时间换成get_next_sibling
+       para = skip_text_node(mxmlGetNextSibling(para), "occupied_by");
     }
 
    return bytes_size; 
@@ -116,6 +120,8 @@ static int alloc_cmd_seq(int bytes_size, struct command_sequence** cmd_seq2p)
     }
     (*cmd_seq2p)->cmd_seq_desc = cmd_seq_desc;
 
+
+    (*cmd_seq2p)->compute_funcs = malloc(sizeof(struct group_code_blocks));
 
     return SUCCESS;
 }

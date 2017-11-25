@@ -6,6 +6,8 @@
 //declared inside parameter list
 #include "parameter_package.h"
 
+#define NO_NEED_POSTPROCESSION -1
+
 extern int do_bytes_array_assembly
 (
    const char* bytes_arr,                          //接受到的字节数组
@@ -16,37 +18,33 @@ extern int do_bytes_array_assembly
 
 extern int assembly_item(const char* bytes_arr, int arr_len);
 
-extern int register_precondition_function
+static void postprocess_parameter
 (
-   const char* lid,
-   int op_idx,
-   precondition_function precond_func
+   struct parameter* para,
+   struct group_code_blocks* gcb,
+   const char* bytes_arr,
+   int asm_val,  
+   int process_id
 );
 
-extern int register_post_processing_func
+
+static int do_check_precondition
 (
-   const char* lid,
-   int op_idx,
-   post_process_function post_proc_func, 
-   int para_pos
+   struct single_code_block* precondtion,
+   int arr_len,
+   const char* bytes_arr
 );
 
-extern int register_post_processing_func_for_paras
-(
-   const char* lid,
-   int op_idx,
-   post_process_function post_proc_func, 
-   int paras_pos[],
-   int arr_len 
-);
 
-static struct bytes_array_assembly_scheme* fetch_assembly_shceme
+static void do_postprocession
 (
-   const char* lid,
-   int op_idx
+   struct group_code_blocks* gcb,
+   int process_id,
+   int asm_val,
+   const char* bytes_arr,
+   void* var_addr
 );
 
 static int check_bytes_num();
-
 
 #endif 

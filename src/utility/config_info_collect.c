@@ -38,6 +38,7 @@ int establish_device_context(char* lid)
                                           lid, 
                                           MXML_DESCEND);
         //对于NULL值的检测，想一下其它的方法
+        // is_null = 
         if (!check_null(__FILE__, __func__, "device_context", device_context)){
            printf("Detail: can't find configuration info for %s in xml file\n", 
                   lid);
@@ -87,6 +88,7 @@ const char* get_device_context(void)
  *　输出：返回一个整数表示条件是否满足
  *　功能：判断设备的配置信息中是否含有global项，该函数在驱动匹配模块中被调用
  */
+// TODO 尝试一下global
 int has_global_config_item(void)
 {
     mxml_node_t* element = mxmlFindElement(device_context,
@@ -170,7 +172,7 @@ static void create_op_name_list(void)
    for (i=0; i<op_list_length; i++){   
        const char* op_name =  mxmlElementGetAttr(op, "name");
        op_name_list[i] =(char*)op_name;
-       op = skip_text_node(op, "name");
+       op = skip_text_node(mxmlGetNextSibling(op), "name");
    }
 }
 
@@ -219,6 +221,7 @@ static int find_para_list
 }
 
 
+//TODO 进行重构
 static int find_global_or_op
 (
    char* global_or_op_name, 
@@ -242,6 +245,7 @@ static int find_global_or_op
 }
 
 
+// TODO 修改成get_first_child
 int get_first_para_and_num_para 
 (
    char* global_or_op_name, 
@@ -265,28 +269,16 @@ int get_first_para_and_num_para
 }
 
 
-/**
- *　输入：xml解析树中的/一个节点node以及节点的属性attr
- *　输出：返回node的第一个非文本类型的兄弟节点指针
- *　功能：当遍历列表的时候，因为xml中列表项中间有text类型的节点，需要将其过滤掉
- *　说明：如果仅仅通过mxmlGetText来跳过text类型的节点有时候不太可靠，所以加上
- *  　　　表项节点的某一属性attr，因为text类型节点没有属性因此可以将其可靠地过滤
- */
+// 通常读取一个属性列表（例如参数列表）的时候
 mxml_node_t* skip_text_node(mxml_node_t* node, char* attr)
 { 
-   mxml_node_t* sibling = NULL;
-   sibling = mxmlGetNextSibling(node);
- 
-   while(mxmlGetText(sibling, NULL) != NULL){
-      //找到第一个非文本类型的节点
-      if (mxmlElementGetAttr(sibling, attr) != NULL){
-          break;
-      }
+    mxml_node_t* sibling = node;
 
+    while (mxmlGetType(sibling) == MXML_TEXT){
       sibling = mxmlGetNextSibling(sibling);
-   }
+    }
 
-   return sibling;   
+    return sibling;
 }
 
 
@@ -340,5 +332,71 @@ int check_data_type
     }
 
    return SUCCESS;
+}
+
+
+
+
+// 用于查找相应的驱动函数的配置项目，op_name是要查找的驱动函数名
+void* find_device_operation(const char* op_name)
+{
+   return  mxmlFindElement(device_context,
+                           device_context,
+                           "op",
+                           "name",
+                            op_name, 
+                            MXML_DESCEND);
+}
+
+
+// xml文件只是配置文件的一种，上层的代码不应该依赖与具体的xml结构
+// 这里元素的数据包括xml中的属性值和文本值，如果不用xml配置文件的
+// 话只要重新实现一下这个接口就行了，因为其它的配置文件形式很有可
+// 能就没有text和attribute这种结构了，因此API的命名以及参数的类型
+// 也要尽量通用，以应对底层配置文件格式的变化
+const char* get_element_data
+(
+   void* elem,
+   const char* prop_name 
+)
+{
+    if (is_equal(prop_name,"text_value")){
+        return mxmlGetText(elem, NULL);
+    }
+
+    return mxmlElementGetAttr(elem, prop_name);
+}
+
+
+// 第一个元素节点
+void* get_first_child (void* parent)
+{
+    void* first_child = mxmlGetFirstChild(parent);
+    return (void*)skip_text_node(first_child, "id");
+}
+
+
+//下一个元素节点
+void* get_next_sibling(void* sibling)
+{
+    return (void*)skip_text_node(mxmlGetNextSibling(sibling), "id");
+}
+
+
+// 对于比较顶层的一些结构如函数操作列表，函数操作项目，参数列表
+// 全局配置项目，单个代码块， 代码块组都可单独提供一个函数去操作
+// 它们
+void* find_element_in_operation_context
+(
+   void* op_context,
+   const char* elem_name
+)
+{
+   return  mxmlFindElement(op_context,
+                           op_context,
+                           elem_name,
+                           NULL,
+                           NULL, 
+                           MXML_DESCEND);
 }
 

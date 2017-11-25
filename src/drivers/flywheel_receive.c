@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 //TODO para_struct 和 para更好的命名
+//para_struct是数据模板结构，而para是上面传递下来的参数
 int flywheel_receive_template0(void* para_struct, void* para)
 {
     static char bytesdata[16] = {

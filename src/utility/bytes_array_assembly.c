@@ -3,7 +3,10 @@
 #include "device.h"
 #include "miscellaneous.h"
 #include "bytes_array_assembly.h"
+#include "interpreter.h"
 #include "types.h"
+#include "error_report.h"
+#include "type_converter.h"
 #include <stdio.h>
 #include <malloc.h>
 
@@ -13,47 +16,145 @@ int do_bytes_array_assembly
    const char* bytes_arr,                     
    int arr_len,                                
    struct parameter_package* para_pkgp,           
-   struct bytes_array_assembly_scheme* asm_schemep 
+   struct bytes_array_assembly_scheme* asm_schemep
 )
 {
-  //TODO 检查所需的字节与读取的字节是否相匹配
+   struct group_code_blocks* postprocess_funcs = asm_schemep->postprocess_funcs;
+   struct single_code_block* precondition = asm_schemep->precondition;
+
+   //TODO 检查所需的字节与读取的字节是否相匹配
    if (para_pkgp->num_para != asm_schemep->num_para) return 1;
 
-   int num_para = para_pkgp->num_para;
-   printf("num_para: %d\n", num_para);
 
-   //调用先验条件进行判断
-   if (! (asm_schemep->precond_func == (precondition_function)0 ||
-          asm_schemep->precond_func(bytes_arr, arr_len))){
-       return 1;
+   // 调用先验条件进行判断
+   if (!(precondition == NULL || 
+        do_check_precondition(precondition, arr_len, bytes_arr))){
+        printf("check failed\n"); 
+        return 1;
    }
-   
+
+
    int i;
-   int asm_val;
+   int num_para = para_pkgp->num_para;
    struct bytes_assembly_descriptor* descs = asm_schemep->bytes_asm_descs;
-   post_process_function* post_proc_funcs = asm_schemep->post_proc_funcs;
    for (i=0; i<num_para; i++){
       struct parameter* parap = fetch_para(para_pkgp);
-      void* var_addr = (void*)parap->value;
 
       //获取位置信息
       int num_byte = descs[i].num_byte;
       int start = descs[i].start;
-      asm_val = assembly_item(bytes_arr + start, num_byte); 
+      int process_id = descs[i].process_id;
 
-      //调用数据的特殊处理函数(对字节组合成的数据进行特殊的处理)
-      //两种方案:
-      //        1 设置默认的函数,统一进行调用
-      //        2 调用之前都要进行是否为NULL的判断
-      if (post_proc_funcs[i] != NULL){
-          post_proc_funcs[i](bytes_arr + start, num_byte, asm_val, var_addr);
-      }else{
-          //没有的话就做默认处理,即按照给定的类型进行存储
-          store_data(var_addr, &asm_val, parap->para_type, "int");
-      }
-   }
+      int asm_val = assembly_item(bytes_arr + start, num_byte); 
+
+      postprocess_parameter(parap, postprocess_funcs, bytes_arr, asm_val, process_id);
+  }
+
+   // 重置parameter_package中的fetch_tracer使得下一次可以重新使用
+   reuse_parameter_package(para_pkgp);
 
    return 0;
+}
+
+
+static void postprocess_parameter
+(
+   struct parameter* para,
+   struct group_code_blocks* postprocess_funcs,
+   const char* bytes_arr,
+   int asm_val,  
+   int process_id
+)
+{
+   void* var_addr = (void*)para->value;
+   
+   if ((process_id > NO_NEED_POSTPROCESSION) &&
+       (postprocess_funcs->code_block_src_array[process_id] != NULL)){
+      do_postprocession(postprocess_funcs, process_id, asm_val, bytes_arr, var_addr);
+      //post_proc_funcs[i](bytes_arr + start, num_byte, asm_val, var_addr);
+   }else{
+      //没有的话就做默认处理,即按照给定的类型进行存储
+      store_data(var_addr, &asm_val, para->para_type, "int");
+    }
+}
+
+
+static void do_postprocession
+(
+   struct group_code_blocks* gcb,
+   int process_id,
+   int asm_val,
+   const char* bytes_arr,
+   void* var_addr
+)
+{
+   static int  result;
+   static int static_asm_val;
+   static int static_var_addr;
+   static const char* static_bytes_arr;
+
+   static_asm_val = asm_val;
+   static_bytes_arr = bytes_arr;
+   static_var_addr = (int)var_addr;
+   
+   int* code = gcb->compiled_byte_code_array[process_id];
+
+   if (code != NULL){
+      run_code(code);
+   }else{
+       struct dependency_items* dep_items;
+       dep_items = init_dependency_items(4);
+
+       add_dependency_item(dep_items, "bytes_arr", &static_bytes_arr, CHAR+PTR);
+       add_dependency_item(dep_items, "var_addr", &var_addr, CHAR+PTR);
+       add_dependency_item(dep_items, "asm_val", (void*)&static_asm_val, INT);
+       add_dependency_item(dep_items, "result", (void*)&result, INT);
+
+        // 根据process_id获取源码数据
+        const char* src = gcb->code_block_src_array[process_id];
+
+        // 将编译的代码放在存放在相应的字段中
+        code = compile_src_code(dep_items, src);
+        gcb->compiled_byte_code_array[process_id] = code;
+
+        run_code(code);
+     }
+}
+
+
+static int do_check_precondition
+(
+   struct single_code_block* precondtion,
+   int arr_len,
+   const char* bytes_arr
+)
+{
+   static int result;
+   static int static_arr_len;
+   static const char* static_bytes_arr;
+   
+   static_arr_len = arr_len;
+   static_bytes_arr = bytes_arr;
+
+   int* code = precondtion->compiled_byte_code;
+
+   if (code != NULL){
+       run_code(code);
+   }else{
+       struct dependency_items* dep_items;
+       dep_items = init_dependency_items(3);
+       add_dependency_item(dep_items, "arr_len", &static_arr_len, INT);
+       add_dependency_item(dep_items, "result", &result, INT);
+       add_dependency_item(dep_items, "bytes_arr", &static_bytes_arr, CHAR+PTR);
+          
+       const char* src = precondtion->code_block_src;
+       code = compile_src_code(dep_items, src);
+       precondtion->compiled_byte_code = code;
+
+       run_code(code);
+   }
+
+  return result;
 }
 
 
@@ -70,74 +171,4 @@ int assembly_item(const char* bytes_arr, int arr_len)
 
     return temp;
 }
-
-
-int register_post_processing_func_for_paras
-(
-   const char* lid,
-   const int op_idx,
-   post_process_function post_proc_func, 
-   int paras_pos[],
-   int arr_len 
-)
-{
-    int i;
-    for (i=0; i<arr_len; i++){
-       int para_pos = paras_pos[i];
-       register_post_processing_func(lid, op_idx, post_proc_func, para_pos);
-    }
-
-    return 0;
-}
-
-
-int register_post_processing_func
-(
-   const char* lid,
-   const int op_idx,
-   post_process_function post_proc_func, 
-   int para_pos
-)
-{
-    //TODO 更细致的检查处理
-   struct bytes_array_assembly_scheme* asm_schemep;
-   asm_schemep = fetch_assembly_shceme(lid, op_idx); 
-   asm_schemep->post_proc_funcs[para_pos] = post_proc_func;
-
-   return 0;
-}
-
-
-int register_precondition_function
-(
-   const char* lid,
-   int op_idx,
-   precondition_function precond_func
-)
-{
-   struct bytes_array_assembly_scheme* asm_schemep;
-   asm_schemep = fetch_assembly_shceme(lid, op_idx); 
-   asm_schemep->precond_func = precond_func;
-
-   return 0;
-}
-
-
-static struct bytes_array_assembly_scheme* fetch_assembly_shceme
-(
-   const char* lid,
-   const int op_idx
-)
-{
-   //TODO 其它的操作的结构不会被损害, 检查每一步查找的结果
-   //查找设备
-   struct device* devp = find_device(lid);
-   //获取模板数据表
-   struct template_data* template_data_table = devp->private_data;
-   //获取相应操作的数据结构
-   struct template_data* op_data = &template_data_table[op_idx];
-
-   return (struct bytes_array_assembly_scheme*)op_data->para_struct;
-}
-
 

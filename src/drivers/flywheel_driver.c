@@ -37,7 +37,7 @@ static void fetch_data(void* private_data, int index)
 }
 
 
-//Warning 添加新的操作函数的时候记得一定要同步fdo，不然会报错的
+// Warning 添加新的操作函数的时候记得一定要同步fdo，不然会报错的
 static struct flywheel_device_operation fdo = {
     general_flywheel_open,
     general_flywheel_set_speed,
@@ -57,10 +57,10 @@ void flywheel_driver_loader(void)
 {
     int major = type2major("flywheel");
     
-    add_supported_interface(&driver_supported_interfaces,"i2c");
-    add_supported_interface(&driver_supported_interfaces,"rs422");
-    //如果添加了支持其它接口的flywheel_driver，只需要在下面添加
-    //add_supported_interface(&driver_supported_interfaces, new_interface);
+    add_supported_interface(&driver_supported_interfaces, "i2c");
+    add_supported_interface(&driver_supported_interfaces, "rs422");
+    // 如果添加了支持其它接口的flywheel_driver，只需要在下面添加
+    // add_supported_interface(&driver_supported_interfaces, new_interface);
 
     add_driver(major, &flywheel_driver);
 }

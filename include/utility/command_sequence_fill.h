@@ -5,14 +5,10 @@
 #include "driver_match.h"
 #include "types.h"
 
-#define MAX_COMPUTE_FUNCTION_NUM  32
-#define PRESET_COMPUTE_FUNCTION_NUM 1
 
-#define SET_BITS(pos) ((1<<(pos)) - 1)
-#define SET_BIT(pos, data) (data |= (1<<(pos)))
-#define CLEAR_BIT(pos, data) (data &= (data - (1<<(pos))))
-#define IS_BIT_SET(pos, data) ((data>>(pos)) & 0x01) 
-
+// 如果配置文件中给的compute_id是-1的话，那么这个参数就不需要
+// 进行计算了，默认的都是32位无符号整型或者通过转型
+#define NO_NEED_COMPUTATION -1
 
 typedef void (*compute_func)(char*, int, void*);
 
@@ -22,29 +18,38 @@ struct compute_functions_manager{
 };
 
 
-extern void fill_cmd_seq_dynamically(struct command_sequence* cmd_seqp, 
-                                     struct parameter_package* para_packp);
+extern void fill_cmd_seq_dynamically
+(
+   struct parameter_package* para_packp,
+   struct command_sequence* cmd_seqp 
+);
 
-static void dispatch_by_compute_id(int compute_id, char* bytes_value, 
-                                   int size, void* para);
-
-extern void use_compute_func(int func_id, char* bytes_value, int size, void* para);
-
-extern int register_compute_func(int compute_id, compute_func func);
-
-extern void unregister_compute_func(int compute_id);
-
-static Boolean has_func_registered(int compute_id);
-
-static Boolean is_bad_compute_id(int compute_id);
-
-extern void inspect_compute_funcs_bitmap(int column);
 
 static void calculate_checksum(char* bytes_value, int size);
 
+static void split_uint32_into_bytes
+(
+   char* bytes_value, 
+   int size, 
+   unsigned int para
+);
 
-//预先定义的计算函数
-static void compute_func0(char* bytes_value, int size, void* para);
+static void process_parameter
+(
+   struct parameter* para,
+   struct group_code_blocks* compute_funcs,
+   int compute_id,
+   char* start_addr_to_fill,
+   int size
+);
 
+static unsigned int cast_to_uint32(struct parameter* para);
+
+static int do_computation
+(
+   int compute_id,
+   struct group_code_blocks* compute_funcs,
+   struct parameter* para
+);
 
 #endif

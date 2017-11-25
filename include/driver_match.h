@@ -37,6 +37,21 @@ struct plain_array{
 };
 
 
+//定义代码块结构
+struct group_code_blocks{
+   int num_block;
+   // 存放各个代码块源码的数组
+   const char** code_block_src_array;
+   // 存放各个代码块编译后的字节码的数组
+   int** compiled_byte_code_array;
+};
+
+struct single_code_block{
+   const char* code_block_src;
+   int* compiled_byte_code;
+};
+
+
 //定义命令序列描述结构体
 struct extra_command_description{
    short int size;
@@ -54,21 +69,15 @@ struct command_sequence{
     int bytes_size;
     unsigned char* bytes_value;
     struct command_description* cmd_seq_desc;
+    struct group_code_blocks* compute_funcs;
 };
 
-
-typedef void (*post_process_function)(const char* start_addr, 
-                                      int num_byte, 
-                                      int asm_val, 
-                                      void* var_addr);
-
-typedef Boolean (*precondition_function)(const char* bytes_arr,
-                                         int arr_len); 
 
 //字节组装描述信息
 struct bytes_assembly_descriptor{
    short int num_byte;
    short int start;
+   short int process_id;
 };
 
 
@@ -76,8 +85,8 @@ struct bytes_assembly_descriptor{
 struct bytes_array_assembly_scheme{
    short int num_para;
    struct bytes_assembly_descriptor* bytes_asm_descs;
-   precondition_function precond_func;  
-   post_process_function* post_proc_funcs;
+   struct single_code_block* precondition;
+   struct group_code_blocks* postprocess_funcs;
 };
 
 

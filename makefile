@@ -1,6 +1,7 @@
-VPATH = src/  src/utility  src/drivers  test/ 
+VPATH = src/  src/utility src/interpreter src/drivers  test/ 
 
-CPPFLAGS = -I include/ -I include/utility -I include/drivers --std=c99  -DDEBUG
+CPPFLAGS = -I include/ -I include/utility -I include/drivers \
+		   -I include/interpreter --std=c99  -DDEBUG
 
 TEST_DEVICE_OPEN_OBJ  = test_device_open.o driver.o driver_register.o \
 					   driver_bind.o driver_loaders.o dev_t.o hashstr.o \
@@ -29,6 +30,8 @@ TEST_DEVICE_OPEN_OBJ  = test_device_open.o driver.o driver_register.o \
                        fill_plain_struct.o fill_plain_array.o\
                        fill_reg_array.o fill_command_sequence.o\
                        fill_bytes_array_assembly_scheme.o\
+                       lex.o parser.o executor.o dependency.o relocation.o\
+                       interpreter.o collect_code_block.o type_converter.o\
                   
 
 test_device_open: $(TEST_DEVICE_OPEN_OBJ)

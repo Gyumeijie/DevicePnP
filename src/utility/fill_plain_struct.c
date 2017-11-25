@@ -64,7 +64,7 @@ static int do_fill_plain_struct
        do_fill(st[i].index, data);
        
        //获取下一个para项
-       para = skip_text_node(para, "name");
+       para = skip_text_node(mxmlGetNextSibling(para), "name");
    }
 
     return SUCCESS;

@@ -4,14 +4,14 @@
 
 int flywheel_set_speed_template0(void* para_struct, void* para)
 {
-    struct command_sequence* set_speed_template0 = para_struct;
-    fill_cmd_seq_dynamically(set_speed_template0, para);
+    fill_cmd_seq_dynamically(para, para_struct);
 
-    int bytes_size =  set_speed_template0->bytes_size;
+    struct command_sequence* cmd_seq = para_struct;
+    int bytes_size = cmd_seq->bytes_size;
     int i;
     for (i=0; i<bytes_size; i++){
-       printf("0x%02X  ", set_speed_template0->bytes_value[i]);
-       printf("%s \n", set_speed_template0->cmd_seq_desc[i].occupied_by);
+       printf("0x%02X  ", cmd_seq->bytes_value[i]);
+       printf("%s \n", cmd_seq->cmd_seq_desc[i].occupied_by);
     }
 }
 

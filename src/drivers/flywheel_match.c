@@ -2,59 +2,77 @@
 #include "flywheel.h"
 #include "fill_command_sequence.h"
 #include "fill_bytes_array_assembly_scheme.h"
+#include "collect_code_block.h"
 //#include "config_info_collect.h"
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
-
-
+ 
 //将具体的匹配方法分割开来
 static int global_match(void){ return MATCH; }
-static int open_template0_match(void) { return MATCH; }
+static int open_match_template0(void) { return MATCH; }
 
 
-//分离的方法有两种一种是:按模板号分(有一整套方案，选择的可能就不太灵活)或者是按接口分
-//            另外一种是:按函数名分(粒度更小，可能更灵活)
-static int set_speed_template0_match(void) 
+static int set_speed_match_template0(void)
 {
-    int exec_status;
+   static struct command_sequence* set_speed_data_template0;
 
-    //分配open_template0结构体
-    set_speed_template0 = malloc(sizeof(struct command_sequence));
+   int exec_status;
 
-    //获取信息
-    exec_status = fill_command_sequence("flywheel_set_speed", 
-                                        "flywheel_set_speed_template0",
-                                         set_speed_template0);
-    //返回不匹配或者匹配
-    return check_match(exec_status, FLYWHEEL_SET_SPEED_INDEX, 0, 
-                                    (void*)set_speed_template0);
+   set_speed_data_template0 = malloc(sizeof(struct command_sequence));
+
+   exec_status = fill_command_sequence("flywheel_set_speed", 
+                                       "flywheel_set_speed_template0",
+                                        set_speed_data_template0);
+ 
+   collect_code_block("flywheel_set_speed",
+                      "compute_function",
+                       GROUP,
+                       set_speed_data_template0->compute_funcs); 
+  
+
+   // TODO 后面有时间的话将check_match重构一下
+   return check_match(exec_status,
+                      FLYWHEEL_SET_SPEED_INDEX,
+                      0, //template_id 
+                      (void*)set_speed_data_template0);
 }
 
 
-static int receive_template0_match(void)
+static int receive_match_template0(void)
 {
+    struct bytes_array_assembly_scheme* receive_data_template0;
     int exec_status;
 
-    //分配open_template0结构体
-    receive_template0 = malloc(sizeof(struct bytes_array_assembly_scheme));
+    receive_data_template0 = malloc(sizeof(struct bytes_array_assembly_scheme));
 
-    //获取信息
     exec_status = fill_bytes_array_assembly_scheme("flywheel_receive", 
                                                    "flywheel_receive_template0",
-                                                    receive_template0);
+                                                    receive_data_template0);
+    
+    collect_code_block("flywheel_receive",
+                       "postprocess_function",
+                        GROUP,
+                        receive_data_template0->postprocess_funcs); 
+
+    collect_code_block("flywheel_receive",
+                       "precondition",
+                        SINGLE,
+                        receive_data_template0->precondition); 
+
     //返回不匹配或者匹配
     return check_match(exec_status, FLYWHEEL_RECEIVE_INDEX, 0, 
-                                    (void*)receive_template0);
+                                    (void*)receive_data_template0);
 }
+
 
 //模板匹配函数表
 //作为一个整体存在
 static struct template_match match_funcs_table[FLYWHEEL_TEMPLATE_NUM] = {
     {"global", global_match},
-    {"flywheel_open_template0", open_template0_match},
-    {"flywheel_set_speed_template0", set_speed_template0_match},
-    {"flywheel_receive_template0", receive_template0_match},
+    {"flywheel_open_template0", open_match_template0},
+    {"flywheel_set_speed_template0", set_speed_match_template0},
+    {"flywheel_receive_template0", receive_match_template0},
 
     //
     //下一个模板号的匹配函数写在下面

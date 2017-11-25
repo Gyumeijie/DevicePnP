@@ -21,6 +21,7 @@ static int fill_parameter_package
     struct parameter* paras = para_pkgp->paras;
     int put_tracer = para_pkgp->put_tracer;
     paras[put_tracer].para_type = type; 
+    paras[put_tracer].is_pointer = is_stored_as_address; 
 
     //如果存入的是变量的地址的话，那么就以int类型存储该地址的值
     char* src_type = is_stored_as_address ? "int" : type;
@@ -41,7 +42,7 @@ int put_value
     char* type
 )
 {   
-    //变量的值
+    //变量的值(等价于传递值，接受这个参数的函数只能读取这个值)
     return fill_parameter_package(para_pkgp,
                                   value,
                                   type,
@@ -58,7 +59,7 @@ int put_literal
    char* type
 )
 {
-    //字面量
+    //字面量(等价于传递值)
     void* literal_keeper = convert_type(value, type);
     return fill_parameter_package(para_pkgp,
                                   literal_keeper, 
@@ -76,7 +77,7 @@ int put_address
    char* type
 )
 {
-    //变量地址（指针）
+    //变量地址（等价于传递指针, 接受这个参数的函数可以通过指针修改变量的值）
     int var_addr_keeper = (int)var_addr;
     return fill_parameter_package(para_pkgp,
                                   &var_addr_keeper, type, 
@@ -145,11 +146,11 @@ Boolean is_all_parameter_set(struct parameter_package* para_pkgp)
     int put_tracer = para_pkgp->put_tracer;
     int num_para = para_pkgp->num_para;
 
-    //不使用位置参数
+    // 不使用位置参数
     if (para_pkgp->put_strategy == PUT_WITHOUT_POS){
         return put_tracer == num_para;
     }else{
-    //使用位置存放参数, put_tracer的每一位代表着一个参数
+    // 使用位置存放参数, put_tracer的每一位代表着一个参数
         return (put_tracer & num_para) == num_para;
     }
 }
@@ -162,7 +163,7 @@ static void update_put_tracer
    int put_pos
 )
 {
-    //放置策略不同跟踪put的方法也不一样
+    // 放置策略不同跟踪put的方法也不一样
     if (put_strategy == PUT_WITHOUT_POS){
          para_pkgp->put_tracer++;
     }else{
@@ -180,7 +181,7 @@ static Boolean can_not_put
 {
     if (is_all_parameter_set(para_pkgp)) return True;
 
-    //在使用位置信息放置参数时，如果某个位置已经放置了则不能再放了
+    // 在使用位置信息放置参数时，如果某个位置已经放置了则不能再放了
     if (put_strategy == PUT_WITH_POS){
         int put_tracer = para_pkgp->put_tracer;
         return !IS_BIT_SET(put_pos, put_tracer);
@@ -216,7 +217,7 @@ void store_data
     }else if (is_equal(dest_type, "char")){
        store_chartype_data_from(src_type, dest, src);
     }else{
-       //不执行实际操作，这里忽略
+       // 不执行实际操作，这里忽略
     }
 }
 
@@ -234,7 +235,7 @@ static void store_floattype_data_from
        int len = parse_inttype_for_length(src_type);
        TO_FLOAT(dest) = (len == 32) ? TO_INT(src) : TO_SHORT_INT(src);
     }else{
-       //由char转float不常见，这里先不写以后有需求的话在写
+       // 由char转float不常见，这里先不写以后有需求的话在写
     }
 }
 
@@ -252,7 +253,7 @@ static void store_chartype_data_from
        int len = parse_inttype_for_length(src_type);
        TO_CHAR(dest) = (len == 32) ? TO_INT(src) : TO_SHORT_INT(src);
     }else{
-       //由char转float不常见，这里先不写以后有需求的话在写
+       // 由char转float不常见，这里先不写以后有需求的话在写
     }
 }
 
@@ -318,8 +319,16 @@ void destroy_parameter_package(struct parameter_package* para_pkgp)
 }
 
 
-//这里不释放paras是为了可以重用该堆空间，避免频繁分配/释放堆空间影响效率
+// 这里不释放paras是为了可以重用该堆空间，避免频繁分配/释放堆空间影响效率
 void reset_parameter_package(struct parameter_package* para_pkgp)
 { 
     para_pkgp->put_tracer = para_pkgp->fetch_tracer = 0; 
+}
+
+
+// 因为在fetch_para的时候更新了fetch_tracer，如果想重新使用参数包中的参数
+// 信息的时候需要重新设置fetch_tracer
+void reuse_parameter_package(struct parameter_package* para_pkgp)
+{
+    para_pkgp->fetch_tracer = 0;
 }

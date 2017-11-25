@@ -5,8 +5,8 @@
 
 int flywheel_open_template0(void* para_struct, void* para)
 { 
-    struct command_sequence* open_template0 = para_struct;
-    fill_cmd_seq_dynamically(open_template0, para);
+    // 对于open函数而言（暂时还没实现）计算函数可能还没有
+    fill_cmd_seq_dynamically(para, para_struct);
 }
 
 

@@ -1,211 +1,213 @@
 <?xml version=1.0 encoding=utf-8?>
 <machine architecture=sparc >
-	<device_description>
-		<device_entity type=gyroscope lid=gyroscope1>
-			<description>
-				<model>XM1</model>
-				<dataSize>2</dataSize>
-			</description>
-			<operation>
+<device_description>
+<device_entity type=gyroscope lid=gyroscope1>
+<description>
+<model>XM1</model>
+<dataSize>2</dataSize>
+</description>
+<operation>
 <!-->
-     
 <-->
 <global name="global">
-  <para_list length="1" name="global">
-	 <para name="slave_address" type="char">0xD2</para>
-  </para_list>
+ <para_list length="1" name="global">
+ <para name="slave_address" type="char">0xD2</para>
+ </para_list>
 </global>
-
 <op_list length="4">
-  <op name="gyroscope_open" template_id="0">
-    <para_list length="5" name="open_template0">
-      <para address="0x20">0x00</para>
-      <para address="0x21">0x00</para>
-      <para address="0x22">0x08</para>
-      <para address="0x23">0x03</para>
-      <para address="0x24">0x00</para>				  
-    </para_list>
-  </op>
-
-  <op name="gyroscope_getx" template_id="0">
-    <para_list length="2" name="getx_template0">
-      <para name="reg_address" type="char">0x28</para> 
-      <para name="size" type="int">2</para>
-    </para_list>				    
-  </op>
-
-  <op name="gyroscope_gety" template_id="0">
-    <para_list length="2" name="gety_template0">
-      <para name="reg_address" type="char">0x2c</para> 
-      <para name="size" type="int">2</para>
-    </para_list>
-  </op>
-
-  <op name="gyroscope_getz" template_id="0">
-    <para_list length="2" name="getz_template0">
-      <para name="reg_address" type="char">0x2f</para> 
-      <para name="size" type="int">2</para>
-    </para_list>
-  </op>
+ <op name="gyroscope_open" template_id="0">
+ <para_list length="5" name="open_template0">
+ <para address="0x20">0x00</para>
+ <para address="0x21">0x00</para>
+ <para address="0x22">0x08</para>
+ <para address="0x23">0x03</para>
+ <para address="0x24">0x00</para> 
+ </para_list>
+ </op>
+ <op name="gyroscope_getx" template_id="0">
+ <para_list length="2" name="getx_template0">
+ <para name="reg_address" type="char">0x28</para> 
+ <para name="size" type="int">2</para>
+ </para_list> 
+ </op>
+ <op name="gyroscope_gety" template_id="0">
+ <para_list length="2" name="gety_template0">
+ <para name="reg_address" type="char">0x2c</para> 
+ <para name="size" type="int">2</para>
+ </para_list>
+ </op>
+ <op name="gyroscope_getz" template_id="0">
+ <para_list length="2" name="getz_template0">
+ <para name="reg_address" type="char">0x2f</para> 
+ <para name="size" type="int">2</para>
+ </para_list>
+ </op>
 </op_list>
-			</operation>
-			<dependence>i2c:001</dependence>
-		</device_entity>
-		<device_entity type=magnetorquer lid=magnetorquer1>
-			<description>
-				<model>XM</model>
-				<dataSize>4</dataSize>
-				<voltage>3.0v</voltage>
-			</description>
-            <operation>
+</operation>
+<dependence>i2c:001</dependence>
+</device_entity>
+<device_entity type=magnetorquer lid=magnetorquer1>
+<description>
+<model>XM</model>
+<dataSize>4</dataSize>
+<voltage>3.0v</voltage>
+</description>
+ <operation>
 <!-->
-
 <-->
 <op_list length="4">
-  <op name="magnetorquer_setx" template_id="0"> 
-    <para_list length="1" name="setx_template0">
-      <para type="int">4</para>
-    </para_list>
-  </op>
-
-  <op name="magnetorquer_sety" template_id="0"> 
-    <para_list length="1" name="sety_template0">
-      <para type="int">6</para>
-    </para_list>
-  </op>
-
-  <op name="magnetorquer_setz" template_id="0"> 
-    <para_list length="1" name="setz_template0">
-      <para type="int">9</para>
-    </para_list>
-  </op>
-
-  <op name="magnetorquer_setxyz" template_id="0"> 
-    <para_list length="3" name="setxyz_template0">
-      <para type="int">4</para>
-      <para type="int">6</para>
-      <para type="int">9</para>
-    </para_list>
-  </op>
+ <op name="magnetorquer_setx" template_id="0"> 
+ <para_list length="1" name="setx_template0">
+ <para type="int">4</para>
+ </para_list>
+ </op>
+ <op name="magnetorquer_sety" template_id="0"> 
+ <para_list length="1" name="sety_template0">
+ <para type="int">6</para>
+ </para_list>
+ </op>
+ <op name="magnetorquer_setz" template_id="0"> 
+ <para_list length="1" name="setz_template0">
+ <para type="int">9</para>
+ </para_list>
+ </op>
+ <op name="magnetorquer_setxyz" template_id="0"> 
+ <para_list length="3" name="setxyz_template0">
+ <para type="int">4</para>
+ <para type="int">6</para>
+ <para type="int">9</para>
+ </para_list>
+ </op>
 </op_list>
-            </operation>
-			<dependence>da:002</dependence>
-		</device_entity>
-		<device_entity type=flywheel lid=flywheel1>
-			<description>
-				<model>XM</model>
-				<dataSize>4</dataSize>
-				<voltage>2.0v</voltage>
-			</description>
-            <operation>
+ </operation>
+<dependence>da:002</dependence>
+</device_entity>
+<device_entity type=flywheel lid=flywheel1>
+<description>
+<model>XM</model>
+<dataSize>4</dataSize>
+<voltage>2.0v</voltage>
+</description>
+ <operation>
 <!-->
-
 <-->
 <op_list length="2">
-  <op name="flywheel_set_speed" template_id="0">
-    <para_list length="6" name="flywheel_set_speed_template0">
-      <para occupied_by="constant">0xD3</para> 
-      <para occupied_by="constant">2</para>
-      <para occupied_by="computed" size="4" compute_id="0"></para>
-      <para occupied_by="constant">0x5B</para>
-      <para occupied_by="checksum"></para>
-      <para occupied_by="computed" size="3" compute_id="3"></para>
-    </para_list>
-  </op>
-
-  <op name="flywheel_receive" template_id="0">
-     <para_list length="6" name="flywheel_receive_template0">
-       <para start="0" num_byte="4"></para> 
-       <para start="4" num_byte="4"></para> 
-       <para start="8" num_byte="3"></para> 
-       <para start="11" num_byte="3"></para> 
-       <para start="14" num_byte="1"></para> 
-       <para start="15" num_byte="1"></para> 
-     </para_list>
-  </op>
+ <op name="flywheel_set_speed" template_id="0">
+ <para_list length="6" name="flywheel_set_speed_template0">
+ <para occupied_by="constant">0xD3</para> 
+ <para occupied_by="constant">2</para>
+ <para occupied_by="computed" size="4" compute_id="-1"></para>
+ <para occupied_by="constant">0x5B</para>
+ <para occupied_by="checksum"></para>
+ <para occupied_by="computed" size="3" compute_id="0"></para>
+ </para_list>
+ <compute_functions length="1">
+ <compute_function id="0">
+use{;}&#x000A;action{&#x000A;result=*(int*)para;&#x000A;result=result*2+1;&#x000A;}&#x000A;
+ </compute_function>
+ </compute_functions>
+ </op>
+ <op name="flywheel_receive" template_id="0">
+ <para_list length="6" name="flywheel_receive_template0">
+ <para start="0" num_byte="4" postprocess_id="-1"></para> 
+ <para start="4" num_byte="4" postprocess_id="-1"></para> 
+ <para start="8" num_byte="3" postprocess_id="0"></para> 
+ <para start="11" num_byte="3" postprocess_id="0"></para> 
+ <para start="14" num_byte="1" postprocess_id="-1"></para> 
+ <para start="15" num_byte="1" postprocess_id="-1"></para> 
+ </para_list>
+ <precondition>
+use{;}&#x000A;action{&#x000A;if(bytes_arr[0]==0x00){&#x000A;result=1;&#x000A;}else{&#x000A;result=0;&#x000A;}&#x000A;;}&#x000A;
+ </precondition>
+ <postprocess_functions length="1">
+ <postprocess_function id="0">
+use{float&#x0020;tmp;}&#x000A;action{&#x000A;tmp=asm_val;&#x000A;tmp=tmp*0.05;&#x000A;*(float*)var_addr=tmp;&#x000A;}&#x000A;
+ </postprocess_function>
+ </postprocess_functions> 
+ </op>
 </op_list>
-            </operation>
-			<dependence>i2c:002</dependence>
-		</device_entity>
-	</device_description>
-	<IO_description>
-		<bus>
-            <io_i2c_entity type=i2c lid=001>
-					<description/>
-			</io_i2c_entity>
-            <io_i2c_entity type=i2c lid=002>
-					<description/>
-			</io_i2c_entity>
-			<io_1553b_entity type=1553b lid=001>
-				<description/>
-			</io_1553b_entity>
-			<io_uart_entity type=uart lid=007>
-				<description/>
-			</io_uart_entity>
-		</bus>
-		<device_io>
-			<io_da_entity type=ad lid=002>
-				<description/>
-			</io_da_entity>
-		</device_io>
-		<RT>
-			<io_RT_entity type=RT lid=02>
-				<description/>
-				<tranData_description>
-					<send_priority>
-						<device lid=001>11</device>
-					</send_priority>
-					<send_blockSize>
-						<device lid=001>100</device>
-					</send_blockSize>
-					<receive_priority>
-						<device lid=001>22</device>
-					</receive_priority>
-					<receive_blockSize>
-						<device lid=001>100</device>
-					</receive_blockSize>
-				</tranData_description>
-			</io_RT_entity>
-			<io_RT_entity type=RT lid=04>
-				<description/>
-				<tranData_description>
-					<send_priority>
-						<device lid=002>11</device>
-					</send_priority>
-					<send_blockSize>
-						<device lid=002>100</device>
-					</send_blockSize>
-					<receive_priority>
-						<device lid=002>22</device>
-					</receive_priority>
-					<receive_blockSize>
-						<device lid=002>100</device>
-					</receive_blockSize>
-				</tranData_description>
-			</io_RT_entity>
-		</RT>
-	</IO_description>
-	<config_description>
-		<io_i2c_config lid=001>
-			<parent>RT:02</parent>
-        </io_i2c_config>
-		<io_i2c_config lid=002>
-			<parent>RT:02</parent>
-		</io_i2c_config>
-		<io_RT_config lid=02>
-			<parent>1553b:001</parent>
-		</io_RT_config>
-		<io_1553b_config lid=001>
-			<parent>ROOT</parent>
-		</io_1553b_config>
-		<io_uart_config lid=007>
-			<parent>RT:04</parent>
-		</io_uart_config>
-		<io_RT_config lid=04>
-			<parent>1553b:001</parent>
-		</io_RT_config>
-		<io_da_config lid=002>
-			<parent>ROOT</parent>
-		</io_da_config>
-	</config_description>
+ </operation>
+<dependence>i2c:002</dependence>
+</device_entity>
+</device_description>
+<IO_description>
+<bus>
+ <io_i2c_entity type=i2c lid=001>
+<description/>
+</io_i2c_entity>
+ <io_i2c_entity type=i2c lid=002>
+<description/>
+</io_i2c_entity>
+<io_1553b_entity type=1553b lid=001>
+<description/>
+</io_1553b_entity>
+<io_uart_entity type=uart lid=007>
+<description/>
+</io_uart_entity>
+</bus>
+<device_io>
+<io_da_entity type=ad lid=002>
+<description/>
+</io_da_entity>
+</device_io>
+<RT>
+<io_RT_entity type=RT lid=02>
+<description/>
+<tranData_description>
+<send_priority>
+<device lid=001>11</device>
+</send_priority>
+<send_blockSize>
+<device lid=001>100</device>
+</send_blockSize>
+<receive_priority>
+<device lid=001>22</device>
+</receive_priority>
+<receive_blockSize>
+<device lid=001>100</device>
+</receive_blockSize>
+</tranData_description>
+</io_RT_entity>
+<io_RT_entity type=RT lid=04>
+<description/>
+<tranData_description>
+<send_priority>
+<device lid=002>11</device>
+</send_priority>
+<send_blockSize>
+<device lid=002>100</device>
+</send_blockSize>
+<receive_priority>
+<device lid=002>22</device>
+</receive_priority>
+<receive_blockSize>
+<device lid=002>100</device>
+</receive_blockSize>
+</tranData_description>
+</io_RT_entity>
+</RT>
+</IO_description>
+<config_description>
+<io_i2c_config lid=001>
+<parent>RT:02</parent>
+ </io_i2c_config>
+<io_i2c_config lid=002>
+<parent>RT:02</parent>
+</io_i2c_config>
+<io_RT_config lid=02>
+<parent>1553b:001</parent>
+</io_RT_config>
+<io_1553b_config lid=001>
+<parent>ROOT</parent>
+</io_1553b_config>
+<io_uart_config lid=007>
+<parent>RT:04</parent>
+</io_uart_config>
+<io_RT_config lid=04>
+<parent>1553b:001</parent>
+</io_RT_config>
+<io_da_config lid=002>
+<parent>ROOT</parent>
+</io_da_config>
+</config_description>
 </machine>

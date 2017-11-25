@@ -1,4 +1,3 @@
-
 #ifndef FLYWHEEL_MATCH_H
 #define FLYWHEEL_MATCH_H
 
@@ -10,20 +9,17 @@
 //模板参数结构体表
 static struct template_data* template_data_table;
 
-static struct command_sequence* set_speed_template0;
-
-static struct bytes_array_assembly_scheme* receive_template0;
-
 static int global_match(void);
 
+
 //open相关的模板匹配函数
-static int open_template0_match(void);
+static int open_match_template0(void);
 
 //write相关的模板匹配函数
-static int set_speed_template0_match(void);
+static int set_speed_match_template0(void);
 
-//write相关的模板匹配函数
-static int receive_template0_match(void);
+//read相关的模板匹配函数
+static int receive_match_template0(void);
 
 extern int flywheel_match(void);
 

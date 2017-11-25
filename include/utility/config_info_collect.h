@@ -73,6 +73,24 @@ extern void store_data_in_array
 );
  
 
+extern void* find_device_operation(const char* op_name);
+
+extern const char* get_element_data
+(
+   void* elem,
+   const char* prop_name 
+);
+
+
+extern void* find_element_in_operation_context
+(
+   void* op_context,
+   const char* elem_name
+);
+
+extern void* get_first_child(void* parent);
+
+extern void* get_next_sibling(void* sibling);
 
 //全局变量
 //TODO 尽可能去减少全局变量的使用
