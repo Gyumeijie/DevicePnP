@@ -75,8 +75,24 @@ void* create_RT_socket_server(void* RT_port){
                 else{
                     printf("port_pos大小出错\n");
                 }
-                printf("\n----------port为%d的RT捕获到数据：%s发送给child_port:%d端口------------\n",port,send_buffer,child_port);
-                create_RT_socket_client(send_buffer,child_port);
+                //printf("\n----------port为%d的RT捕获到数据：%s发送给child_port:%d端口------------\n",port,send_buffer,child_port);
+                double d;
+                if(child_port==8003){
+                    double d1=send_buffer[0];
+                    double d2=send_buffer[1];
+                    double d3=send_buffer[2];
+                    d=d1+pow(0.1,d3)*d2;
+                }
+                else {
+                    d=send_buffer[0];
+                }
+                printf("位置：RT；类型：->接收；数据：%lf；大小：%d；端口：%d    ",d,size,child_port);
+                add_string(RECEIVE,d,child_port);
+                void* p_time=get_time_node();
+                get_current_time(p_time);
+                print_time(p_time);
+                free_time_node(&p_time);
+                //create_RT_socket_client(send_buffer,child_port);
                 memset(send_buffer,0,4096);
             }
             if(pos!=n){
@@ -120,13 +136,10 @@ void create_RT_socket_client(char* buffer,UINT port){
     //printf("---%d---\n",recv_len);
     //printf("recv_len:%d----------------%s\n",recv_len,recv_buffer);
     if(recv_len!=0){
-        //printf("有回来数据,port:%d\n",port);
-        write_write_buffer(port,recv_buffer,recv_len,&size);
-        //printf("sz:%d\n",size);
-        //printf("写入RT buffer%d数据\n",size);
-        if(size!=recv_len){
-            printf("ERR:写入RT buffer过程丢失数据\n");
-        }
+        //write_write_buffer(port,recv_buffer,recv_len,&size);
+        //if(size!=recv_len){
+        //    printf("ERR:写入RT buffer过程丢失数据\n");
+        //}
     }
     close(sockfd);  
     return;
@@ -141,7 +154,7 @@ void* create_RT_ret_socket_client(void* RT_port){//以原port+1发
     UINT ret_size;
     struct sockaddr_in    servaddr;  
     while(1){
-    usleep(1000000);
+    usleep(30000);
     if( (sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){  
     printf("create socket error: %s(errno: %d)\n", strerror(errno),errno);  
     exit(0);  
@@ -160,6 +173,10 @@ void* create_RT_ret_socket_client(void* RT_port){//以原port+1发
     //printf("ret_size:%d\n",ret_size);
     if(ret_size!=0){
         //printf("ret_size:%d 打包发回的数据为:%s\n",ret_size,ret_buff);
+        //int s=0;
+        //for(;s<ret_size;s++){
+        //    printf(" %x ",ret_buff[s]);
+        //}
         if(send(sockfd,ret_buff, ret_size,0) == -1)  
             perror("send error");  
             close(sockfd);  
@@ -189,4 +206,145 @@ void set_RT_port(void* p_port_con,UINT port){
 void* get_one_port_con(){
     port_con* p=(port_con*)malloc(sizeof(port_con));
     return (void*)p;
+}
+void* generate_data_1(void* argc){
+    unsigned char recv_buffer[5];
+    double d=20.005;
+    int d1=20;
+    int d2=5;
+    int d3=3;
+    recv_buffer[0]=d1;
+    recv_buffer[1]=d2;
+    recv_buffer[2]=d3;
+    recv_buffer[3]='\0';
+    UINT size;
+    UINT time;
+    UINT t=TIMES;
+    while(t--){
+        time=m_random();
+        usleep(2000*time);
+        write_write_buffer(8001,recv_buffer,strlen(recv_buffer),&size);
+        if(size!=3)printf("generate data err!\n");
+        void* p_time=get_time_node();
+        get_current_time(p_time);
+        printf("位置：RT，类型：发送；数据：%f；大小：%d；端口：%d    时间戳：%d/%d/%d\n",d,size,8001,((timeStamp*)p_time)->hour,((timeStamp*)p_time)->minute,((timeStamp*)p_time)->second);
+        add_string(SEND,d,8001);
+        free_time_node(&p_time);
+    }
+    set_is_end();
+}
+void* generate_data_2(void* argc){
+    unsigned char recv_buffer[5];
+    double d=30.01;
+    int d1=30;
+    int d2=1;
+    int d3=2;
+    recv_buffer[0]=d1;
+    recv_buffer[1]=d2;
+    recv_buffer[2]=d3;
+    recv_buffer[3]='\0';
+    UINT size;
+    UINT time;
+    UINT t=TIMES;
+    while(t--){
+        time=m_random();
+        usleep(2000*time);
+        write_write_buffer(8002,recv_buffer,strlen(recv_buffer),&size);
+        if(size!=3)printf("generate data err!\n");
+        void* p_time=get_time_node();
+        get_current_time(p_time);
+        printf("位置：RT，类型：发送；数据：%f；大小：%d；端口：%d    时间戳：%d/%d/%d\n",d,size,8002,((timeStamp*)p_time)->hour,((timeStamp*)p_time)->minute,((timeStamp*)p_time)->second);
+        add_string(SEND,d,8002);
+        free_time_node(&p_time);
+    }
+    set_is_end();
+}
+void* generate_data_4(void* argc){
+    unsigned char recv_buffer[5];
+    recv_buffer[0]=4;
+    recv_buffer[1]='\0';
+    UINT size;
+    UINT time;
+    UINT t=TIMES;
+    while(t--){
+        time=m_random();
+        usleep(2000*time);
+        write_write_buffer(8004,recv_buffer,strlen(recv_buffer),&size);
+        if(size!=1)printf("generate data err!\n");
+        void* p_time=get_time_node();
+        get_current_time(p_time);
+        printf("位置：RT，类型：发送；数据：%d；大小：%d；端口：%d    时间戳：%d/%d/%d\n",recv_buffer[0],size,8004,((timeStamp*)p_time)->hour,((timeStamp*)p_time)->minute,((timeStamp*)p_time)->second);
+        add_string(SEND,recv_buffer[0],8004);
+        free_time_node(&p_time);
+    }
+    set_is_end();
+}
+void* generate_data_5(void* argc){
+    unsigned char recv_buffer[5];
+    recv_buffer[0]=5;
+    recv_buffer[1]='\0';
+    UINT size;
+    UINT time;
+    UINT t=TIMES;
+    while(t--){
+        time=m_random();
+        usleep(2000*time);
+        write_write_buffer(8005,recv_buffer,strlen(recv_buffer),&size);
+        if(size!=1)printf("generate data err!\n");
+        void* p_time=get_time_node();
+        get_current_time(p_time);
+        printf("位置：RT，类型：发送；数据：%d；大小：%d；端口：%d    时间戳：%d/%d/%d\n",recv_buffer[0],size,8005,((timeStamp*)p_time)->hour,((timeStamp*)p_time)->minute,((timeStamp*)p_time)->second);
+        add_string(SEND,recv_buffer[0],8005);
+        free_time_node(&p_time);
+    }
+    set_is_end();
+}
+void* generate_data_6(void* argc){
+    unsigned char recv_buffer[5];
+    recv_buffer[0]=6;
+    recv_buffer[1]='\0';
+    UINT size;
+    UINT time;
+    UINT t=TIMES;
+    while(t--){
+        time=m_random();
+        usleep(2000*time);
+        write_write_buffer(8006,recv_buffer,strlen(recv_buffer),&size);
+        if(size!=1)printf("generate data err!\n");
+        void* p_time=get_time_node();
+        get_current_time(p_time);
+        printf("位置：RT，类型：发送；数据：%d；大小：%d；端口：%d    时间戳：%d/%d/%d\n",recv_buffer[0],size,8006,((timeStamp*)p_time)->hour,((timeStamp*)p_time)->minute,((timeStamp*)p_time)->second);
+        add_string(SEND,recv_buffer[0],8006);
+        free_time_node(&p_time);
+    }
+    set_is_end();
+}
+void* generate_data_7(void* argc){
+    unsigned char recv_buffer[5];
+    recv_buffer[0]=7;
+    recv_buffer[1]='\0';
+    UINT size;
+    UINT time;
+    UINT t=TIMES;
+    while(t--){
+        time=m_random();
+        usleep(2000*time);
+        write_write_buffer(8007,recv_buffer,strlen(recv_buffer),&size);
+        if(size!=1)printf("generate data err!\n");
+        void* p_time=get_time_node();
+        get_current_time(p_time);
+        printf("位置：RT，类型：发送；数据：%d；大小：%d；端口：%d    时间戳：%d/%d/%d\n",recv_buffer[0],size,8007,((timeStamp*)p_time)->hour,((timeStamp*)p_time)->minute,((timeStamp*)p_time)->second);
+        add_string(SEND,recv_buffer[0],8007);
+        free_time_node(&p_time);
+    }
+    set_is_end();
+}
+void generate_data(void){
+    pthread_t tid;
+    pthread_create(&tid,NULL,generate_data_1,NULL);
+    pthread_create(&tid,NULL,generate_data_2,NULL);
+    pthread_create(&tid,NULL,generate_data_4,NULL);
+    pthread_create(&tid,NULL,generate_data_5,NULL);
+    pthread_create(&tid,NULL,generate_data_6,NULL);
+    pthread_create(&tid,NULL,generate_data_7,NULL);
 }

@@ -12,19 +12,23 @@ void ctrl_app_write_data(UINT traffic_repos_id,char* dev_lid,unsigned char* buff
     }
     *size=size_tmp;
     //is_load
-    set_traffic_light(traffic_repos_id,dev_lid,NOT_SET,LOADED,NOT_SET);
+    //set_traffic_light(traffic_repos_id,dev_lid,NOT_SET,LOADED,NOT_SET);
 }
 void ctrl_app_read_data(UINT traffic_repos_id,char* dev_lid,unsigned char* buffer,UINT read_size,UINT* size,void* time){
     app_read_data_func(dev_lid,buffer,read_size,size,time);
     if(*size==0)return;
-    void* p_route=get_route_node();
-    get_dev_route_map(dev_lid,&p_route);
-    if(is_write_region_empty(get_route_bus_type(p_route),get_route_bus_lid(p_route),get_route_RT_lid(p_route),dev_lid)){
-        set_traffic_light(traffic_repos_id,dev_lid,NOT_SET,NOT_SET,NOT_BACK);
-    }
-    free_route_node(&p_route);
+    //void* p_route=get_route_node();
+    //get_dev_route_map(dev_lid,&p_route);
+    //if(is_write_region_empty(get_route_bus_type(p_route),get_route_bus_lid(p_route),get_route_RT_lid(p_route),dev_lid)){
+    //    set_traffic_light(traffic_repos_id,dev_lid,NOT_SET,NOT_SET,NOT_BACK);
+    //}
+    //free_route_node(&p_route);
 }
 void ctrl_dev_write_data(UINT traffic_repos_id,char* dev_lid,unsigned char* buffer,UINT write_size,UINT* size){
+    if(write_size==0||strlen(buffer)==0){
+        *size=0;
+        return;
+    }
     //printf("---dev_lid:%s\n",dev_lid);
     dev_write_data_func(dev_lid,buffer,write_size,size);
     if(*size==0)return;
@@ -35,7 +39,7 @@ void ctrl_dev_write_data(UINT traffic_repos_id,char* dev_lid,unsigned char* buff
     }
     *size=size_tmp;
     //is_load
-    set_traffic_light(traffic_repos_id,dev_lid,NOT_SET,NOT_SET,BACK);
+    //set_traffic_light(traffic_repos_id,dev_lid,NOT_SET,NOT_SET,BACK);
 }
 void ctrl_dev_read_data(UINT traffic_repos_id,char* dev_lid,unsigned char* buffer,UINT read_size,UINT* size,void* time){
     UINT light_pos=get_dev_light_pos(traffic_repos_id,dev_lid);
@@ -50,19 +54,19 @@ void ctrl_dev_read_data(UINT traffic_repos_id,char* dev_lid,unsigned char* buffe
             throw_event(0,RT_lid,EVT_1553_RECV_COMMAND_ERR);
             return;
         }
-        if(is_read_region_empty(get_route_bus_type(p_route),get_route_bus_lid(p_route),get_route_RT_lid(p_route),dev_lid)){
-            set_traffic_light(traffic_repos_id,dev_lid,UNCHECKED,NOT_LOADED,NOT_SET);
-        }
-        else set_traffic_light(traffic_repos_id,dev_lid,UNCHECKED,NOT_SET,NOT_SET);
+        //if(is_read_region_empty(get_route_bus_type(p_route),get_route_bus_lid(p_route),get_route_RT_lid(p_route),dev_lid)){
+        //    set_traffic_light(traffic_repos_id,dev_lid,UNCHECKED,NOT_LOADED,NOT_SET);
+        //}
+        //else set_traffic_light(traffic_repos_id,dev_lid,UNCHECKED,NOT_SET,NOT_SET);
         *size=0;
         return;
     }
     dev_read_data_func(dev_lid,buffer,read_size,size,time);
-    if(*size==0){return;}
-    if(is_read_region_empty(get_route_bus_type(p_route),get_route_bus_lid(p_route),get_route_RT_lid(p_route),dev_lid)){
-        set_traffic_light(traffic_repos_id,dev_lid,UNCHECKED,NOT_LOADED,NOT_SET);
-    }
-    else set_traffic_light(traffic_repos_id,dev_lid,UNCHECKED,NOT_SET,NOT_SET);
+    if(*size==0)return;
+    //if(is_read_region_empty(get_route_bus_type(p_route),get_route_bus_lid(p_route),get_route_RT_lid(p_route),dev_lid)){
+    //    set_traffic_light(traffic_repos_id,dev_lid,UNCHECKED,NOT_LOADED,NOT_SET);
+    //}
+    //else set_traffic_light(traffic_repos_id,dev_lid,UNCHECKED,NOT_SET,NOT_SET);
     free_route_node(&p_route);
 }
 //读写都为读写block_size

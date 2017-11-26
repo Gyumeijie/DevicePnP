@@ -8,6 +8,7 @@
 #include "unistd.h"
 #include "handle_event.h"
 #include "route_map.h"
+#include"address_map.h"
 #include<pthread.h>
 static traffic_light_repos* p_traffic_light_repos_array[TRAFFIC_REPOS_ARRAY_MAX_LEN];
 void* get_traffic_repos_node(UINT traffic_repos_id);
@@ -16,7 +17,7 @@ void config_traffic(void);
 void  traffic_repos_scan_func(UINT traffic_repos_id);
 void* traffic_repos_scan_pthread_func(void* argc);
 void create_traffic_repos_scan_unit(void);
-void  set_traffic_light(UINT traffic_repos_id,char* dev_lid,TRAFFIC_STATUS traffic_status,IS_LOADED is_loaded,IS_BACK is_back);
+void  set_traffic_light(UINT traffic_repos_id,UINT light_pos,TRAFFIC_STATUS traffic_status,IS_LOADED is_loaded,IS_BACK is_back);
 
 void set_traffic_repos_disable(UINT traffic_repos_id);
 UINT get_dev_light_pos(UINT traffic_repos_id,char* dev_lid);

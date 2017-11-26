@@ -20,7 +20,6 @@ void* create_traffic_repos(char* bus_type,char* bus_lid){
             (p_traffic_light_list+i)->traffic_status=UNCHECKED;
             (p_traffic_light_list+i)->is_loaded=NOT_LOADED;
             (p_traffic_light_list+i)->is_back=NOT_BACK;
-            (p_traffic_light_list+i)->count=0;
         }
         char* RT_lid;
         p_traffic_light_repository->p_traffic_light_list[pos_tmp]=p_traffic_light_list;

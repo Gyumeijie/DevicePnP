@@ -6,12 +6,17 @@ void get_current_time(void* time_stamp){
     time(&t);
     lt=localtime(&t);
     p_tmp->year=lt->tm_year+1900;
-    p_tmp->month=lt->tm_mon;;
+    p_tmp->month=lt->tm_mon;
     p_tmp->day=lt->tm_mday;
     p_tmp->hour=lt->tm_hour;
     p_tmp->minute=lt->tm_min;
     p_tmp->second=lt->tm_sec;
 
+}
+void print_time(void* time_stamp){
+    if(time_stamp==NULL)return;
+    timeStamp* p_t=(timeStamp*)time_stamp;
+    printf("时间戳：%d/%d/%d\n",p_t->hour,p_t->minute,p_t->second);
 }
 void* get_data_node_array(void){
     UINT size=CACHE_MAX_LEN;

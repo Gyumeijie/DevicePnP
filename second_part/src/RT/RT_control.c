@@ -74,6 +74,10 @@ void init_port_array(UINT RT_physical_addr){
     }
     //printf("%d---%d\n",child_port_array[0],child_port_array[1]);
     free_route_node(&p_route);
+    int i=0;
+    for(;i<len;i++){
+        printf("port:%d ",child_port_array[i]);
+    }
     printf("完成子地址分配...\n");
 }
 
@@ -117,7 +121,7 @@ int get_child_port_pos(UINT child_port){
     return pos;
 }
 UINT get_child_port(int pos){
-    UINT port_tmp;
+    UINT port_tmp=-1;
     if(pos>=len||pos<0)return 0;
     else port_tmp=child_port_array[pos];
     return port_tmp;

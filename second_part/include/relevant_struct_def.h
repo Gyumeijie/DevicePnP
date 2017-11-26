@@ -1,6 +1,7 @@
 #ifndef RELEVANT_STRUCT_DEF_H_
 #define RELEVANT_STRUCT_DEF_H_
 #include <time.h>
+#include<stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "unistd.h"
@@ -32,4 +33,5 @@ void clear_data_node_array(void* p_data_node_array,UINT array_size);
 void* get_time_node(void);
 void free_time_node(void** pp_time_node);
 void delay(UINT m_s);
+void print_time(void* time_stamp);
 #endif

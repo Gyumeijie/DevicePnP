@@ -1,6 +1,7 @@
 #include "package.h"
 ///负责打包解包
 void unpack_package_to_1553(UINT traffic_repos_id,unsigned char* buffer,UINT buf_size,char* bus_type,char* bus_lid,char* RT_lid){
+    //printf("ret_size:%d 打包发回的数据为:%s\n",buf_size,buffer);
     UINT cur_prio=0;
     UINT buffer_pos=0;
     UINT block_size=0;
@@ -16,7 +17,6 @@ void unpack_package_to_1553(UINT traffic_repos_id,unsigned char* buffer,UINT buf
         UINT is_valid=*(buffer+buffer_pos)/DATA_BLOCK_VALID_PREFIX;
         if(is_valid==1){
             block_size=*(buffer+buffer_pos)%DATA_BLOCK_VALID_PREFIX;
-            //printf("block_size:%d\n",block_size);
             //printf("block_size:%d\n",block_size);
             buffer_pos++;
             ctrl_dev_write_data(traffic_repos_id,dev_lid,buffer+buffer_pos,block_size,&size);
@@ -43,8 +43,8 @@ void pack_package_to_1553(UINT traffic_repos_id,UINT light_pos,char* bus_type,ch
     UINT prev_priority=MAX_PRIORITY;
     UINT anchor=0;
     bool is_send_valid=false;
-    unsigned char read_buffer[READ_BUFFER_MAX_SIZE];
-    unsigned char buffer_tmp[READ_BUFFER_MAX_SIZE];
+    unsigned char read_buffer[READ_BUFFER_MAX_SIZE]={0};
+    unsigned char buffer_tmp[READ_BUFFER_MAX_SIZE]={0};
     char* dev_lid=get_priority_deterio_dev_lid(bus_type,bus_lid,RT_lid,RECEIVE_PRIORITY_FLAG,prev_priority,&cur_prio,&anchor);
     prev_priority=cur_prio;
     if(strcmp(dev_lid,"")==0){
@@ -55,6 +55,11 @@ void pack_package_to_1553(UINT traffic_repos_id,UINT light_pos,char* bus_type,ch
         block_size=get_dev_trans_attr(bus_type,bus_lid,RT_lid,dev_lid,RECEIVE_BLOCK_FLAG);
         void* p_time_node=get_time_node();
         ctrl_dev_read_data(traffic_repos_id,dev_lid,read_buffer,block_size,&size,p_time_node);
+        int j=0;
+        //printf("dev_lid:%s size:%d\n",dev_lid,size);
+        //for(;j<size;j++){
+        //    printf("dev_lid:%s--%d ",dev_lid,read_buffer[j]);
+        //}
         //printf("%d -- %s\n",size,read_buffer);
         //比较时间是否超时，若超时抛出异常
         if(size!=0&&block_size!=size){//抛出异常,应用层应该以一个block的大小发送指令/数据
@@ -86,6 +91,10 @@ void pack_package_to_1553(UINT traffic_repos_id,UINT light_pos,char* bus_type,ch
         *buffer_size=buffer_pos;
         buffer_tmp[buffer_pos]='\0';
         strcpy(buffer_1553,buffer_tmp);
+        //int i=0;
+        //for(;i<*buffer_size;i++){
+        //    printf("-%x",buffer_tmp[i]);
+        //}
     }
     else{
         *buffer_size=0;

@@ -7,6 +7,7 @@ void create_bus_socket_client(UINT config_id,UINT RT_config_id,UINT port){
     UINT traffic_repos_id=get_config_node_traffic_repos_id(p_config_node_tmp);
     //printf("bus client port:%d\n",port);
     while(1){
+    if(!get_buffer_is_avail(config_id,RT_config_id))continue;
     if( (sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){  
     printf("create socket error: %s(errno: %d)\n", strerror(errno),errno);  
     exit(0);  
@@ -104,14 +105,16 @@ void* scan_1553_RT_section_pthread_func(void* p_scan_config){
     void* p_config_node_tmp=get_config_node(config_id);
     UINT repos_pos_tmp=get_config_node_traffic_repos_id(p_config_node_tmp);
     UINT light_pos_tmp;
+    //UINT s=1;
     while(true){
         ctrl_pack_package_to_1553(repos_pos_tmp,buffer,&size,&light_pos_tmp);
         if(size!=0){
             //printf("size:%d%x\n",size,*(buffer));
             //printf("sasasasa %d\n",config_id);
             set_buffer_avail(config_id,light_pos_tmp);
+            //printf("%d\n",s++);
         }
-        //usleep(10000);
+        usleep(5000);
     }
 }
 void* bus_socket_pthread_func(void* p_socket_config){

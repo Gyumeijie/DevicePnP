@@ -5,7 +5,7 @@
 			<description>
 				<interface>i2c</interface>	
 				<model>XM1</model>
-				<dataSize>2</dataSize>
+				<dataSize>1</dataSize>
 			</description>
 			<operation>
 				<global name="global">
@@ -33,23 +33,68 @@
 			</operation>
 			<dependence>i2c:003;channel:2</dependence>
 		</device_entity>
-		<device_entity type="XM2" lid="002">
+		<device_entity type="XM" lid="002">
 			<description>
 				<interface>uart</interface>
 				<model>XM</model>
-				<dataSize>4</dataSize>
+				<dataSize>1</dataSize>
 				<voltage>2.0v</voltage>
 			</description>
 			<dependence>uart:007</dependence>
 		</device_entity>
-		<device_entity type="XM2" lid="003">
+		<device_entity type="XM" lid="003">
 			<description>
 				<interface>ad</interface>
 				<model>XM</model>
-				<dataSize>4</dataSize>
+				<dataSize>1</dataSize>
 				<voltage>3.0v</voltage>
 			</description>
 			<dependence>ad:002</dependence>
+		</device_entity>
+		<device_entity type="DY" lid="004">
+			<description>
+				<interface>uart</interface>
+				<model>DY</model>
+				<dataSize>1</dataSize>
+				<voltage>3.0v</voltage>
+			</description>
+			<dependence>uart:007</dependence>
+		</device_entity>
+		<device_entity type="TLY" lid="005">
+			<description>
+				<interface>uart</interface>
+				<model>TLY</model>
+				<dataSize>1</dataSize>
+				<voltage>3.0v</voltage>
+			</description>
+			<dependence>uart:007</dependence>
+		</device_entity>
+		<device_entity type="TLY" lid="006">
+			<description>
+				<interface>uart</interface>
+				<model>TLY</model>
+				<dataSize>1</dataSize>
+				<voltage>3.0v</voltage>
+			</description>
+			<dependence>uart:007</dependence>
+		</device_entity>
+		<device_entity type="TLY" lid="007">
+			<description>
+				<interface>uart</interface>
+				<model>TLY</model>
+				<dataSize>1</dataSize>
+				<voltage>3.0v</voltage>
+			</description>
+			<dependence>uart:007</dependence>
+		</device_entity>
+		<device_entity type="TLY_C" lid="008">
+			<description>
+				<interface>uart</interface>
+				<model>TLY_C_01</model>
+				<dataSize>1</dataSize>
+				<voltage>3.0v</voltage>
+			</description>
+			<dependence>uart:007</dependence>
 		</device_entity>
 	</device_description>
 	<IO_description>
@@ -75,47 +120,71 @@
 			<io_RT_entity type="RT" lid="02">
 				<description>
 					<dev_map_subAddr_list>
-						<device lid="001">1:9000:8000</device>
-						<device lid="003">1:9000:8010</device>
+						<device lid="001">1:9000:8001</device>
+						<device lid="002">1:9000:8002</device>
+						<device lid="003">1:9000:8003</device>
+						<device lid="004">1:9000:8004</device>
+						<device lid="005">1:9000:8005</device>
+						<device lid="006">1:9000:8006</device>
+						<device lid="007">1:9000:8007</device>
+						<device lid="008">1:9000:8008</device>
 					</dev_map_subAddr_list>
 				</description>
 				<tranData_description>
 					<send_priority>
 						<device lid="001">100</device>
-                        <device lid="003">200</device>
+                        <device lid="002">200</device>
+						<device lid="003">300</device>
+						<device lid="004">400</device>
+						<device lid="005">500</device>
+						<device lid="006">600</device>
+						<device lid="007">700</device>
+						<device lid="008">800</device>
 					</send_priority>
 					<send_blockSize>
-						<device lid="001">24</device>
-						<device lid="003">22</device>
+						<device lid="001">3</device>
+						<device lid="002">3</device>
+						<device lid="003">3</device>
+						<device lid="004">1</device>
+						<device lid="005">1</device>
+						<device lid="006">1</device>
+						<device lid="007">1</device>
+						<device lid="008">1</device>
 					</send_blockSize>
 					<receive_priority>
 						<device lid="001">100</device>
-						<device lid="003">200</device>
+						<device lid="002">200</device>
+						<device lid="003">300</device>
+						<device lid="004">400</device>
+						<device lid="005">500</device>
+						<device lid="006">600</device>
+						<device lid="007">700</device>
+						<device lid="008">800</device>
 					</receive_priority>
 					<receive_blockSize>
-						<device lid="001">32</device>
-                        <device lid="003">34</device>
+						<device lid="001">1</device>
+						<device lid="002">1</device>
+						<device lid="003">3</device>
+						<device lid="004">1</device>
+						<device lid="005">1</device>
+						<device lid="006">1</device>
+						<device lid="007">1</device>
+						<device lid="008">1</device>
 					</receive_blockSize>
 				</tranData_description>
 			</io_RT_entity>
 			<io_RT_entity type="RT" lid="04">
 				<description>
-					<dev_map_subAddr_list>
-						<device lid="002">1:9050:8050</device>
-					</dev_map_subAddr_list>
+                    <dev_map_subAddr_list/>
 				</description>
 				<tranData_description>
 					<send_priority>
-						<device lid="002">11</device>
 					</send_priority>
 					<send_blockSize>
-						<device lid="002">32</device>
 					</send_blockSize>
 					<receive_priority>
-						<device lid="002">22</device>
 					</receive_priority>
 					<receive_blockSize>
-						<device lid="002">32</device>
 					</receive_blockSize>
 				</tranData_description>
 			</io_RT_entity>
@@ -132,7 +201,7 @@
 			<parent>ROOT</parent>
 		</io_1553b_config>
 		<io_uart_config lid="007">
-			<parent>RT:04</parent>
+			<parent>RT:02</parent>
 		</io_uart_config>
 		<io_RT_config lid="04">
 			<parent>1553b:001</parent>

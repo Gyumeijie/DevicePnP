@@ -50,7 +50,7 @@ void create_index_list(void){
                UINT t_node_len=t_p_tmp->t_node_len;
                t_p_tmp->t_node_len++;
                t_p_tmp->t_node[k].addr_read_s=t_p_tmp->t_node[k].addr_read_e=t_p_tmp->t_node[k].addr_work_r=(dataNode*)p_s+k*TRANS_SPACE_MAX_SIZE;
-               t_p_tmp->t_node[k].addr_write_s=t_p_tmp->t_node[k].addr_write_e=t_p_tmp->t_node[k].addr_work_w=(dataNode*)p_s+(k*(TRANS_SPACE_MAX_SIZE+1)-1);
+               t_p_tmp->t_node[k].addr_write_s=t_p_tmp->t_node[k].addr_write_e=t_p_tmp->t_node[k].addr_work_w=(dataNode*)p_s+((k+1)*(TRANS_SPACE_MAX_SIZE)-1);
             }
         }
     }
@@ -122,7 +122,11 @@ void dev_write_data(char* bus_type,char* bus_lid,char* RT_lid,char*dev_lid,void*
     while(writeSize--){
         void* next=(void*)(((((dataNode*)e_p-1)-(dataNode*)s_p)%WRITE_REGION_MAX_SIZE)+(dataNode*)s_p);
         if(next==w_p)break;
-        const void* data_p_tmp=(dataNode*)dataBuffer+*size;
+        void* data_p_tmp=(dataNode*)dataBuffer+*size;
+        //if(strcmp(dev_lid,"001")==0){
+        //    printf("%x %x",e_p,data_p_tmp);
+        //    //while(true);
+        //}
         memcpy(e_p,data_p_tmp,sizeof(dataNode));
         e_p=next;
         (*size)++;

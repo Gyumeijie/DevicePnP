@@ -29,7 +29,6 @@ typedef struct traffic_light{
     TRAFFIC_STATUS traffic_status;
     IS_LOADED is_loaded;
     IS_BACK is_back;
-    UINT count;
 }traffic_light;
 
 typedef struct traffic_light_repos{

@@ -36,6 +36,9 @@ void app_read_data_func(char* dev_lid,unsigned char* buffer,UINT read_size,UINT*
     free_data_node_array(data_node_array_tmp);
 }
 void dev_write_data_func(char* dev_lid,unsigned char* buffer,UINT write_size,UINT* size){
+    //if(strcmp(dev_lid,"001")==0){
+    //    printf("len:%d,%s\n",strlen(buffer),buffer);
+    //}
     if(write_size>WRITE_MAX_SIZE){
         void* p_route=get_route_node();
         get_dev_route_map(dev_lid,&p_route);
@@ -49,9 +52,15 @@ void dev_write_data_func(char* dev_lid,unsigned char* buffer,UINT write_size,UIN
     void* data_node_array_tmp=get_data_node_array();
     UINT size_tmp;
     plugin_data_node_array(data_node_array_tmp,buffer,write_size,&size_tmp);
+    //if(strcmp(dev_lid,"001")==0){
+    //    printf("%s %s %s\n",get_route_bus_type(p_route),get_route_bus_lid(p_route),get_route_RT_lid(p_route));
+    //}
+    //if(strcmp(dev_lid,"001")==0){
+    //    printf("%d\n",size_tmp);
+    //}
+    
     dev_write_data(get_route_bus_type(p_route),get_route_bus_lid(p_route),get_route_RT_lid(p_route),dev_lid,data_node_array_tmp,size_tmp,size);
     //set_traffic_light(traffic_repos_id,dev_lid,NULL,NULL,NULL,BACK);
-    //设置is_back
     free_route_node(&p_route);
     free_data_node_array(data_node_array_tmp);
 }

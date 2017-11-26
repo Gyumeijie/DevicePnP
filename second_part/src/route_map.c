@@ -4,6 +4,7 @@ void* get_route_node(){
     return p_route_node;
 }
 void get_RT_route_map(char* RT_lid,void** pp_route){
+    if(strcmp(RT_lid,"")==0)return;
     UINT irdirect_pos=find_irdirect_RT_pos(RT_lid);
     *pp_route=get_route_node();
     strcpy(((route*)(*pp_route))->bus_type,get_irdirect_bus_type(irdirect_pos));
@@ -11,6 +12,7 @@ void get_RT_route_map(char* RT_lid,void** pp_route){
     strcpy(((route*)(*pp_route))->RT_lid,get_irdirect_RT_lid(irdirect_pos));
 }
 void get_dev_route_map(char* dev_lid,void** pp_route){
+    if(strcmp(dev_lid,"")==0)return;
     UINT irdirect_pos=find_irdirect_dev_pos(dev_lid);
     *pp_route=get_route_node();
     strcpy(((route*)(*pp_route))->bus_type,get_irdirect_bus_type(irdirect_pos));
