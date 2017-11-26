@@ -29,7 +29,7 @@ void numtype_to_strtype(int num_type, char* repr)
 }
 
 
-int strtype_to_numtype(char* type, Boolean is_pointer)
+int strtype_to_numtype(const char* type, Boolean is_pointer)
 {
     int base_type;
     if (is_equal(type, "char")){

@@ -9,20 +9,19 @@
 
 int fill_reg_array
 (
-   char* global_or_op_name, 
-   char* para_name,
+   const char* dts_owner_name, 
+   const char* para_list_name, 
    struct reg_array* regap
 )
 {
-   int num_para;
-   mxml_node_t* first_para;
-   if (! get_first_para_and_num_para(global_or_op_name,
-                                     para_name,
-                                     &num_para,
-                                     &first_para)){
-       return UNMATCH;
-   }
+   void* para_list = find_para_list(dts_owner_name, para_list_name);
+   if (para_list == NULL)  return UNMATCH;
 
+   int num_para = get_para_list_length(para_list);
+   if (num_para == -1)  return UNMATCH;
+
+   void* first_para = get_first_para(para_list);
+   
    return do_fill_reg_array(first_para, num_para, &regap);
 }
 
@@ -30,33 +29,33 @@ int fill_reg_array
 
 static int do_fill_reg_array
 (
-   mxml_node_t* para, 
+   const void* first_para, 
    int len, 
    struct reg_array** rega2p
 )
 {
-   struct reg *regp;
-   const char *value, *address;
-
-   //分配存储空间，如果分配失败则返回错误
-   if(!alloc_reg_array(len, rega2p)) return FAILURE;
-   regp = (*rega2p)->regp;
+   // 分配存储空间，如果分配失败则返回错误
+   if(! alloc_reg_array(len, rega2p)) return FAILURE;
+   struct reg* regp = (*rega2p)->regp;
 
    int i;
+   const void* para = first_para;
    for (i=0; i<len; i++){
-       address  = mxmlElementGetAttr(para, "address");
-       if (! check_null(__FILE__, __func__, "address", address)) return FAILURE;
+       const char* address_str = get_element_data(para, "address");
+       if (! check_null(__FILE__, __func__, "address", address_str)){
+           return FAILURE;
+       }
 
-       value = mxmlGetText(para, NULL);
-       if (! check_null(__FILE__, __func__, "value", value)) return FAILURE;
+       const char* value_str = get_element_data(para, "text_value");
+       if (! check_null(__FILE__, __func__, "value", value_str)) return FAILURE;
 
-       regp[i].addr = strtol(address, NULL, 16);
-       regp[i].val = strtol(value, NULL, 16);
+       regp[i].addr = strtol(address_str, NULL, 16);
+       regp[i].val = strtol(value_str, NULL, 16);
 
-       para = skip_text_node(para, "address");
+       para = get_next_sibling(para);
     }
 
-    //其它字段的初始化
+    // 其它字段的初始化
     (*rega2p)->len = len;
 
     return SUCCESS;
@@ -65,9 +64,8 @@ static int do_fill_reg_array
 
 static int alloc_reg_array(int len, struct reg_array** rega2p)
 {
-   struct reg *regp;
 
-   regp = (struct reg*)malloc(sizeof(struct reg)*len);  
+   struct reg* regp = (struct reg*)malloc(sizeof(struct reg) * len);  
    if (! check_null(__FILE__, __func__, "regp", regp)) return FAILURE;
    (*rega2p)->regp = regp;
 

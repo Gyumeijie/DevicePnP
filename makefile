@@ -13,7 +13,7 @@ TEST_DEVICE_OPEN_OBJ  = test_device_open.o driver.o driver_register.o \
 					   magnetorquer.o magnetorquer_driver.o magnetorquer_match.o \
                        analogsunsensor_driver.o adda_operation.o error_report.o \
                        flywheel_driver.o flywheel.o flywheel_match.o \
-					   parameter_package.o command_sequence_fill.o miscellaneous.o\
+					   parameter_package.o command_sequence_generate.o miscellaneous.o\
 					   bytes_array_assembly.o driver_supported_interface.o\
 					   flywheel_receive.o flywheel_set_speed.o flywheel_open.o\
 					   magnetometer_getx.o magnetometer_gety.o magnetometer_getz.o\

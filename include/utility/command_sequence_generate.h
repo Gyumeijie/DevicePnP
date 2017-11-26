@@ -1,5 +1,5 @@
-#ifndef COMMAND_SEQUENCE_FILL_H
-#define COMMAND_SEQUENCE_FILL_H
+#ifndef COMMAND_SEQUENCE_GENERATE_H
+#define COMMAND_SEQUENCE_GENERATE_H
 
 #include "parameter_package.h"
 #include "driver_match.h"

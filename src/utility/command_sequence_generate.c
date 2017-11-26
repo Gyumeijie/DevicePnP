@@ -2,7 +2,7 @@
 #include "config_info_collect.h"
 #include "driver_match.h"
 #include "miscellaneous.h"
-#include "command_sequence_fill.h" 
+#include "command_sequence_generate.h" 
 #include "interpreter.h"
 #include "type_converter.h"
 #include <stdio.h>
@@ -71,7 +71,7 @@ static void process_parameter
 
 static unsigned int cast_to_uint32(struct parameter* para)
 {
-   char* para_type = para->para_type;
+   const char* para_type = para->para_type;
    int value = para->value;
    unsigned int result;
 
@@ -180,5 +180,3 @@ static int do_computation
     printf("result is %d\n", result);
     return result;
 }
-
-

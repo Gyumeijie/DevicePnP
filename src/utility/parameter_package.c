@@ -7,8 +7,8 @@
 static int fill_parameter_package
 (
     struct parameter_package* para_pkgp,
-    void* value,
-    char* type, 
+    const void* value,
+    const char* type, 
     int put_strategy,
     int put_pos, 
     Boolean is_stored_as_address
@@ -23,8 +23,8 @@ static int fill_parameter_package
     paras[put_tracer].para_type = type; 
     paras[put_tracer].is_pointer = is_stored_as_address; 
 
-    //如果存入的是变量的地址的话，那么就以int类型存储该地址的值
-    char* src_type = is_stored_as_address ? "int" : type;
+    // 如果存入的是变量的地址的话，那么就以int类型存储该地址的值
+    const char* src_type = is_stored_as_address ? "int" : type;
     store_data(&paras[put_tracer].value, value, src_type, src_type); 
     
     update_put_tracer(para_pkgp, put_strategy, put_pos);
@@ -33,16 +33,16 @@ static int fill_parameter_package
 }
 
 
-//下面一组put方法放置参数的方法适合集中准备参数的情况，并且放置的顺序需要
-//用户负责
+// 下面一组put方法放置参数的方法适合集中准备参数的情况，并且放置的顺序需要
+// 用户负责
 int put_value
 (
     struct parameter_package* para_pkgp,
-    void* value, 
-    char* type
+    const void* value, 
+    const char* type
 )
 {   
-    //变量的值(等价于传递值，接受这个参数的函数只能读取这个值)
+    // 变量的值(等价于传递值，接受这个参数的函数只能读取这个值)
     return fill_parameter_package(para_pkgp,
                                   value,
                                   type,
@@ -55,12 +55,12 @@ int put_value
 int put_literal
 (
    struct parameter_package* para_pkgp,
-   void* value, 
-   char* type
+   const void* value, 
+   const char* type
 )
 {
-    //字面量(等价于传递值)
-    void* literal_keeper = convert_type(value, type);
+    // 字面量(等价于传递值)
+    void* literal_keeper = string_to_numeric_value(value, type);
     return fill_parameter_package(para_pkgp,
                                   literal_keeper, 
                                   type, 
@@ -73,11 +73,11 @@ int put_literal
 int put_address
 (
    struct parameter_package* para_pkgp,
-   void* var_addr, 
-   char* type
+   const void* var_addr, 
+   const char* type
 )
 {
-    //变量地址（等价于传递指针, 接受这个参数的函数可以通过指针修改变量的值）
+    // 变量地址（等价于传递指针, 接受这个参数的函数可以通过指针修改变量的值）
     int var_addr_keeper = (int)var_addr;
     return fill_parameter_package(para_pkgp,
                                   &var_addr_keeper, type, 
@@ -87,14 +87,14 @@ int put_address
 }
 
 
-//下面一组put方法放置参数的位置可有用户显示指定，同一个参数包的参数放置的顺序
-//更灵活
+// 下面一组put方法放置参数的位置可有用户显示指定，同一个参数包的参数放置的顺序
+// 更灵活
 int put_value_with_pos
 (
    int put_pos, 
    struct parameter_package* para_pkgp, 
-   void* value,
-   char* type
+   const void* value,
+   const char* type
 )
 {
    return fill_parameter_package(para_pkgp, 
@@ -109,11 +109,11 @@ int put_literal_with_pos
 (
    int put_pos, 
    struct parameter_package* para_pkgp,
-   void* value, 
-   char* type
+   const void* value, 
+   const char* type
 )
 {
-    void* literal_keeper = convert_type(value, type);
+    void* literal_keeper = string_to_numeric_value(value, type);
     return fill_parameter_package(para_pkgp,
                                   literal_keeper,
                                   type,
@@ -127,8 +127,8 @@ int put_address_with_pos
 ( 
    int put_pos, 
    struct parameter_package* para_pkgp, 
-   void* var_addr,
-   char* type
+   const void* var_addr,
+   const char* type
 )
 {
     int var_addr_keeper = (int)var_addr;
@@ -202,8 +202,8 @@ struct parameter* fetch_para(struct parameter_package* para_pkgp)
 
 void store_data
 (
-    void* dest, 
-    void* src, 
+    const void* dest, 
+    const void* src, 
     const char* dest_type,
     const char* src_type
 )
@@ -225,8 +225,8 @@ void store_data
 static void store_floattype_data_from
 (
     const char* src_type, 
-    void* dest,
-    void* src
+    const void* dest,
+    const void* src
 )
 {   
     if (is_equal(src_type, "float")){
@@ -243,8 +243,8 @@ static void store_floattype_data_from
 static void store_chartype_data_from
 (
     const char* src_type, 
-    void* dest,
-    void* src
+    const void* dest,
+    const void* src
 )
 {
     if (is_equal(src_type, "char")){
@@ -261,8 +261,8 @@ static void store_chartype_data_from
 static void store_int16type_data_from
 (
     const char* src_type, 
-    void* dest,
-    void* src
+    const void* dest,
+    const void* src
 )
 {
     if (is_inttype(src_type)){
@@ -279,8 +279,8 @@ static void store_int16type_data_from
 static void store_int32type_data_from
 (
     const char* src_type, 
-    void* dest,
-    void* src
+    const void* dest,
+    const void* src
 )
 {
     if (is_inttype(src_type)){

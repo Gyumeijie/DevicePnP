@@ -5,6 +5,6 @@
 
 extern void numtype_to_strtype(int num_type, char* repr);
 
-extern int strtype_to_numtype(char* type, Boolean is_pointer);
+extern int strtype_to_numtype(const char* type, Boolean is_pointer);
 
 #endif

@@ -2,7 +2,6 @@
 #include "gyroscope_match.h"
 #include "fill_plain_struct.h"
 #include "fill_reg_array.h"
-//#include "config_info_collect.h"
 #include "error_report.h"
 #include <malloc.h>
 #include <string.h>

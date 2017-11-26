@@ -6,7 +6,7 @@
 #include "load_xml.h"
 #include "XmlParser.h"
 #include "parameter_package.h"
-#include "command_sequence_fill.h"
+#include "command_sequence_generate.h"
 #include "bytes_array_assembly.h"
 #include <stdio.h>
 

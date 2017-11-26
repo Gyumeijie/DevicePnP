@@ -1,5 +1,6 @@
 #include "config_info_collect.h"
 #include "error_report.h"
+#include "config_info_collect.h"
 #include "fill_plain_struct.h"
 #include "miscellaneous.h"
 #include <string.h>
@@ -16,20 +17,19 @@
  */
 int fill_plain_struct
 (
-   char* global_or_op_name, 
-   char* para_name, 
+   const char* dts_owner_name, 
+   const char* para_list_name, 
    struct struct_member st[], 
    struct_fill_func_ptr do_fill
 )
 {
-   int num_para;
-   mxml_node_t* first_para;
-   if (! get_first_para_and_num_para(global_or_op_name, 
-                                     para_name,
-                                     &num_para,
-                                     &first_para)){
-       return UNMATCH;
-    }
+   void* para_list = find_para_list(dts_owner_name, para_list_name);
+   if (para_list == NULL)  return UNMATCH;
+
+   int num_para = get_para_list_length(para_list);
+   if (num_para == -1)  return UNMATCH;
+
+   void* first_para = get_first_para(para_list);
 
    return do_fill_plain_struct(first_para, num_para, st, do_fill);
 }
@@ -37,34 +37,30 @@ int fill_plain_struct
 
 static int do_fill_plain_struct
 (
-   mxml_node_t* first_para,
+   const void* first_para,
    int num_para,
    struct struct_member st[],
    struct_fill_func_ptr do_fill
 )
 {
 
-   void* data;
-   const char *name, *value;
-   mxml_node_t* para = first_para;
-
-   //依次处理st中的成员
    int i;
+   const void* para = first_para;
    for (i=0; i<num_para; i++){
-       //检查是否有对应的结构体成员，如果没有则表示不匹配
-       name = st[i].name;
-       if (! is_equal(name, mxmlElementGetAttr(para, "name"))) return FAILURE;
+       // 检查是否有对应的结构体成员，如果没有则表示不匹配
+       const char* name = st[i].name;
+       if (! is_equal(name, get_element_data(para, "name"))) return FAILURE;
 
-       //检查type是否一致，如果不是则表示不匹配
-       if (! check_data_type(para, name, st[i].type)) return FAILURE;
+       // 检查type是否一致，如果不是则表示不匹配
+       if (! check_para_data_type(para, name, st[i].type)) return FAILURE;
 
-       //将成员的数据写入到相应的结构体中
-       value = mxmlGetText(para, NULL);
-       data = convert_type(value, st[i].type);
+       // 将成员的数据写入到相应的结构体中
+       const char* value_str = get_element_data(para, "text_value");
+       void* data = string_to_numeric_value(value_str, st[i].type);
        do_fill(st[i].index, data);
        
-       //获取下一个para项
-       para = skip_text_node(mxmlGetNextSibling(para), "name");
+       // 获取下一个para项
+       para = get_next_sibling(para);
    }
 
     return SUCCESS;

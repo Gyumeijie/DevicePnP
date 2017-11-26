@@ -4,14 +4,14 @@
 #include <mxml.h>
 #include "driver_match.h"
 
-//函数接口
+// 函数接口
 extern int establish_device_context(char* lid);
 
 extern void destroy_device_context(void);
 
 extern const char* get_device_context(void);
 
-extern int has_global_config_item(void);
+extern Boolean has_global_config_item(void);
 
 extern char* get_op_name(void);
 
@@ -23,61 +23,44 @@ extern int config_info_collect_init(void);
 
 static void create_op_name_list(void);
 
-extern int check_data_type
+extern int check_para_data_type
 (
-    mxml_node_t* para,
+    const void* para,
     const char* name,
     const char* type
 );
 
-extern  mxml_node_t* skip_text_node(mxml_node_t* node, char* attr);
+extern  mxml_node_t* skip_text_node(mxml_node_t* node);
 
-//TODO 安排参数的顺序以及更好地命名
-static int find_global_or_op
+static mxml_node_t* find_data_template_struct_owner
 (
-  char* global_or_op_name,
-  mxml_node_t** global_or_op
+   const char* dts_owner_name
 );
 
-static int find_para_list
+extern void* find_para_list
 (
-  char* para_name,
-  mxml_node_t* global_or_op,
-  mxml_node_t** plp
+   const char* dts_owner_name,
+   const char* para_name
 );
 
-static int get_first_para
+extern void* get_first_para(void* para_list);
+
+static void* find_element_in_device_context
 (
-  mxml_node_t* global_or_op,
-  mxml_node_t* para_list,
-  mxml_node_t** first_para2p,
- const char* name
+   const char* elem_name,
+   const char* attr_name,
+   const char* attr_val
 );
 
+extern int get_para_list_length(void* para_list);
 
-extern int get_first_para_and_num_para 
-(
-   char* global_or_op_name, 
-   char* para_name,
-   int* num_para,
-   mxml_node_t** first_para
-);
-
-
-extern void store_data_in_array
-(   
-    void* array, 
-    int idx,
-    void* data, 
-    char* type
-);
- 
+extern void* find_device_global_configuration();
 
 extern void* find_device_operation(const char* op_name);
 
 extern const char* get_element_data
 (
-   void* elem,
+   const void* elem,
    const char* prop_name 
 );
 
@@ -88,18 +71,11 @@ extern void* find_element_in_operation_context
    const char* elem_name
 );
 
-extern void* get_first_child(void* parent);
+extern void* get_first_child(const void* parent);
 
-extern void* get_next_sibling(void* sibling);
+extern void* get_next_sibling(const void* sibling);
 
-//全局变量
-//TODO 尽可能去减少全局变量的使用
-//有比较多的全局变量时，如果代码又很长，那么就需要多考虑这些全局代码在那些函数
-//中修改
-//如果按照填充结构进行拆分，那么就全局变量而言我们需要关注的代码就少了很多
-//对应特定的填充结构而言我们就能更专注地思考其功能实现
-//
-//“专注”
+
 static mxml_node_t *tree;
 
 static mxml_node_t *device_context;
@@ -108,6 +84,6 @@ static char** op_name_list;
 
 static int op_list_length;
 
-static int counter;
+static int op_list_fetch_tracer;
 
 #endif

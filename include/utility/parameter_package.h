@@ -22,10 +22,10 @@
 // 这里的value类型为int，仅仅将其作为一个4个字节储存空间；这里不用
 // 一个4字节长度的字符数组或者是float是因为int类型的参数占多数，
 // 这样可以减少类型转换的次数
-//TODO 如果要使用double的话，还是要用char value[8]来进行存储
+// TODO 如果要使用double的话，还是要用char value[8]来进行存储
 struct parameter{
    int value; 
-   char* para_type; 
+   const char* para_type; 
    Boolean is_pointer;
 };
 
@@ -42,46 +42,46 @@ struct parameter_package{
 extern int put_literal
 (
     struct parameter_package* para_pkgp, 
-    void* value,
-    char* type
+    const void* value,
+    const char* type
 );
 
 extern int put_value
 ( 
     struct parameter_package* para_pkgp,
-    void* value, 
-    char* type
+    const void* value, 
+    const char* type
 );
 
 extern int put_literal_with_pos
 (
    int put_pos,
    struct parameter_package* para_pkgp,
-   void* value,
-   char* type
+   const void* value,
+   const char* type
 );
 
 extern int put_value_with_pos
 (
    int put_pos, 
    struct parameter_package* para_pkgp, 
-   void* value,
-   char* type
+   const void* value,
+   const char* type
 );
 
 extern int put_address
 (
    struct parameter_package* para_pkgp,
-   void* var_addr,
-   char* type
+   const void* var_addr,
+   const char* type
 );
 
 extern int put_address_with_pos
 (
    int put_pos,
    struct parameter_package* para_pkgp, 
-   void* var_addr,
-   char* type
+   const void* var_addr,
+   const char* type
 );
 
 extern struct parameter_package* init_parameter_package
@@ -102,8 +102,8 @@ extern struct parameter* fetch_para(struct parameter_package* para_pkgp);
 
 extern void store_data
 (
-    void* dest, 
-    void* src, 
+    const void* dest, 
+    const void* src, 
     const char* dest_type,
     const char* src_type
 );
@@ -111,40 +111,40 @@ extern void store_data
 static void store_floattype_data_from
 (
     const char* src_type, 
-    void* dest,
-    void* src
+    const void* dest,
+    const void* src
 );
 
 
 static void store_chartype_data_from
 (
     const char* src_type, 
-    void* dest,
-    void* src
+    const void* dest,
+    const void* src
 );
 
 
 static void store_int16type_data_from
 (
     const char* src_type, 
-    void* dest,
-    void* src
+    const void* dest,
+    const void* src
 );
 
 
 static void store_int32type_data_from
 (
     const char* src_type, 
-    void* dest,
-    void* src
+    const void* dest,
+    const void* src
 );
 
 
 static int fill_parameter_package
 (  
    struct parameter_package* para_pkgp,
-   void* value, 
-   char* type, 
+   const void* value, 
+   const char* type, 
    int put_strategy,
    int put_pos,
    Boolean is_stored_as_address
