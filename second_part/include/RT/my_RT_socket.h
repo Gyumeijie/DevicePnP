@@ -1,7 +1,7 @@
 #ifndef MY_RT_SOCKET_H_
 #define MY_RT_SOCKET_H_
 #define m_random() rand()%100
-#define TIMES 300
+#define TIMES 100
 #include "RT_control.h"
 #include "file.h"
 #include<pthread.h>

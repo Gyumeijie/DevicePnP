@@ -222,7 +222,7 @@ void* generate_data_1(void* argc){
     UINT t=TIMES;
     while(t--){
         time=m_random();
-        usleep(2000*time);
+        usleep(4000*time);
         write_write_buffer(8001,recv_buffer,strlen(recv_buffer),&size);
         if(size!=3)printf("generate data err!\n");
         void* p_time=get_time_node();
@@ -248,7 +248,7 @@ void* generate_data_2(void* argc){
     UINT t=TIMES;
     while(t--){
         time=m_random();
-        usleep(2000*time);
+        usleep(4000*time);
         write_write_buffer(8002,recv_buffer,strlen(recv_buffer),&size);
         if(size!=3)printf("generate data err!\n");
         void* p_time=get_time_node();
@@ -268,7 +268,7 @@ void* generate_data_4(void* argc){
     UINT t=TIMES;
     while(t--){
         time=m_random();
-        usleep(2000*time);
+        usleep(4000*time);
         write_write_buffer(8004,recv_buffer,strlen(recv_buffer),&size);
         if(size!=1)printf("generate data err!\n");
         void* p_time=get_time_node();
@@ -288,7 +288,7 @@ void* generate_data_5(void* argc){
     UINT t=TIMES;
     while(t--){
         time=m_random();
-        usleep(2000*time);
+        usleep(4000*time);
         write_write_buffer(8005,recv_buffer,strlen(recv_buffer),&size);
         if(size!=1)printf("generate data err!\n");
         void* p_time=get_time_node();
@@ -308,7 +308,7 @@ void* generate_data_6(void* argc){
     UINT t=TIMES;
     while(t--){
         time=m_random();
-        usleep(2000*time);
+        usleep(4000*time);
         write_write_buffer(8006,recv_buffer,strlen(recv_buffer),&size);
         if(size!=1)printf("generate data err!\n");
         void* p_time=get_time_node();
@@ -328,7 +328,7 @@ void* generate_data_7(void* argc){
     UINT t=TIMES;
     while(t--){
         time=m_random();
-        usleep(2000*time);
+        usleep(4000*time);
         write_write_buffer(8007,recv_buffer,strlen(recv_buffer),&size);
         if(size!=1)printf("generate data err!\n");
         void* p_time=get_time_node();

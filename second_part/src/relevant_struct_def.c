@@ -16,7 +16,7 @@ void get_current_time(void* time_stamp){
 void print_time(void* time_stamp){
     if(time_stamp==NULL)return;
     timeStamp* p_t=(timeStamp*)time_stamp;
-    printf("时间戳：%d/%d/%d\n",p_t->hour,p_t->minute,p_t->second);
+    printf("时间戳：%d:%d:%d\n",p_t->hour,p_t->minute,p_t->second);
 }
 void* get_data_node_array(void){
     UINT size=CACHE_MAX_LEN;
