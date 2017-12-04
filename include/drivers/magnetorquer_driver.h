@@ -19,8 +19,6 @@ static int general_magnetorquer_setz(void* private_data, void* data);
 
 static int general_magnetorquer_setxyz(void* private_data, void* data);
 
-static void fetch_data(void* private_data, int op_idx);
-
 extern void magnetorquer_driver_loader(void);
 
 

@@ -19,8 +19,6 @@ static int general_magnetometer_getz(void* private_data, void* data);
 
 static int general_magnetometer_getxyz(void* private_data, void* data);
 
-static void fetch_data(void* private_data, int op_idx);
-
 extern void magnetometer_driver_loader(void);
 
 

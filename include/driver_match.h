@@ -40,11 +40,10 @@ struct plain_array{
 //定义代码块结构
 struct group_code_blocks{
    int num_block;
-   // 存放各个代码块源码的数组
-   const char** code_block_src_array;
-   // 存放各个代码块编译后的字节码的数组
-   int** compiled_byte_code_array;
+   const char** code_block_src_array; // 存放各个代码块源码的数组
+   int** compiled_byte_code_array; // 存放各个代码块编译后的字节码的数组
 };
+
 
 struct single_code_block{
    const char* code_block_src;
@@ -113,9 +112,8 @@ struct min_function_set{
 };
 
 
-//typedef enum {plain_array reg_array, ...}para_struct_type;
 //定义模板参数结构体
-struct template_data{
+struct data_template{
     //TODO 增加一个参数结构的标识符号， 有的操作只能面向特定的结构，操作之前
     //需要判断
     int template_id;
@@ -133,13 +131,13 @@ struct match_info{
 
 static struct match_info* g_mip; 
 
-static struct template_data* template_data_table;
+static struct data_template* data_template_table;
 
 static int find_and_exec_match_func(char* name);
 
 static void undo_match(void);
 
-static void init_template_data_table(int dtsize);
+static void init_data_template_table(int dtsize);
 
 static match_func_ptr find_match_func(char* name);
 
@@ -159,18 +157,18 @@ extern int check_match
    int status, 
    int op_idx, 
    int template_id,
-   void* template_data
+   void* data_template
 );
 
 extern int do_match(struct match_info* mip); 
 
-extern void* get_template_data_table(void);
+extern void* get_data_template_table(void);
 
 extern const char* get_op_context();
 
 extern int has_op_complemented
 (  
-    struct template_data* private_data, 
+    struct data_template* private_data, 
     int op_idx
 );
 

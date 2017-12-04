@@ -1,7 +1,6 @@
 #ifndef GYROSCOPE_DRIVER_H
 #define GYROSCOPE_DRIVER_H
 
-
 #include "driver_operation_function.h"
 #include "gyroscope_match.h"
 #include "gyroscope_open.h"
@@ -9,7 +8,6 @@
 #include "gyroscope_gety.h"
 #include "gyroscope_getz.h"
 #include "gyroscope_getxyz.h"
-
 
 static int general_gyroscope_open(void* private_data, void* data);
 
@@ -22,8 +20,6 @@ static int general_gyroscope_gety(void* private_data, void* data);
 static int general_gyroscope_getz(void* private_data, void* data);
 
 static int general_gyroscope_getxyz(void* private_data, void* data);
-
-static void fetch_data(void* private_data, int index);
 
 extern void gyroscope_driver_loader(void);
 

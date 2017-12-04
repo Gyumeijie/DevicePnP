@@ -66,19 +66,11 @@ struct driver* get_driver(int index, char* device_interface)
     struct driver_node* drinodp = driver_index_table[index];
     struct driver* drip = NULL;
 
-    //如果没有支持某类型设备的驱动则返回NULL
+    // 如果没有支持某类型设备的驱动则返回NULL
     if (drinodp == NULL) return NULL;
     while (drinodp != NULL){
-
         drip = drinodp->drip;
-        //TODO
-        //由于描述设备支持的接口的细节不同，可能是字符数组也可能是特定格式的
-        //字符串，需要专门的解析来 i2c:rs422:ad
-        //这里需要一个叫通用的接口查询函数将细节封装起来
-        //check_interface()
-        //is_supported_interface(driver, interface)
-        //下面的函数显然是暴露了实现的细节
-        //if (strcmp(drip->interface, interface) == 0){
+
         if (is_supported_interface(drip->driver_supported_interfaces, 
                                    device_interface)){
             return drip;
@@ -88,4 +80,21 @@ struct driver* get_driver(int index, char* device_interface)
     }
 
     return NULL;
+}
+
+
+void release_drivers(void)
+{
+   int i;
+   for (i=0; i<MAX_DEVICE_TYPE; i++){
+      struct driver_node* drinodp = driver_index_table[i];
+      driver_index_table[i] = NULL;
+
+      while (drinodp != NULL){
+         struct driver_node* to_be_released = drinodp;
+         free(to_be_released);
+
+         drinodp = drinodp->next;
+      }
+   }
 }

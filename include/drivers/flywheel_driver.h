@@ -14,8 +14,6 @@ static int general_flywheel_set_speed(void* private_data, void* para);
 
 static int general_flywheel_receive(void* private_data, void* para);
 
-static void fetch_data(void* private_data, int op_idx);
-
 extern void flywheel_driver_loader(void);
 
 typedef int (*driver_operation_function)(void*, void*);

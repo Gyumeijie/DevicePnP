@@ -3,6 +3,7 @@
 #include "parameter_package.h"
 #include "flywheel_driver.h"
 #include "flywheel.h"
+#include "data_template_fetch.h"
 #include "driver_supported_interface.h"
 #include <stdio.h>
 
@@ -11,29 +12,34 @@ static void* para_struct;
 
 static int general_flywheel_open(void* private_data, void* para)
 { 
-    fetch_data(private_data, FLYWHEEL_OPEN_INDEX);
+    fetch_data_template(private_data,
+                        FLYWHEEL_OPEN_INDEX,
+                        &template_id, 
+                        &para_struct);
+
     return flywheel_open_templates[template_id](para_struct, para);
 }
 
 
 static int general_flywheel_set_speed(void* private_data, void* para)
 {
-    fetch_data(private_data, FLYWHEEL_SET_SPEED_INDEX);
+    fetch_data_template(private_data,
+                        FLYWHEEL_SET_SPEED_INDEX,
+                        &template_id, 
+                        &para_struct);
+
     return flywheel_set_speed_templates[template_id](para_struct, para); 
 }
 
 
 static int general_flywheel_receive(void* private_data, void* para)
 {
-    fetch_data(private_data, FLYWHEEL_RECEIVE_INDEX);
+    fetch_data_template(private_data, 
+                        FLYWHEEL_RECEIVE_INDEX,
+                        &template_id, 
+                        &para_struct);
+
     return flywheel_receive_templates[template_id](para_struct, para); 
-}
-
-
-static void fetch_data(void* private_data, int index)
-{
-    template_id = ((struct template_data*)private_data)[index].template_id;
-    para_struct = ((struct template_data*)private_data)[index].para_struct;
 }
 
 

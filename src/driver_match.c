@@ -24,14 +24,14 @@ int do_match(struct match_info* mip)
     if(!check_null(__FILE__, __func__, "mip", mip)) return UNMATCH;
     g_mip = mip;
     
-    //初始化设备的模板参数结构体表
-    init_template_data_table(mip->data_table_size);
+    // 初始化设备的模板参数结构体表
+    init_data_template_table(mip->data_table_size);
 
-    //先通过全局变量匹配函数来匹配以及收集全局的参数信息
+    // 先通过全局变量匹配函数来匹配以及收集全局的参数信息
     op_context = "global";
     if (has_global_config_item() && !try_match("global")) return UNMATCH;
 
-    //然后根据配置文件依次匹配以及收集每个模板的参数
+    // 然后根据配置文件依次匹配以及收集每个模板的参数
     int i;
     length = get_op_list_length();
     for (i=0; i<length; i++){
@@ -47,14 +47,13 @@ int do_match(struct match_info* mip)
     }
 
     
-    //检查通用设备驱动是否定义了最小功能集，如果有则检查配置文件的配置信息是否
-    //涵盖了这个最小功能集
+    // 检查通用设备驱动是否定义了最小功能集，如果有则检查配置文件的配置信息是否
+    // 涵盖了这个最小功能集
     op_context = NULL;
     if (mip->mfsp != NULL){
        return has_all_required_ops_complemented();
    }
 
-    //返回匹配
     return MATCH;
 }
 
@@ -62,7 +61,7 @@ int do_match(struct match_info* mip)
 static void construct_template_name(char* template_name, char* op_name,
                                     int template_id)
 {
-    //构造模板名 设备类型_操作名_templatexxx，其中xxx为template_id
+    // 构造模板名 设备类型_操作名_templatexxx，其中xxx为template_id
      sprintf(template_name, "%s_template%d", op_name, template_id);
 }
 
@@ -71,40 +70,40 @@ static int try_match(char* template_name)
 {
     int exec_status;
 
-    //通过模板名找到给定模板的匹配函数入口地址并执行
+    // 通过模板名找到给定模板的匹配函数入口地址并执行
     exec_status = find_and_exec_match_func(template_name);
     if (!exec_status){
-        //释放掉匹配以及收集前面模板所分配的数据结构并返回不匹配
+        // 释放掉匹配以及收集前面模板所分配的数据结构并返回不匹配
         undo_match();
-        template_data_table = NULL;
+        data_template_table = NULL;
     }
 
     return exec_status;
 }
 
 
-static void init_template_data_table(int dtsize)
+static void init_data_template_table(int dtsize)
 {   
-    int memsize = sizeof(struct template_data)*dtsize; 
+    int memsize = sizeof(struct data_template)*dtsize; 
 
-    template_data_table = malloc(memsize);
-    check_null(__FILE__, __func__, "template_data_table", template_data_table);
+    data_template_table = malloc(memsize);
+    check_null(__FILE__, __func__, "data_template_table", data_template_table);
 
-    memset(template_data_table, 0, memsize);
+    memset(data_template_table, 0, memsize);
 }
 
 
 static void undo_match(void)
 {
-    free(template_data_table);
-    template_data_table = NULL;
+    free(data_template_table);
+    data_template_table = NULL;
 }
 
 
 //TODO 检查name是否为空
 static int find_and_exec_match_func(char* name)
 {
-    //查找匹配函数，如果没有找到则返回不匹配，并给出具体的原因
+    // 查找匹配函数，如果没有找到则返回不匹配，并给出具体的原因
     match_func_ptr match_func = find_match_func(name);
     if (!check_null(__FILE__, __func__, "match_func", match_func)){
         printf("Detail: can't not find matching function of template '%s'\n",
@@ -112,7 +111,7 @@ static int find_and_exec_match_func(char* name)
         return UNMATCH;
     }
 
-    //执行函数并返回匹配函数的结果
+    // 执行函数并返回匹配函数的结果
     return match_func();
 }
 
@@ -143,15 +142,14 @@ static match_func_ptr find_match_func(char* name)
 }
 
 
-int check_match(int status, int op_idx, int template_id, void* template_data)
+int check_match(int status, int op_idx, int template_id, void* data_template)
 {
-    //返回不匹配
+    // 返回不匹配
     if (!status) return UNMATCH;
 
-    //否则将收集到的数据存放到template_data_table中供后面使用
-    template_data_table[op_idx].para_struct = template_data;
-    template_data_table[op_idx].template_id = template_id;
-    //TODO 添加para_struct_type
+    // 否则将收集到的数据存放到data_template_table中供后面使用
+    data_template_table[op_idx].para_struct = data_template;
+    data_template_table[op_idx].template_id = template_id;
     
     //返回匹配
     return MATCH;
@@ -164,25 +162,25 @@ int check_match(int status, int op_idx, int template_id, void* template_data)
  *　功能：返回设备的对通用设备驱动的配置信息，该函数在判断匹配后有设备驱动绑定
  *　      模块调用，将此信息赋值给设备结构体中的相应字段
  */
-void* get_template_data_table(void)
+void* get_data_template_table(void)
 {
-    return (void*)template_data_table;
+    return (void*)data_template_table;
 }
 
 
 const char* get_op_context()
 {   
-    //为了调试方便加入的
+    // 为了调试方便加入的
     return op_context;
 }
 
 /**
  *　输入：具体设备的驱动模板配置信息结构体指针private_data，以及一个用于判断给
- *        定操作是否配置实现的操作索引号op_idx
+ *        定操作是否配置实现的操作索引o号op_idx
  *　输出：返回一个整数表示条件是否满足　
  *　功能：
  */
-int has_op_complemented(struct template_data* private_data, int op_idx)
+int has_op_complemented(struct data_template* private_data, int op_idx)
 {
    if (!check_null(__FILE__, __func__, "private_data", private_data)){
       printf("Detail: may be no corresponding driver being loaded\n");
@@ -213,8 +211,8 @@ static int has_all_required_ops_complemented(void)
         for (i=0; i< mfsp->required_ops_num; i++){
            index = mfsp->required_ops_index[i];
 
-           //record与required_ops不相等不等于就不匹配，只有规定的操作实现了就是
-           //匹配的
+           // record与required_ops不相等不等于就不匹配，只有规定的操作实现了
+           // 就是匹配的
            if (!(record & (1<<index))){
               sprintf(msg, "'%s' is required", mfsp->required_ops_name[index]);
               report_error(__FILE__, __func__, msg); 

@@ -18,11 +18,15 @@ int init(void)
     driver_init();
     interpreter_init(); 
 
-    if(!config_info_collect_init()) return FAILURE; 
+    if(! config_info_collect_init()) return FAILURE; 
+
     device_open_init();
 
-    if(!register_devices()) return FAILURE;
+    if(! register_devices()) return FAILURE;
+
     register_drivers();
-    if(!bind_drivers()) return FAILURE;
+
+    if(! bind_drivers()) return FAILURE;
+
     return SUCCESS;
 }

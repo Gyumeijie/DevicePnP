@@ -39,4 +39,7 @@ static void add_driver_node
 
 //获取支持给定接口的设备驱动(设备驱动绑定模块)
 extern struct driver* get_driver(int index, char* device_interface);
+
+extern void release_drivers(void);
+
 #endif

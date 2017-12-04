@@ -10,8 +10,6 @@ static int general_analogsunsensor_open(void* private_data, void* data);
 
 static int general_analogsunsensor_read(void* private_data, void* data);
 
-static void fetch_data(void* private_data, int op_idx);
-
 extern void analogsunsensor_driver_loader(void);
 
 static driver_operation_function analogsunsensor_open_templates[] = {
