@@ -9,16 +9,14 @@
 
 static int global_match(void);
 
-//open相关的模板匹配函数
-static int open_template0_match(void);
+static int open_match_template0(void);
 
-static int get_pat0_match(int op_idx, char* op_name, char* para_name);
+static int get_pat0_match(char* op_name, char* para_name, int op_idx);
 
-//get相关的模板匹配函数
-static int getx_template0_match(void);
-static int gety_template0_match(void);
-static int getz_template0_match(void);
-static int getxyz_template0_match(void);
+static int getx_match_template0(void);
+static int gety_match_template0(void);
+static int getz_match_template0(void);
+static int getxyz_match_template0(void);
 
 extern int magnetometer_match(void);
 

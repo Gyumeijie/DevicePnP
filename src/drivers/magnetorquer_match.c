@@ -1,7 +1,6 @@
 #include "magnetorquer_match.h"
 #include "magnetorquer.h"
 #include "fill_plain_array.h"
-//#include "config_info_collect.h"
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
@@ -11,62 +10,64 @@
  * 实质性的操作；在这里写是为了防止用户在配置信息的时候将global以及op为open写
  * 上而没有相应的匹配函数出错
  */
+
 static int global_match(void){ return MATCH; }
-static int open_template0_match(void) { return MATCH; }
+static int open_match_template0(void) { return MATCH; }
 
-
-static int setx_template0_match(void)
+static int setx_match_template0(void)
 {
-   return set_pat0_match(MAGNETORQUER_SETX_INDEX, "magnetorquer_setx",
-                         "setx_template0");   
+   return set_pat0_match("magnetorquer_setx",
+                         "setx_template0", 
+                         MAGNETORQUER_SETX_INDEX); 
 }
 
-static int sety_template0_match(void)
+static int sety_match_template0(void)
 {
-   return set_pat0_match(MAGNETORQUER_SETY_INDEX, "magnetorquer_sety",
-                         "sety_template0");   
-}
-
-
-static int setz_template0_match(void)
-{
-   return set_pat0_match(MAGNETORQUER_SETZ_INDEX, "magnetorquer_setz",
-                         "setz_template0");   
+   return set_pat0_match("magnetorquer_sety",
+                         "sety_template0", 
+                         MAGNETORQUER_SETY_INDEX); 
 }
 
 
-static int setxyz_template0_match(void)
+static int setz_match_template0(void)
 {
-   return set_pat0_match(MAGNETORQUER_SETXYZ_INDEX, "magnetorquer_setxyz",
-                         "setxyz_template0");   
+   return set_pat0_match("magnetorquer_setz",
+                         "setz_template0", 
+                         MAGNETORQUER_SETZ_INDEX); 
 }
 
 
-static int set_pat0_match(int op_idx, char* op_name, char* para_name) 
+static int setxyz_match_template0(void)
 {
+   return set_pat0_match("magnetorquer_setxyz",
+                         "setxyz_template0", 
+                         MAGNETORQUER_SETXYZ_INDEX); 
+}
+
+
+// 辅助函数
+static int set_pat0_match(char* op_name, char* para_name, int op_idx)
+{
+    struct plain_array* set_data_template0;
     int exec_status;
-    struct plain_array* set_pat0p;
 
-    //分配set_pat0p结构体
-    set_pat0p  = (struct plain_array*)malloc(sizeof(struct plain_array));
-    set_pat0p->type = "int"; 
+    set_data_template0  = malloc(sizeof(struct plain_array));
+    set_data_template0->type = "int"; 
 
-    //获取信息
-    exec_status = fill_plain_array(op_name, para_name, set_pat0p); 
+    exec_status = fill_plain_array(op_name, para_name, set_data_template0); 
 
-    //返回不匹配或者匹配
-    return check_match(exec_status, op_idx, 0, (void*)set_pat0p);
+    return check_match(exec_status, op_idx, 0, (void*)set_data_template0);
 }
 
 
-//模板匹配函数表
+// 模板匹配函数表
 static struct template_match match_funcs_table[MAGNETORQUER_TEMPLATE_NUM] = {
     {"global", global_match},
-    {"magnetorquer_open_template0", open_template0_match},
-    {"magnetorquer_setx_template0", setx_template0_match},
-    {"magnetorquer_sety_template0", sety_template0_match},
-    {"magnetorquer_setz_template0", setz_template0_match},
-    {"magnetorquer_setxyz_template0", setxyz_template0_match}
+    {"magnetorquer_open_template0", open_match_template0},
+    {"magnetorquer_setx_template0", setx_match_template0},
+    {"magnetorquer_sety_template0", sety_match_template0},
+    {"magnetorquer_setz_template0", setz_match_template0},
+    {"magnetorquer_setxyz_template0", setxyz_match_template0}
 }; 
 
 

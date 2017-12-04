@@ -6,18 +6,12 @@
 #define ANALOGSUNSENSOR_TEMPLATE_NUM 10
 #define MATCH_FUNCS_NUM  3
 
-//模板参数结构体表
-static struct template_data* template_data_table;
-
-static struct plain_array* read_template0;
 
 static int global_match(void);
 
-//open相关的模板匹配函数
-static int open_template0_match(void);
+static int open_match_template0(void);
 
-//read相关的模板匹配函数
-static int read_template0_match(void);
+static int read_match_template0(void);
 
 extern int analogsunsensor_match(void);
 
