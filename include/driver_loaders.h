@@ -2,11 +2,10 @@
 #define DRIVER_LOADERS_H
 
 #define MAX_DRIVER_LOADER 256
-#define NULL  ((void*)0)
 
 typedef void (*driver_loader) (void);
 
-//在这里添加设备驱动加载函数
+// 在这里添加设备驱动加载函数
 extern void gyroscope_driver_loader(void);
 extern void analogsunsensor_driver_loader(void);
 extern void magnetometer_driver_loader(void);

@@ -10,10 +10,10 @@
 
 
 // 定义填充结构体的函数类型
-typedef void (*struct_fill_func_ptr)(int, void*);
+typedef void (*fill_struct_function)(int, void*);
 
 // 定义模板匹配函数类型
-typedef int (*match_func_ptr) (void);
+typedef int (*match_function)(void);
 
 // 定义寄存器结构
 struct reg{
@@ -56,6 +56,7 @@ struct extra_command_description{
    short int compute_id;
 };
 
+
 struct command_description{    
     char occupied_by[12];
     struct extra_command_description extra_cmd_desc;
@@ -87,7 +88,6 @@ struct bytes_array_assembly_scheme{
    struct group_code_blocks* postprocess_funcs;
 };
 
-
 // 定义收集设备配置文件中类型为struct的para_list的结构体
 struct struct_member{
     char* type;
@@ -99,8 +99,9 @@ struct struct_member{
 // 定义模板匹配结构体
 struct template_match{
     char* name;
-    match_func_ptr match_func;
+    match_function match_func;
 };
+
 
 // 定义描述设备驱动的最小功能集结构体
 struct min_function_set{
@@ -113,11 +114,10 @@ struct min_function_set{
 
 // 定义模板参数结构体
 struct data_template{
-    //TODO 增加一个参数结构的标识符号， 有的操作只能面向特定的结构，操作之前
-    //需要判断
     int template_id;
     void* para_struct;
 };
+
 
 // 匹配信息结构体
 struct match_info{
@@ -128,17 +128,15 @@ struct match_info{
  int* complementation_record;
 };
 
-static struct match_info* g_mip; 
-
-static struct data_template* data_template_table;
-
-static int find_and_exec_match_func(char* name);
-
 static void undo_match(void);
 
 static void init_data_template_table(int dtsize);
 
-static match_func_ptr find_match_func(char* name);
+static match_function find_match_function
+(
+   char* template_name,
+   struct match_info* mip 
+);
 
 static void construct_operation_template_name
 (  
@@ -147,9 +145,13 @@ static void construct_operation_template_name
    int template_id
 );
 
-static int try_match(char* template_name);
+static int try_match
+(
+   char* template_name,
+   struct match_info* mip 
+);
 
-static int has_all_required_operations_complemented(void);
+static int has_all_required_operations_complemented(struct match_info* mip);
 
 extern int check_match
 (
@@ -170,5 +172,7 @@ extern int has_operation_complemented
     struct data_template* private_data, 
     int op_idx
 );
+
+
 
 #endif

@@ -14,17 +14,11 @@ int config_info_collect_init(void)
    return SUCCESS;
 }
 
-
-/**
- *　输入：设备逻辑标识符
- *　输出：无
- *  功能：建立收集设备配置信息上下文环境
- */
+// 建立收集设备配置信息上下文环境
 int establish_device_context(char* lid)
 {
-    //TODO 检测lid
     if (device_context == NULL){
-        //建立设备上下文，如果没有在配置文件中找到相应的项，则返回不匹配
+        // 建立设备上下文，如果没有在配置文件中找到相应的项，则返回不匹配
         device_context = mxmlFindElement(tree,
                                          tree,
                                          "device_entity", 
@@ -48,40 +42,27 @@ int establish_device_context(char* lid)
     return SUCCESS;
 }
 
-
-/**
- *　输入：无
- *　输出：无
- *　功能：在关闭设备上下文的时候，做一些清理工作
- */ 
+// 在关闭设备上下文的时候，做一些清理工作
 void destroy_device_context(void)
 {
     device_context = NULL;
    
-    //与设备context相关的全局变量的清零
+    // 与设备context相关的全局变量的清零
     op_list_fetch_tracer = 0;
     free(op_name_list);
     op_name_list = NULL;
 }
 
 
-/**
- *　输入：无
- *　输出：当前处理的设备逻辑名
- *　功能：返回当前处理的设备逻辑名，该函数是为了方便调试在设备驱动匹配过程中出
- *　　　　现的错误
- */
+// 返回当前处理的设备逻辑名，该函数是为了方便调试在设备驱动匹配过程中出
 const char* get_device_context(void)
 {
    return mxmlElementGetAttr(device_context, "lid");
 }
 
 
-/**
- *　输入：无
- *　输出：返回一个整数表示条件是否满足
- *　功能：判断设备的配置信息中是否含有global项，该函数在驱动匹配模块中被调用
- */
+
+// 判断设备的配置信息中是否含有global项，该函数在驱动匹配模块中被调用
 Boolean has_global_config_item(void)
 {
     mxml_node_t* element = mxmlFindElement(device_context,
@@ -144,11 +125,7 @@ char* get_op_name(void)
 }
 
 
-/**
- *　输入：无
- *　输出：无
- *　功能：为设备配置文件中的设备创建一个操作名列表
- */
+// 为设备配置文件中的设备创建一个操作名列表
 static void create_op_name_list(void)
 {  
    op_list_length = get_op_list_length();
@@ -266,12 +243,7 @@ mxml_node_t* skip_text_node(mxml_node_t* node)
     return sibling;
 }
 
-
-/**
- *　输入：参数名name, 配置信息中参数项指针para以及设备驱动中要求的类型type
- *　输出：返回一个整数表示配置的参数类型是否与设备驱动要求的参数类型相同
- *　功能：检查配置信息中参数的类型
- */
+// 检查配置信息中参数的类型
 int check_para_data_type
 (
     const void* para, 
@@ -376,4 +348,3 @@ void* find_element_in_operation_context
                            NULL, 
                            MXML_DESCEND);
 }
-

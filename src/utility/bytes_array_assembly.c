@@ -19,16 +19,13 @@ int do_bytes_array_assembly
    struct bytes_array_assembly_scheme* asm_schemep
 )
 {
+   if (para_pkgp->num_para != asm_schemep->num_para) return 1;
+
    struct group_code_blocks* postprocess_funcs = asm_schemep->postprocess_funcs;
    struct single_code_block* precondition = asm_schemep->precondition;
 
-   //TODO 检查所需的字节与读取的字节是否相匹配
-   if (para_pkgp->num_para != asm_schemep->num_para) return 1;
-
-
    // 调用先验条件进行判断
-   if (!(precondition == NULL || 
-        do_check_precondition(precondition, arr_len, bytes_arr))){
+   if (is_precondition_failed(precondition, arr_len, bytes_arr)){
         printf("check failed\n"); 
         return 1;
    }
@@ -40,14 +37,18 @@ int do_bytes_array_assembly
    for (i=0; i<num_para; i++){
       struct parameter* parap = fetch_para(para_pkgp);
 
-      //获取位置信息
+      // 获取位置信息
       int num_byte = descs[i].num_byte;
       int start = descs[i].start;
       int process_id = descs[i].process_id;
 
-      int asm_val = assembly_item(bytes_arr + start, num_byte); 
+      int asm_val = assembly_item(bytes_arr+start, num_byte); 
 
-      postprocess_parameter(parap, postprocess_funcs, bytes_arr, asm_val, process_id);
+      postprocess_parameter(parap,
+                            postprocess_funcs,
+                            bytes_arr,
+                            asm_val, 
+                            process_id);
   }
 
    // 重置parameter_package中的fetch_tracer使得下一次可以重新使用
@@ -67,15 +68,50 @@ static void postprocess_parameter
 )
 {
    void* var_addr = (void*)para->value;
-   
-   if ((process_id > NO_NEED_POSTPROCESSION) &&
-       (postprocess_funcs->code_block_src_array[process_id] != NULL)){
-      do_postprocession(postprocess_funcs, process_id, asm_val, bytes_arr, var_addr);
-      //post_proc_funcs[i](bytes_arr + start, num_byte, asm_val, var_addr);
+
+   if (need_postprocess(postprocess_funcs, process_id)){
+      do_postprocession(postprocess_funcs,
+                        process_id,
+                        asm_val, 
+                        bytes_arr,
+                        var_addr);
    }else{
-      //没有的话就做默认处理,即按照给定的类型进行存储
+      // 没有的话就做默认处理,即按照给定的类型进行存储
       store_data(var_addr, &asm_val, para->para_type, "int");
     }
+}
+
+
+static Boolean is_precondition_failed
+(
+   struct single_code_block* precondition,
+   int arr_len,
+   const char* bytes_arr
+ 
+)
+{
+   if (! (precondition == NULL || 
+         do_check_precondition(precondition, arr_len, bytes_arr)))
+   {
+      return True; 
+   }
+
+   return False;
+}
+
+
+static Boolean need_postprocess
+(
+   struct group_code_blocks* postprocess_funcs,
+   int process_id
+)
+{
+    const char* src = postprocess_funcs->code_block_src_array[process_id];
+    if ((process_id > NO_NEED_POSTPROCESSION) && (src != NULL)){
+       return True;
+    }
+
+    return False;
 }
 
 
@@ -124,7 +160,7 @@ static void do_postprocession
 
 static int do_check_precondition
 (
-   struct single_code_block* precondtion,
+   struct single_code_block* precondition,
    int arr_len,
    const char* bytes_arr
 )
@@ -136,7 +172,7 @@ static int do_check_precondition
    static_arr_len = arr_len;
    static_bytes_arr = bytes_arr;
 
-   int* code = precondtion->compiled_byte_code;
+   int* code = precondition->compiled_byte_code;
 
    if (code != NULL){
        run_code(code);
@@ -147,9 +183,9 @@ static int do_check_precondition
        add_dependency_item(dep_items, "result", &result, INT);
        add_dependency_item(dep_items, "bytes_arr", &static_bytes_arr, CHAR+PTR);
           
-       const char* src = precondtion->code_block_src;
+       const char* src = precondition->code_block_src;
        code = compile_src_code(dep_items, src);
-       precondtion->compiled_byte_code = code;
+       precondition->compiled_byte_code = code;
 
        run_code(code);
    }

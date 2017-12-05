@@ -7,20 +7,13 @@
 #include <malloc.h>
 #include <stdio.h>
 
-
-/**
- *　输入：操作名op_name，模板参数para_list的名字para_name，包含驱动模板中待收集
- *        的类型为struct的模板参数的每个成员信息结构体数组st以及执行具体填充工作
- *        的函数do_fill
- *　输出：填充类型为struct的模板参数是否成功
- *　功能：为给定操作名填充类型为struct的模板参数
- */
+// 为给定操作名填充类型为struct的模板参数
 int fill_plain_struct
 (
    const char* dts_owner_name, 
    const char* para_list_name, 
    struct struct_member st[], 
-   struct_fill_func_ptr do_fill
+   fill_struct_function do_fill
 )
 {
    void* para_list = find_para_list(dts_owner_name, para_list_name);
@@ -40,7 +33,7 @@ static int do_fill_plain_struct
    const void* first_para,
    int num_para,
    struct struct_member st[],
-   struct_fill_func_ptr do_fill
+   fill_struct_function do_fill
 )
 {
 

@@ -21,12 +21,10 @@ int add_supported_interface
     const char* interface
 )
 { 
-    //一般情况下32个字符已经足够了，所以这里就不需要添加长度是否够用的检查
-    char* interfaces_string;
-    int last_pos;
-
-    last_pos = driver_supported_interfaces->last_pos;
-    interfaces_string = (char*)driver_supported_interfaces->interfaces_string;
+    // 一般情况下32个字符已经足够了，所以这里就不需要添加长度是否够用的检查
+    
+    int last_pos = driver_supported_interfaces->last_pos;
+    char* interfaces_string = driver_supported_interfaces->interfaces_string;
    
     strcpy(&interfaces_string[last_pos], interface);
     driver_supported_interfaces->last_pos += strlen(interface);

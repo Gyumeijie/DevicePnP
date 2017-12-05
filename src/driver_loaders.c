@@ -1,4 +1,5 @@
 #include "driver_loaders.h"
+#include <stdio.h>
 
 
 unsigned int get_driver_loader_num(void)
@@ -15,6 +16,7 @@ driver_loader get_driver_loader(void)
         return driver_loaders_table[counter++];
     }else{
         counter = 0;
+
         return NULL;
     }
 }

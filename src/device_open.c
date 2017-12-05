@@ -65,12 +65,8 @@ static int has_already_open(char* lid)
 }
 
 
-/**
- *　输入：设备逻辑标识符lid和对应的设备打开索引表表项下标index
- *　输出：无
- *  功能：建立设备逻辑标识符和对应的设备打开索引表表项下标之间的联系
- *  说明：键值对(lid,index)
- */ 
+// 建立设备逻辑标识符和对应的设备打开索引表表项下标之间的联系
+// 为了方便后面通过设备逻辑号lid查找设备打开索引表下标
 static void lid2idx_mapping(const char* lid, int index)
 {
      long value = (long)index;
