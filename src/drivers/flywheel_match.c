@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <string.h>
  
-//将具体的匹配方法分割开来
 static int global_match(void){ return MATCH; }
 static int open_match_template0(void) { return MATCH; }
 

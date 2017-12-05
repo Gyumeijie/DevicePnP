@@ -15,55 +15,47 @@ void device_open_init(void)
 
 int open_device(char* lid, open_status* os, const char* dev_type)
 {
-    int already_open;
-    int index;
-    struct device_open* devop = NULL;
-
-    already_open = has_already_open(lid);    
-    //判断该设备是否已经打开
+    int already_open = has_already_open(lid);    
     if (already_open){
-        index = get_index_by_lid(lid);
-        //设置设备打开状态
+        int index = get_index_by_lid(lid);
+        // 设置设备打开状态
         *os = ALREADY_OPEN;
         return index;
     }
 
-    //获取设备打开索引表空闲的表项
-    index = get_unused_index();
+    // 获取设备打开索引表空闲的表项
+    int index = get_unused_index();
     if (index == -1) return -1;
     
-    //分配设备打开结构体
-    devop = (struct device_open*)malloc(sizeof(struct device_open));
+    struct device_open* devop = malloc(sizeof(struct device_open));
     if (devop == NULL) return -1;
     devop->lid = lid;
    
-    //建立设备打开结构体与设备结构体之间的联系
-    if(!attach_device(devop, dev_type)) {
+    // 建立设备打开结构体与设备结构体之间的联系
+    if(! attach_device(devop, dev_type)) {
        free(devop);
        return -1;
     }
 
-    //将设备打开结构体指针填入到设备打开索引表中
+    // 将设备打开结构体指针填入到设备打开索引表中
     device_open_index_table[index] = devop;
     
-    //建立设备逻辑标识符与相应设备打开表表项下标的联系
+    // 建立设备逻辑标识符与相应设备打开表表项下标的联系
     lid2idx_mapping(lid, index);
    
-    //设置设备打开状态
+    // 设置设备打开状态
     *os = NEWLY_OPEN;
+
     return index;
 }
 
 
 void release_device(int index)
 {
-    struct device_open* devop = NULL;
-    char* lid = NULL;
+    struct device_open* devop = device_open_index_table[index];
 
-    devop =  device_open_index_table[index];
-    lid = devop->lid;
+    lid2idx_mapping(devop->lid, -1);
 
-    lid2idx_mapping(lid, -1);
     free(devop);
 }
 
@@ -75,9 +67,8 @@ void release_device(int index)
  */
 static int attach_device(struct device_open* devop, const char* dev_type)
 {
-    struct device* devp = NULL;
-    //根据设备逻辑号找到相应的设备结构体
-    devp = find_device(devop->lid);
+    // 根据设备逻辑号找到相应的设备结构体
+    struct device* devp = find_device(devop->lid);
     if(!check_null(__FILE__, __func__, "devp", devp)){
        printf("Detail: can't find device named '%s' in register table\n",
                                                 devop->lid);   
@@ -90,7 +81,6 @@ static int attach_device(struct device_open* devop, const char* dev_type)
     devop->device_operation = devp->device_operation;
     devop->private_data = devp->private_data;
     
-
     return SUCCESS;
 }
 
@@ -98,7 +88,6 @@ static int attach_device(struct device_open* devop, const char* dev_type)
 static int get_unused_index(void)
 {  
     int i;
-
     for (i=0; i<MAX_DEVICES_OPEN; i++){
         if (device_open_index_table[i] == NULL){
             return i;
@@ -111,8 +100,7 @@ static int get_unused_index(void)
 
 static int has_already_open(char* lid)
 {
-    int index;
-    index = get_index_by_lid(lid);
+    int index = get_index_by_lid(lid);
     
     return (index == -1) ? 0 : 1;
 }
@@ -135,14 +123,11 @@ static void lid2idx_mapping(const char* lid, int index)
 
 static int get_index_by_lid(const char* lid)
 {
-    int index;
-    struct hash_item* hip;
 
-    hip = get_hash_item(lid, lid2idx_table, PRIME_TABLSIZ);
+    struct hash_item* hip = get_hash_item(lid, lid2idx_table, PRIME_TABLSIZ);
     if (hip == NULL) return -1;
     
-    index = (int)hip->value;
-    return index;
+    return  (int)hip->value;
 }
 
 

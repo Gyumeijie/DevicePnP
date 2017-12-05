@@ -18,7 +18,7 @@ int bind_drivers(void)
 
         // 根据设备接口类型获取设备驱动索引表中的相应驱动结构体
         struct driver* drip = get_driver(GET_MAJOR(devno), devp->interface);
-        if(! check_null(__FILE__, __func__, "drip", drip)){
+        if (! check_null(__FILE__, __func__, "drip", drip)){
             printf("Detail: can't not find driver for %s of %s\n", 
                               major2type(GET_MAJOR(devno)), devp->interface);
             continue;
@@ -34,7 +34,7 @@ int bind_drivers(void)
         int exec_status = drip->match();
         if (exec_status){
             do_bind(devp, drip);
-        }else{
+        } else {
             destroy_device_context();
             return FAILURE;
         }

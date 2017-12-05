@@ -8,28 +8,27 @@
 
 #define MAX_TEMPLATE_NAME_LENGTH 64
 
-//TODO 将不同类型的填充结构体分离出去
 
-//定义填充结构体的函数类型
+// 定义填充结构体的函数类型
 typedef void (*struct_fill_func_ptr)(int, void*);
 
-//定义模板匹配函数类型
+// 定义模板匹配函数类型
 typedef int (*match_func_ptr) (void);
 
-//定义寄存器结构
+// 定义寄存器结构
 struct reg{
   char addr;
   char val;
 };
 
-//定义收集设备配置文件中类型为reg_array的para_list的结构体
+// 定义收集设备配置文件中类型为reg_array的para_list的结构体
 struct reg_array{
     int len; 
     struct reg* regp;
 };
 
 
-//定义收集设备配置文件中类型为plain_array的para_list的结构体
+// 定义收集设备配置文件中类型为plain_array的para_list的结构体
 struct plain_array{
     int len;
     void* arr;
@@ -37,7 +36,7 @@ struct plain_array{
 };
 
 
-//定义代码块结构
+// 定义代码块结构
 struct group_code_blocks{
    int num_block;
    const char** code_block_src_array; // 存放各个代码块源码的数组
@@ -51,7 +50,7 @@ struct single_code_block{
 };
 
 
-//定义命令序列描述结构体
+// 定义命令序列描述结构体
 struct extra_command_description{
    short int size;
    short int compute_id;
@@ -63,7 +62,7 @@ struct command_description{
 };
 
 
-//定义收集设备配置文件中类型为command_sequence的para_list的结构体
+// 定义收集设备配置文件中类型为command_sequence的para_list的结构体
 struct command_sequence{
     int bytes_size;
     unsigned char* bytes_value;
@@ -72,7 +71,7 @@ struct command_sequence{
 };
 
 
-//字节组装描述信息
+// 字节组装描述信息
 struct bytes_assembly_descriptor{
    short int num_byte;
    short int start;
@@ -80,7 +79,7 @@ struct bytes_assembly_descriptor{
 };
 
 
-//字节数组组装方案
+// 字节数组组装方案
 struct bytes_array_assembly_scheme{
    short int num_para;
    struct bytes_assembly_descriptor* bytes_asm_descs;
@@ -89,7 +88,7 @@ struct bytes_array_assembly_scheme{
 };
 
 
-//定义收集设备配置文件中类型为struct的para_list的结构体
+// 定义收集设备配置文件中类型为struct的para_list的结构体
 struct struct_member{
     char* type;
     char* name;
@@ -97,13 +96,13 @@ struct struct_member{
 };
 
 
-//定义模板匹配结构体
+// 定义模板匹配结构体
 struct template_match{
     char* name;
     match_func_ptr match_func;
 };
 
-//定义描述设备驱动的最小功能集结构体
+// 定义描述设备驱动的最小功能集结构体
 struct min_function_set{
   int required_ops;
   int required_ops_num;
@@ -112,7 +111,7 @@ struct min_function_set{
 };
 
 
-//定义模板参数结构体
+// 定义模板参数结构体
 struct data_template{
     //TODO 增加一个参数结构的标识符号， 有的操作只能面向特定的结构，操作之前
     //需要判断
@@ -120,7 +119,7 @@ struct data_template{
     void* para_struct;
 };
 
-//匹配信息结构体
+// 匹配信息结构体
 struct match_info{
  int data_table_size;
  struct template_match* match_funcs_table;
@@ -141,7 +140,7 @@ static void init_data_template_table(int dtsize);
 
 static match_func_ptr find_match_func(char* name);
 
-static void construct_template_name
+static void construct_operation_template_name
 (  
    char* template_name,
    char* op_name, 
@@ -150,7 +149,7 @@ static void construct_template_name
 
 static int try_match(char* template_name);
 
-static int has_all_required_ops_complemented(void);
+static int has_all_required_operations_complemented(void);
 
 extern int check_match
 (
@@ -166,7 +165,7 @@ extern void* get_data_template_table(void);
 
 extern const char* get_op_context();
 
-extern int has_op_complemented
+extern int has_operation_complemented
 (  
     struct data_template* private_data, 
     int op_idx

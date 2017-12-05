@@ -39,7 +39,7 @@ static void add_device_node(struct device_node** head, struct device_node* node)
      }else{
          struct device_node* tmp = *head;
          
-         //将该节点加入到链表的表尾
+         // 将该节点加入到链表的表尾
          while (tmp->next != NULL){
                tmp = tmp->next;
          }
@@ -63,7 +63,6 @@ void add_device(int index, struct device* devp)
      node->next = NULL;
      
      add_device_node(head, node);
-     //设备索引表节点数加１
      device_num++;
 }
 
@@ -75,14 +74,10 @@ void add_device(int index, struct device* devp)
  */ 
 struct device* find_device(const char* lid)
 {
-    struct device* devp;
-    struct hash_item* hip;   
-
-    hip = get_hash_item(lid, lid2dev_table, PRIME_TABLSIZ);
+    struct hash_item* hip = get_hash_item(lid, lid2dev_table, PRIME_TABLSIZ);
     if (hip == NULL) return NULL;
 
-    devp = (struct device*)hip->value;
-    return devp;
+    return (struct device*)hip->value;
 }
 
 /**
@@ -102,7 +97,7 @@ struct device* get_device(void)
 
     int first_unused_major = get_first_unused_major();
    
-    //如果node为NULL，则尝试设备索引表下一个表项对应的链表
+    // 如果node为NULL，则尝试设备索引表下一个表项对应的链表
     while (node == NULL){
        cur_major++;
        if (cur_major < first_unused_major){
@@ -114,7 +109,7 @@ struct device* get_device(void)
        }
     }
     
-    //如果node不为NULL，则在链表内部进行遍历
+    // 如果node不为NULL，则在链表内部进行遍历
     struct device* devp = node->devp;
     node = node->next;
     

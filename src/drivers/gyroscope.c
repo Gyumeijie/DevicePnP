@@ -10,19 +10,19 @@ static struct gyroscope_device_operation* gdop = NULL;
 
 int gyroscope_open(char* lid)
 {
-    int index;
     open_status os;
+    int index = open_device(lid, &os, "gyroscope");
 
-    index = open_device(lid, &os, "gyroscope");
-
-    //如果打开失败
+    // 如果打开失败
     if (index == -1) return -1;
 
-    //如果已经打开，则直接返回之前的索引号index
+    // 如果已经打开，则直接返回之前的索引号index
     if(os == ALREADY_OPEN) return index;
 
     devop = get_device_open_struct(index); 
-    if (has_op_complemented(devop->private_data, GYROSCOPE_OPEN_INDEX)){
+    if (has_operation_complemented(devop->private_data,
+                                   GYROSCOPE_OPEN_INDEX))
+    {
         gdop = devop->device_operation;
         gdop->general_gyroscope_open(devop->private_data, NULL);
     }
@@ -63,21 +63,20 @@ static int gyroscope_get_helper
 )
 {
     int result = -1;
-    void* private_data;
 
     devop = get_device_open_struct(dev_open_idx); 
-    if (!check_null(__FILE__, __func__, "devop", devop)){
+    if (! check_null(__FILE__, __func__, "devop", devop)){
        printf("Detail: can't find device open struct with index %d\n",
                                                                  dev_open_idx);
        return -1;
     }
     
-    //检查设备的类型是否为gyroscope
-    if (!check_device_type(devop, "gyroscope")) return -1;
+    // 检查设备的类型是否为gyroscope
+    if (! check_device_type(devop, "gyroscope")) return -1;
 
     gdop = devop->device_operation;
-    private_data = devop->private_data;
-    if (has_op_complemented(devop->private_data, op_idx)){
+    void* private_data = devop->private_data;
+    if (has_operation_complemented(private_data, op_idx)){
          switch (op_idx){
                case GYROSCOPE_GETX_INDEX: 
                     result =  gdop->general_gyroscope_getx(private_data, 
