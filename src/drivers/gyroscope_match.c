@@ -14,7 +14,7 @@ static int global_match(void)
 
     global_data_template0 = malloc(sizeof(struct gyroscope_global));
     exec_status = fill_plain_struct("global", 
-                                    "global", 
+                                    "tdm0", 
                                      &gyro_global[0],
                                      gyro_global_do_fill);
 
@@ -35,7 +35,7 @@ static int open_match_template0(void)
     open_data_template0  = malloc(sizeof(struct reg_array));
     
     exec_status = fill_reg_array("gyroscope_open",
-                                 "open_template0",
+                                 "tdm0", 
                                  open_data_template0); 
 
     complementation_record |= 1<<GYROSCOPE_OPEN_INDEX;
@@ -50,15 +50,15 @@ static int open_match_template0(void)
 static int getx_match_template0(void)
 {
     return getreg_pat0_match("gyroscope_getx",
-                             "getx_template0", 
-                              GYROSCOPE_GETX_INDEX);
+                             "tdm0", 
+                             GYROSCOPE_GETX_INDEX);
 }
 
 
 static int gety_match_template0(void)
 {
     return getreg_pat0_match("gyroscope_gety", 
-                             "gety_template0", 
+                             "tdm0", 
                              GYROSCOPE_GETY_INDEX);
 }
 
@@ -66,7 +66,7 @@ static int gety_match_template0(void)
 static int getz_match_template0(void)
 {
     return getreg_pat0_match("gyroscope_getz", 
-                             "getz_template0",
+                             "tdm0", 
                              GYROSCOPE_GETZ_INDEX);
 }
 
@@ -74,7 +74,7 @@ static int getz_match_template0(void)
 static int getxyz_match_template0(void)
 {
     return getreg_pat0_match("gyroscope_getxyz",
-                             "getxyz_template0",
+                             "tdm0", 
                              GYROSCOPE_GETXYZ_INDEX);
 }
 

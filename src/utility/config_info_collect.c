@@ -14,6 +14,7 @@ int config_info_collect_init(void)
    return SUCCESS;
 }
 
+
 // 建立收集设备配置信息上下文环境
 int establish_device_context(char* lid)
 {
@@ -42,6 +43,7 @@ int establish_device_context(char* lid)
     return SUCCESS;
 }
 
+
 // 在关闭设备上下文的时候，做一些清理工作
 void destroy_device_context(void)
 {
@@ -59,7 +61,6 @@ const char* get_device_context(void)
 {
    return mxmlElementGetAttr(device_context, "lid");
 }
-
 
 
 // 判断设备的配置信息中是否含有global项，该函数在驱动匹配模块中被调用
@@ -165,27 +166,28 @@ void* get_first_para(void* para_list)
 
 void* find_para_list
 (
-   const char* dts_owner_name,
-   const char* para_name
+   const char* template_data_owner_name,
+   const char* tempate_data_name 
 )
 {  
-   mxml_node_t *dts_owner, *para_list;
+   mxml_node_t *template_data_owner, *para_list, *template_data;
     
    // 查找配置信息中是否有相关的global或op配置项
-   dts_owner = find_data_template_struct_owner(dts_owner_name);
-   if(dts_owner == NULL) return UNMATCH;
+   template_data_owner = find_template_data_owner(template_data_owner_name);
+   if(template_data_owner == NULL) return UNMATCH;
+
+   template_data = find_element_in_context(template_data_owner, 
+                                           "template_data",
+                                            "name",
+                                            tempate_data_name);
+   if(template_data == NULL) return UNMATCH;
 
    // 然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
-   para_list = mxmlFindElement(dts_owner,
-                               dts_owner,
-                               "para_list",
-                               "name",
-                               para_name,
-                               MXML_DESCEND);  
-   // TODO 错误检测
+   para_list = find_element_in_context(template_data,"para_list", NULL, NULL);
+
    if (!check_null(__FILE__, __func__, "para_list", para_list)){
-       printf("Detail: can't find para_list item named '%s' in xml file\n",
-              para_name);
+       printf("Detail: can't find template_data named '%s' in xml file\n",
+              tempate_data_name);
        return NULL;
    }
 
@@ -196,26 +198,30 @@ void* find_para_list
 // 因为fill_系列的函数都是填充相应数据模板结构体的函数
 // 而在同一个设备上下文中，数据模板结构体可能在global或者
 // op下，这个函数的功能是查找数据模板的所有者
-static mxml_node_t* find_data_template_struct_owner
+static mxml_node_t* find_template_data_owner
 (
-   const char* dts_owner_name
+   const char* template_data_owner_name
 )
 {
-   mxml_node_t* dts_owner;
+   mxml_node_t* template_data_owner;
 
-   if (is_equal(dts_owner_name, "global")){
-       dts_owner = find_device_global_configuration();
+   if (is_equal(template_data_owner_name, "global")){
+       template_data_owner = find_device_global_configuration();
    }else{
-       dts_owner = find_device_operation(dts_owner_name);
+       template_data_owner = find_device_operation(template_data_owner_name);
    }
 
-   if (!check_null(__FILE__, __func__, "dts_owner", dts_owner)){
+
+   if (! check_null(__FILE__, __func__, "template_data_owner", 
+                    template_data_owner))
+   {
        printf("Detail: can't find data template struct owner named '%s'\n", 
-               dts_owner_name);
+               template_data_owner_name);
+
        return NULL;
    }
    
-   return dts_owner;
+   return template_data_owner;
 }
 
 
@@ -242,6 +248,7 @@ mxml_node_t* skip_text_node(mxml_node_t* node)
 
     return sibling;
 }
+
 
 // 检查配置信息中参数的类型
 int check_para_data_type
@@ -298,6 +305,7 @@ static void* find_element_in_device_context
 
 }
 
+
 // xml文件只是配置文件的一种，上层的代码不应该依赖与具体的xml结构
 // 这里元素的数据包括xml中的属性值和文本值，如果不用xml配置文件的
 // 话只要重新实现一下这个接口就行了，因为其它的配置文件形式很有可
@@ -335,16 +343,18 @@ void* get_next_sibling(const void* sibling)
 // 对于比较顶层的一些结构如函数操作列表，函数操作项目，参数列表
 // 全局配置项目，单个代码块， 代码块组都可单独提供一个函数去操作
 // 它们
-void* find_element_in_operation_context
+void* find_element_in_context
 (
-   void* op_context,
-   const char* elem_name
+   void* context,
+   const char* elem_name,
+   const char* attr_name,
+   const char* attr_val
 )
 {
-   return  mxmlFindElement(op_context,
-                           op_context,
+   return  mxmlFindElement(context,
+                           context,
                            elem_name,
-                           NULL,
-                           NULL, 
+                           attr_name,
+                           attr_val, 
                            MXML_DESCEND);
 }

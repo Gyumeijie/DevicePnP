@@ -37,7 +37,8 @@ int collect_code_block
                                               code_block_struct);
    }else{
        char enclosing_elem_name[128];
-       sprintf(enclosing_elem_name, "%ss", code_block_name);
+       sprintf(enclosing_elem_name, "%s_list", code_block_name);
+
        return do_group_code_blocks_collection(op_context,
                                               enclosing_elem_name,
                                               code_block_struct);
@@ -52,35 +53,33 @@ static int do_group_code_blocks_collection
    struct group_code_blocks* gcb
 )
 {
-   void* group_blocks = find_element_in_operation_context(op_context, elem_name);
+   void* group_blocks = find_element_in_context(op_context,
+                                                elem_name,
+                                                NULL,
+                                                NULL);
 
    if (group_blocks == NULL) return FAILURE;
-   // TODO 如果没有找到的话，就为空gcb=NULL;
 
    // 注意如果配置文件中没有length属性，将会报错这种是比较常见的模式
    // 应该有一个专门的报错函数，整理一下error_report
    int length = strtoul(get_element_data(group_blocks, "length"), NULL, 10); 
-   const char** code_blocks_array = malloc(sizeof((void*)0) * length);
-   int** compiled_byte_code = malloc(sizeof((void*)0) * length);
-   memset(code_blocks_array, 0, sizeof((void*)0) * length);
-   memset(compiled_byte_code, 0, sizeof((void*)0) * length);
+   const char** code_blocks_array = malloc(sizeof((void*)0)*length);
+   int** compiled_byte_code = malloc(sizeof((void*)0)*length);
+
+   memset(code_blocks_array, 0, sizeof((void*)0)*length);
+   memset(compiled_byte_code, 0, sizeof((void*)0)*length);
 
    gcb->code_block_src_array = code_blocks_array;
    gcb->num_block = length;
    gcb->compiled_byte_code_array = compiled_byte_code;
 
-   printf("length is %d elem_name is %s\n", length, elem_name);
+   // 获取第一个代码块
+   void* code_block = get_first_child(group_blocks);
+   if (code_block == NULL) return FAILURE;
 
    int i;
-   void* code_block = get_first_child(group_blocks);
-   // TODO code_block也有可能为NUL即没有孩子
    for (i=0; i<length; i++){
-        
        install_code_block(code_blocks_array, length, code_block);
-
-       //printf("src is %s\n", get_element_data(code_block, "text_value"));
-       //printf("id is %s\n", get_element_data(code_block, "id"));
-       
        code_block = get_next_sibling(code_block);
    }
 
@@ -95,7 +94,11 @@ static int do_single_code_block_collection
    struct single_code_block* scb
 )
 { 
-   void* single_block = find_element_in_operation_context(op_context, elem_name);
+   void* single_block = find_element_in_context(op_context,
+                                                elem_name,
+                                                NULL,
+                                                NULL);
+
    if (single_block == NULL) return FAILURE;
 
    scb->code_block_src = (void*)get_element_data(single_block, "text_value");

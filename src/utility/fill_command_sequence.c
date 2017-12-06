@@ -10,12 +10,16 @@
 
 int fill_command_sequence
 (
-   const char* dts_owner_name,
-   const char* para_list_name,
+   const char* template_data_owner_name,
+   const char* template_data_name,
    struct command_sequence* cmd_seqp
 )
 {
-    void* para_list = find_para_list(dts_owner_name, para_list_name);
+    // TODO 对模板数据进行类型检查
+    
+    void* para_list; 
+    para_list = find_para_list(template_data_owner_name, template_data_name);
+
     if (para_list == NULL)  return UNMATCH;
 
     int num_para = get_para_list_length(para_list);
@@ -23,7 +27,6 @@ int fill_command_sequence
 
     void* first_para = get_first_para(para_list);
  
-   
     return do_fill_cmd_seq(first_para, num_para, &cmd_seqp);
 }
 

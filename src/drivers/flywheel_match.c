@@ -19,7 +19,7 @@ static int set_speed_match_template0(void)
    set_speed_data_template0 = malloc(sizeof(struct command_sequence));
 
    exec_status = fill_command_sequence("flywheel_set_speed", 
-                                       "flywheel_set_speed_template0",
+                                       "tdm0",
                                         set_speed_data_template0);
  
    collect_code_block("flywheel_set_speed",
@@ -43,7 +43,7 @@ static int receive_match_template0(void)
     receive_data_template0 = malloc(sizeof(struct bytes_array_assembly_scheme));
 
     exec_status = fill_bytes_array_assembly_scheme("flywheel_receive", 
-                                                   "flywheel_receive_template0",
+                                                   "tdm0",
                                                     receive_data_template0);
     
     collect_code_block("flywheel_receive",

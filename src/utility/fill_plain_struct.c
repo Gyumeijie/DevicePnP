@@ -10,13 +10,14 @@
 // 为给定操作名填充类型为struct的模板参数
 int fill_plain_struct
 (
-   const char* dts_owner_name, 
-   const char* para_list_name, 
+   const char* template_data_owner_name, 
+   const char* template_data_name, 
    struct struct_member st[], 
    fill_struct_function do_fill
 )
 {
-   void* para_list = find_para_list(dts_owner_name, para_list_name);
+   void* para_list;
+   para_list = find_para_list(template_data_owner_name, template_data_name);
    if (para_list == NULL)  return UNMATCH;
 
    int num_para = get_para_list_length(para_list);

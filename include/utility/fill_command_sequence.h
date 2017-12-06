@@ -6,8 +6,8 @@
 // command_sequence相关函数
 extern int fill_command_sequence
 (
-   const char* dts_owner_name, 
-   const char* para_list_name,
+   const char* template_data_owner_name, 
+   const char* template_data_name,
    struct command_sequence* cmd_seqp
 );
 

@@ -17,14 +17,14 @@ static int open_match_template0(void) { return MATCH; }
 static int setx_match_template0(void)
 {
    return set_pat0_match("magnetorquer_setx",
-                         "setx_template0", 
+                         "tdm0",
                          MAGNETORQUER_SETX_INDEX); 
 }
 
 static int sety_match_template0(void)
 {
    return set_pat0_match("magnetorquer_sety",
-                         "sety_template0", 
+                         "tdm0",
                          MAGNETORQUER_SETY_INDEX); 
 }
 
@@ -32,7 +32,7 @@ static int sety_match_template0(void)
 static int setz_match_template0(void)
 {
    return set_pat0_match("magnetorquer_setz",
-                         "setz_template0", 
+                         "tdm0",
                          MAGNETORQUER_SETZ_INDEX); 
 }
 
@@ -40,7 +40,7 @@ static int setz_match_template0(void)
 static int setxyz_match_template0(void)
 {
    return set_pat0_match("magnetorquer_setxyz",
-                         "setxyz_template0", 
+                         "tdm0",
                          MAGNETORQUER_SETXYZ_INDEX); 
 }
 

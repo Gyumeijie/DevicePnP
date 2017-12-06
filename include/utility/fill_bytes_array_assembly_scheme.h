@@ -6,9 +6,9 @@
 // bytes_assembly相关函数
 extern int fill_bytes_array_assembly_scheme
 (
-  const char* dts_owner_name, 
-  const char* para_list_name, 
-  struct bytes_array_assembly_scheme* asm_schemep
+   const char* template_data_owner_name, 
+   const char* template_data_name, 
+   struct bytes_array_assembly_scheme* asm_schemep
 );
 
 static int alloc_bytes_array_assembly_scheme
@@ -19,9 +19,9 @@ static int alloc_bytes_array_assembly_scheme
 
 static int do_fill_bytes_array_assembly_scheme
 (
-  const void* first_para,
-  int num_para, 
-  struct bytes_array_assembly_scheme** asm_scheme2p
+   const void* first_para,
+   int num_para, 
+   struct bytes_array_assembly_scheme** asm_scheme2p
 );
 
 #endif

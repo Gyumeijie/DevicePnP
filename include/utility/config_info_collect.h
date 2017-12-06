@@ -32,15 +32,16 @@ extern int check_para_data_type
 
 extern  mxml_node_t* skip_text_node(mxml_node_t* node);
 
-static mxml_node_t* find_data_template_struct_owner
+static mxml_node_t* find_template_data_owner
 (
-   const char* dts_owner_name
+   const char* template_data_owner_name
 );
+
 
 extern void* find_para_list
 (
-   const char* dts_owner_name,
-   const char* para_name
+   const char* template_data_owner_name,
+   const char* tempate_data_name 
 );
 
 extern void* get_first_para(void* para_list);
@@ -65,10 +66,12 @@ extern const char* get_element_data
 );
 
 
-extern void* find_element_in_operation_context
+extern void* find_element_in_context
 (
-   void* op_context,
-   const char* elem_name
+   void* context,
+   const char* elem_name,
+   const char* attr_name,
+   const char* attr_val
 );
 
 extern void* get_first_child(const void* parent);
