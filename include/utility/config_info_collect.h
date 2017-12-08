@@ -19,6 +19,8 @@ extern int get_op_list_length(void);
 
 extern int get_op_template_id(char* op_name);
 
+extern int get_global_template_id();
+
 extern int config_info_collect_init(void);
 
 static void create_op_name_list(void);

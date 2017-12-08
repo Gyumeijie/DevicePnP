@@ -11,7 +11,7 @@
 // 模板数据指的是某种数据模板类型的具体值
 
 
-static int global_match(void){ return MATCH; }
+static int global_match_template0(void){ return MATCH; }
 static int open_match_template0(void) { return MATCH; }
 
 static int set_speed_match_template0(void)
@@ -71,7 +71,7 @@ static int receive_match_template0(void)
 
 // 模板匹配函数表
 static struct template_match match_funcs_table[FLYWHEEL_TEMPLATE_NUM] = {
-    {"global", global_match},
+    {"global_template0", global_match_template0},
     {"flywheel_open_template0", open_match_template0},
     {"flywheel_set_speed_template0", set_speed_match_template0},
     {"flywheel_receive_template0", receive_match_template0},

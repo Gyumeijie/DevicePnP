@@ -11,7 +11,7 @@
  * 上而没有相应的匹配函数出错
  */
 
-static int global_match(void){ return MATCH; }
+static int global_match_template0(void){ return MATCH; }
 static int open_match_template0(void) { return MATCH; }
 
 static int read_match_template0(void) 
@@ -35,7 +35,7 @@ static int read_match_template0(void)
 
 // 模板匹配函数表
 static struct template_match match_funcs_table[ANALOGSUNSENSOR_TEMPLATE_NUM] = {
-    {"global", global_match},
+    {"global_template0", global_match_template0},
     {"analogsunsensor_open_template0", open_match_template0},
     {"analogsunsensor_read_template0", read_match_template0},
 }; 

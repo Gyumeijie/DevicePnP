@@ -1,7 +1,7 @@
 <!-->
      
 <-->
-<global name="global">
+<global name="global" template_id="0">
     <template_data type="plain_struct" name="global_template0_data">
       <para_list length="1">
 	    <para name="slave_address" type="char">0xD2</para>

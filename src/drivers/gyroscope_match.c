@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 
-static int global_match(void)
+static int global_match_template0(void)
 {
     int exec_status;
 
@@ -125,7 +125,7 @@ static void getreg_pat0_do_fill(int index, void* data)
 
 // 模板匹配函数表
 static struct template_match match_funcs_table[GYROSCOPE_TEMPLATE_NUM] = {
-    {"global", global_match},
+    {"global_template0", global_match_template0},
     {"gyroscope_open_template0", open_match_template0},
     {"gyroscope_getx_template0", getx_match_template0},
     {"gyroscope_gety_template0", gety_match_template0},

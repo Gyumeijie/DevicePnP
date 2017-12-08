@@ -6,7 +6,7 @@
 #define MAGNETORQUER_TEMPLATE_NUM 10
 #define MATCH_FUNCS_NUM  6
 
-static int global_match(void);
+static int global_match_template0(void);
 
 static int open_match_template0(void);
 

@@ -63,7 +63,7 @@ static struct struct_member getreg_pat0[2] = {
 static int getreg_pat0_match(char* op_name, char* para_name, int op_idx);
 static void getreg_pat0_do_fill(int index, void* data);
 
-static int global_match(void);
+static int global_match_template0(void);
 static void gyro_global_do_fill(int index, void* data);
 
 static int open_match_template0(void);

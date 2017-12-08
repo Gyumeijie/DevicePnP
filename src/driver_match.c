@@ -11,16 +11,11 @@ static struct data_template* data_template_table;
 
 int do_match(struct match_info* mip)
 {
-    if(! check_null(__FILE__, __func__, "mip", mip)) return UNMATCH;
-    
-    char template_name[MAX_TEMPLATE_NAME_LENGTH];
     
     // 初始化设备的模板参数结构体表
     init_data_template_table(mip->data_table_size);
 
-    // 先通过全局变量匹配函数来匹配以及收集全局的参数信息
-    op_context = "global";
-    if (has_global_config_item() && !try_match("global", mip)) return UNMATCH;
+    if (! tackle_global_configuration(mip)) return UNMATCH;
 
     // 然后根据配置文件依次匹配以及收集每个模板的参数
     int i;
@@ -30,11 +25,10 @@ int do_match(struct match_info* mip)
         int template_id = get_op_template_id(op_name);
         op_context = op_name;
          
-        construct_operation_template_name(template_name, op_name, template_id);
+        char template_name[MAX_TEMPLATE_NAME_LENGTH];
+        construct_template_name(template_name, op_name, template_id);
    
-        if (! try_match(template_name, mip)){
-            return UNMATCH;
-        }
+        if (! try_match(template_name, mip)) return UNMATCH;
     }
 
     
@@ -49,15 +43,31 @@ int do_match(struct match_info* mip)
 }
 
 
-static void construct_operation_template_name
+static int tackle_global_configuration(struct match_info* mip)
+{
+   if (has_global_config_item()){
+     op_context = "global";
+     char template_name[MAX_TEMPLATE_NAME_LENGTH];
+     int template_id = get_global_template_id();
+    
+     construct_template_name(template_name, "global", template_id);
+
+     if (! try_match(template_name, mip)) return UNMATCH;
+    }
+
+    return MATCH;
+}
+
+
+static void construct_template_name
 (
    char* template_name,
-   char* op_name,
+   char* name,
    int template_id
 )
 {
-    // 构造模板名 设备类型_操作名_templatexxx，其中xxx为template_id
-    sprintf(template_name, "%s_template%d", op_name, template_id);
+    // 构造模板名 设备类型_操作名或global_templatexxx，其中xxx为template_id
+    sprintf(template_name, "%s_template%d", name, template_id);
 }
 
 

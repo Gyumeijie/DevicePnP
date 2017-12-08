@@ -116,6 +116,17 @@ int get_op_template_id(char* op_name)
 }
 
 
+int get_global_template_id()
+{
+   void* global = find_element_in_device_context("global", NULL, NULL);
+   const char* template_id_str = get_element_data(global, "template_id");
+
+   if (template_id_str == NULL) return -1;
+
+   return strtoul(template_id_str, NULL, 10);
+}
+
+
 char* get_op_name(void)
 {   
     if (op_list_fetch_tracer < op_list_length){

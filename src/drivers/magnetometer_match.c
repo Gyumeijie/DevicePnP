@@ -11,7 +11,7 @@
  * 上而没有相应的匹配函数出错
  */
 
-static int global_match(void){ return MATCH; }
+static int global_match_template0(void){ return MATCH; }
 static int open_match_template0(void) { return MATCH; }
 
 static int getx_match_template0(void)
@@ -63,7 +63,7 @@ static int get_pat0_match(char* op_name, char* para_name, int op_idx)
 
 // 模板匹配函数表
 static struct template_match match_funcs_table[MAGNETOMETER_TEMPLATE_NUM] = {
-    {"global", global_match},
+    {"global_template0", global_match_template0},
     {"magnetometer_open_template0", open_match_template0},
     {"magnetometer_getx_template0", getx_match_template0},
     {"magnetometer_gety_template0", gety_match_template0},

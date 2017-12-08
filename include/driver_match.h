@@ -138,12 +138,14 @@ static match_function find_match_function
    struct match_info* mip 
 );
 
-static void construct_operation_template_name
+static void construct_template_name
 (  
    char* template_name,
-   char* op_name, 
+   char* name, 
    int template_id
 );
+
+static int tackle_global_configuration(struct match_info* mip);
 
 static int try_match
 (
@@ -172,7 +174,5 @@ extern int has_operation_complemented
     struct data_template* private_data, 
     int op_idx
 );
-
-
 
 #endif
