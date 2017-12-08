@@ -2,7 +2,7 @@
 #include "dev_t.h"
 #include "analogsunsensor_driver.h"
 #include "analogsunsensor.h"
-#include "data_template_fetch.h"
+#include "template_data_fetch.h"
 #include "driver_supported_interface.h"
 
 static int template_id;
