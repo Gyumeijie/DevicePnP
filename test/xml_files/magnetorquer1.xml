@@ -3,44 +3,36 @@
 <-->
 <op_list length="4">
   <op name="magnetorquer_setx" template_id="0"> 
-    <template_data_list>
-      <template_data type="plain_array" name="tdm0">
+      <template_data type="plain_array" name="setx_template0_data">
         <para_list length="1">
           <para type="int">4</para>
         </para_list>
       </template_data>
-    </template_data_list>
   </op>
 
   <op name="magnetorquer_sety" template_id="0"> 
-    <template_data_list>
-      <template_data type="plain_array" name="tdm0">
+      <template_data type="plain_array" name="sety_template0_data">
         <para_list length="1">
           <para type="int">6</para>
         </para_list>
       </template_data>
-    </template_data_list>
   </op>
 
   <op name="magnetorquer_setz" template_id="0"> 
-    <template_data_list>
-      <template_data type="plain_array" name="tdm0">
+      <template_data type="plain_array" name="setz_template0_data">
         <para_list length="1">
           <para type="int">9</para>
         </para_list>
       </template_data>
-    </template_data_list>
   </op>
 
   <op name="magnetorquer_setxyz" template_id="0"> 
-    <template_data_list>
-      <template_data type="plain_array" name="tdm0">
+      <template_data type="plain_array" name="setxyz_template0_data">
         <para_list length="3">
           <para type="int">4</para>
           <para type="int">6</para>
           <para type="int">9</para>
         </para_list>
       </template_data>
-    </template_data_list>
   </op>
 </op_list>

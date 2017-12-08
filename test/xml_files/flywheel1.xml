@@ -3,32 +3,29 @@
 <-->
 <op_list length="2">
   <op name="flywheel_set_speed" template_id="0">
-    <template_data_list>
-      <template_data type="bytes_array_assembly" name="tdm0">
+      <template_data type="bytes_array_assembly" name="set_speed_template0_data">
         <para_list length="6">
           <para occupied_by="constant">0xD3</para> 
           <para occupied_by="constant">2</para>
           <para occupied_by="computed" size="4" compute_id="0"></para>
           <para occupied_by="constant">0x5B</para>
-          <para occupied_by="checksum"></para>
           <para occupied_by="computed" size="3" compute_id="0"></para>
+          <para occupied_by="checksum"></para>
         </para_list>
-        <compute_function_list length="1">
-          <compute_function id="0">
+        <code_block_list length="1" name="compute">
+          <code_block id="0">
             use{;}
             action{
               result = *(int*)para;
               result = result * 2 + 1; 
             }
-          </compute_function>
-        </compute_function_list>
+          </code_block>
+        </code_block_list>
       </template_data>
-    </template_data_list>
   </op>
 
   <op name="flywheel_receive" template_id="0">
-    <template_data_list>
-      <template_data type="bytes_array_assembly" name="tdm0">
+      <template_data type="bytes_array_assembly" name="receive_template0_data">
         <para_list length="6">
           <para start="0" num_byte="4" postprocess_id="-1"></para> 
           <para start="4" num_byte="4" postprocess_id="-1"></para> 
@@ -37,7 +34,7 @@
           <para start="14" num_byte="1" postprocess_id="-1"></para> 
           <para start="15" num_byte="1" postprocess_id="-1"></para> 
         </para_list>
-        <precondition>
+        <code_block name="precondition">
           use{;}
           action{
              if (bytes_arr[0] == 0x00){
@@ -46,18 +43,17 @@
                 result = 0;
              }
           ;}
-       </precondition>
-       <postprocess_function_list length="1">
-         <postprocess_function id="0">
+       </code_block>
+       <code_block_list length="1" name="postprocess">
+         <code_block id="0">
            use{float tmp;}
            action{
               tmp = asm_val; 
               tmp = tmp * 0.05;
               *(float*)var_addr = tmp;
            }
-         </postprocess_function>
-       </postprocess_function_list>         
+         </code_block>
+       </code_block_list>         
      </template_data>
-   </template_data_list>
   </op>
 </op_list>

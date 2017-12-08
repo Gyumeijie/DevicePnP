@@ -1,7 +1,7 @@
 #include "gyroscope_match.h"
 #include "gyroscope_match.h"
 #include "fill_plain_struct.h"
-#include "fill_reg_array.h"
+#include "fill_register_array.h"
 #include "error_report.h"
 #include <malloc.h>
 #include <string.h>
@@ -14,7 +14,7 @@ static int global_match(void)
 
     global_data_template0 = malloc(sizeof(struct gyroscope_global));
     exec_status = fill_plain_struct("global", 
-                                    "tdm0", 
+                                    "global_template0_data", 
                                      &gyro_global[0],
                                      gyro_global_do_fill);
 
@@ -29,14 +29,14 @@ static int global_match(void)
 
 static int open_match_template0(void)
 {
-    struct reg_array* open_data_template0;
+    struct register_array* open_data_template0;
     int exec_status;
 
-    open_data_template0  = malloc(sizeof(struct reg_array));
+    open_data_template0  = malloc(sizeof(struct register_array));
     
-    exec_status = fill_reg_array("gyroscope_open",
-                                 "tdm0", 
-                                 open_data_template0); 
+    exec_status = fill_register_array("gyroscope_open",
+                                      "open_template0_data", 
+                                      open_data_template0); 
 
     complementation_record |= 1<<GYROSCOPE_OPEN_INDEX;
 
@@ -50,7 +50,7 @@ static int open_match_template0(void)
 static int getx_match_template0(void)
 {
     return getreg_pat0_match("gyroscope_getx",
-                             "tdm0", 
+                             "getx_template0_data", 
                              GYROSCOPE_GETX_INDEX);
 }
 
@@ -58,7 +58,7 @@ static int getx_match_template0(void)
 static int gety_match_template0(void)
 {
     return getreg_pat0_match("gyroscope_gety", 
-                             "tdm0", 
+                             "gety_template0_data", 
                              GYROSCOPE_GETY_INDEX);
 }
 
@@ -66,7 +66,7 @@ static int gety_match_template0(void)
 static int getz_match_template0(void)
 {
     return getreg_pat0_match("gyroscope_getz", 
-                             "tdm0", 
+                             "getz_template0_data", 
                              GYROSCOPE_GETZ_INDEX);
 }
 
@@ -74,7 +74,7 @@ static int getz_match_template0(void)
 static int getxyz_match_template0(void)
 {
     return getreg_pat0_match("gyroscope_getxyz",
-                             "tdm0", 
+                             "getxyz_template0_data", 
                              GYROSCOPE_GETXYZ_INDEX);
 }
 

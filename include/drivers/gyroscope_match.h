@@ -56,7 +56,7 @@ static struct get_reg_pattern0* get_data_template0;
 
 // get_x, get_y, get_z, get_xyz所需的信息结构体描述
 static struct struct_member getreg_pat0[2] = {
-       {"char", "reg_address", 0},
+       {"char", "register_address", 0},
        {"int", "size", 1}
 };
 

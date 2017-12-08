@@ -1,17 +1,17 @@
 #include "config_info_collect.h"
 #include "error_report.h"
-#include "fill_reg_array.h"
+#include "fill_register_array.h"
 #include "miscellaneous.h"
 #include <string.h>
 #include <malloc.h>
 #include <stdio.h>
 
 
-int fill_reg_array
+int fill_register_array
 (
    const char* template_data_owner_name, 
    const char* template_data_name, 
-   struct reg_array* regap
+   struct register_array* regap
 )
 {
    void* para_list;
@@ -23,27 +23,27 @@ int fill_reg_array
 
    void* first_para = get_first_para(para_list);
    
-   return do_fill_reg_array(first_para, num_para, &regap);
+   return do_fill_register_array(first_para, num_para, &regap);
 }
 
 
 
-static int do_fill_reg_array
+static int do_fill_register_array
 (
    const void* first_para, 
    int len, 
-   struct reg_array** rega2p
+   struct register_array** rega2p
 )
 {
    // 分配存储空间，如果分配失败则返回错误
-   if(! alloc_reg_array(len, rega2p)) return FAILURE;
+   if(! alloc_register_array(len, rega2p)) return FAILURE;
    struct reg* regp = (*rega2p)->regp;
 
    int i;
    const void* para = first_para;
    for (i=0; i<len; i++){
-       const char* address_str = get_element_data(para, "address");
-       if (! check_null(__FILE__, __func__, "address", address_str)){
+       const char* address_str = get_element_data(para, "register_address");
+       if (! check_null(__FILE__, __func__, "register_address", address_str)){
            return FAILURE;
        }
 
@@ -63,7 +63,7 @@ static int do_fill_reg_array
 }
 
 
-static int alloc_reg_array(int len, struct reg_array** rega2p)
+static int alloc_register_array(int len, struct register_array** rega2p)
 {
 
    struct reg* regp = (struct reg*)malloc(sizeof(struct reg) * len);  

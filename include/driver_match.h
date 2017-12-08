@@ -21,8 +21,8 @@ struct reg{
   char val;
 };
 
-// 定义收集设备配置文件中类型为reg_array的para_list的结构体
-struct reg_array{
+// 定义收集设备配置文件中类型为register_array的para_list的结构体
+struct register_array{
     int len; 
     struct reg* regp;
 };

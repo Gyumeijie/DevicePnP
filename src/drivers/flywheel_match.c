@@ -7,9 +7,12 @@
 #include <stdio.h>
 #include <string.h>
  
+// 数据模板指的是一种类型
+// 模板数据指的是某种数据模板类型的具体值
+
+
 static int global_match(void){ return MATCH; }
 static int open_match_template0(void) { return MATCH; }
-
 
 static int set_speed_match_template0(void)
 {
@@ -19,11 +22,12 @@ static int set_speed_match_template0(void)
    set_speed_data_template0 = malloc(sizeof(struct command_sequence));
 
    exec_status = fill_command_sequence("flywheel_set_speed", 
-                                       "tdm0",
+                                       "set_speed_template0_data",
                                         set_speed_data_template0);
  
    collect_code_block("flywheel_set_speed",
-                      "compute_function",
+                      "set_speed_template0_data",
+                      "compute",
                        GROUP,
                        set_speed_data_template0->compute_funcs); 
   
@@ -43,22 +47,25 @@ static int receive_match_template0(void)
     receive_data_template0 = malloc(sizeof(struct bytes_array_assembly_scheme));
 
     exec_status = fill_bytes_array_assembly_scheme("flywheel_receive", 
-                                                   "tdm0",
+                                                   "receive_template0_data",
                                                     receive_data_template0);
     
     collect_code_block("flywheel_receive",
-                       "postprocess_function",
+                       "receive_template0_data",
+                       "postprocess",
                         GROUP,
                         receive_data_template0->postprocess_funcs); 
 
     collect_code_block("flywheel_receive",
+                       "receive_template0_data",
                        "precondition",
                         SINGLE,
                         receive_data_template0->precondition); 
 
-    // 返回不匹配或者匹配
-    return check_match(exec_status, FLYWHEEL_RECEIVE_INDEX, 0, 
-                                    (void*)receive_data_template0);
+    return check_match(exec_status, 
+                       FLYWHEEL_RECEIVE_INDEX,
+                       0, 
+                      (void*)receive_data_template0);
 }
 
 

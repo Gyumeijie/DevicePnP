@@ -23,7 +23,7 @@ static int read_match_template0(void)
     read_data_template0->type = "int"; 
 
     exec_status = fill_plain_array("analogsunsensor_read",
-                                   "tdm0",
+                                   "read_template0_data",
                                    read_data_template0); 
 
     return check_match(exec_status, 

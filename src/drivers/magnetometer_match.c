@@ -17,7 +17,7 @@ static int open_match_template0(void) { return MATCH; }
 static int getx_match_template0(void)
 {
    return get_pat0_match("magnetometer_getx",
-                         "tdm0",
+                         "getx_template0_data",
                          MAGNETOMETER_GETX_INDEX);
 }
 
@@ -25,7 +25,7 @@ static int getx_match_template0(void)
 static int gety_match_template0(void)
 {
    return get_pat0_match("magnetometer_gety",
-                         "tdm0",
+                         "gety_template0_data",
                          MAGNETOMETER_GETY_INDEX);
 }
 
@@ -33,7 +33,7 @@ static int gety_match_template0(void)
 static int getz_match_template0(void)
 {
    return get_pat0_match("magnetometer_getz",
-                         "tdm0",
+                         "getz_template0_data",
                          MAGNETOMETER_GETZ_INDEX);
 }
 
@@ -41,7 +41,7 @@ static int getz_match_template0(void)
 static int getxyz_match_template0(void)
 {
    return get_pat0_match("magnetometer_getxyz",
-                         "tdm0",
+                         "getxyz_template0_data",
                          MAGNETOMETER_GETXYZ_INDEX);
 }
 
