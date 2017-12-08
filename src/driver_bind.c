@@ -51,7 +51,7 @@ int bind_drivers(void)
 static void do_bind(struct device* devp, struct driver* drip)
 {
     devp->device_operation = drip->device_operation;
-    devp->private_data = get_data_template_table();
+    devp->private_data = get_template_data_table();
 }
 
 

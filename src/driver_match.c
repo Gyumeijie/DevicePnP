@@ -7,13 +7,13 @@
 #include <malloc.h>
 
 static const char* op_context;
-static struct data_template* data_template_table;
+static struct template_data* template_data_table;
 
 int do_match(struct match_info* mip)
 {
     
     // 初始化设备的模板参数结构体表
-    init_data_template_table(mip->data_table_size);
+    init_template_data_table(mip->data_table_size);
 
     if (! tackle_global_configuration(mip)) return UNMATCH;
 
@@ -89,28 +89,28 @@ static int try_match
     if (! exec_status){
         // 释放掉匹配以及收集前面模板所分配的数据结构并返回不匹配
         undo_match();
-        data_template_table = NULL;
+        template_data_table = NULL;
     }
 
     return exec_status;
 }
 
 
-static void init_data_template_table(int dtsize)
+static void init_template_data_table(int dtsize)
 {   
-    int memsize = sizeof(struct data_template) * dtsize; 
+    int memsize = sizeof(struct template_data) * dtsize; 
 
-    data_template_table = malloc(memsize);
-    check_null(__FILE__, __func__, "data_template_table", data_template_table);
+    template_data_table = malloc(memsize);
+    check_null(__FILE__, __func__, "template_data_table", template_data_table);
 
-    memset(data_template_table, 0, memsize);
+    memset(template_data_table, 0, memsize);
 }
 
 
 static void undo_match(void)
 {
-    free(data_template_table);
-    data_template_table = NULL;
+    free(template_data_table);
+    template_data_table = NULL;
 }
 
 
@@ -134,14 +134,14 @@ static match_function find_match_function
 }
 
 
-int check_match(int status, int op_idx, int template_id, void* data_template)
+int check_match(int status, int op_idx, int template_id, void* template_data)
 {
     // 返回不匹配
     if (! status) return UNMATCH;
 
-    // 否则将收集到的数据存放到data_template_table中供后面使用
-    data_template_table[op_idx].para_struct = data_template;
-    data_template_table[op_idx].template_id = template_id;
+    // 否则将收集到的数据存放到template_data_table中供后面使用
+    template_data_table[op_idx].para_struct = template_data;
+    template_data_table[op_idx].template_id = template_id;
     
     // 返回匹配
     return MATCH;
@@ -149,9 +149,9 @@ int check_match(int status, int op_idx, int template_id, void* data_template)
 
 
 // 获取设备的数据模板信息表
-void* get_data_template_table(void)
+void* get_template_data_table(void)
 {
-    return (void*)data_template_table;
+    return (void*)template_data_table;
 }
 
 
@@ -162,7 +162,7 @@ const char* get_op_context()
 }
 
 
-int has_operation_complemented(struct data_template* private_data, int op_idx)
+int has_operation_complemented(struct template_data* private_data, int op_idx)
 {
    if (! check_null(__FILE__, __func__, "private_data", private_data)){
       printf("Detail: may be no corresponding driver being loaded\n");

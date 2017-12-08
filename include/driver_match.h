@@ -113,7 +113,7 @@ struct min_function_set{
 
 
 // 定义模板参数结构体
-struct data_template{
+struct template_data{
     int template_id;
     void* para_struct;
 };
@@ -130,7 +130,7 @@ struct match_info{
 
 static void undo_match(void);
 
-static void init_data_template_table(int dtsize);
+static void init_template_data_table(int dtsize);
 
 static match_function find_match_function
 (
@@ -160,18 +160,18 @@ extern int check_match
    int status, 
    int op_idx, 
    int template_id,
-   void* data_template
+   void* template_data
 );
 
 extern int do_match(struct match_info* mip); 
 
-extern void* get_data_template_table(void);
+extern void* get_template_data_table(void);
 
 extern const char* get_op_context();
 
 extern int has_operation_complemented
 (  
-    struct data_template* private_data, 
+    struct template_data* private_data, 
     int op_idx
 );
 
