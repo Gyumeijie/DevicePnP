@@ -37,11 +37,8 @@ int flywheel_set_speed(int index, void* para)
     int result = -1;
 
     devp = get_open_device(index);
-    if (! check_null(__FILE__, __func__, "devp", devp)){
-       printf("Detail: can't find device open struct with index %d\n", index);
-       return -1;
-    }
-    
+    assure_not_null(__FILE__, __func__, "devp", devp);
+       
     // 检查使用flywheel_read的设备的类型是否为flywheel
     if (! check_device_type(devp, "flywheel")) return -1;
     
@@ -57,15 +54,13 @@ int flywheel_set_speed(int index, void* para)
     return result;
 }
 
+
 int flywheel_receive(int index, void* para)
 {
     int result = -1;
 
     devp = get_open_device(index);
-    if (! check_null(__FILE__, __func__, "devp", devp)){
-       printf("Detail: can't find device open struct with index %d\n", index);
-       return -1;
-    }
+    assure_not_null(__FILE__, __func__, "devp", devp);
     
     // 检查使用flywheel_read的设备的类型是否为flywheel
     if (! check_device_type(devp, "flywheel")) return -1;

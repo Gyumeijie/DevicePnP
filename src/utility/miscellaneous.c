@@ -11,13 +11,17 @@ void* string_to_numeric_value(const char* value, const char* type)
    static long int data; 
 
    if (is_inttype(type)){
+
        int base = parse_inttype_for_base(type);
        data = strtoul(value, NULL, base);
    }else if (is_equal(type, "char")){
+
        data = strtoul(value, NULL, 16);
    }else if (is_equal(type, "float")){
+
        *(float*)&data = strtod(value, NULL);
    }else{
+
         return NULL;
    }
 
@@ -32,6 +36,7 @@ int parse_inttype(const char* type, const char attr)
 
   char* attr_start = strchr(type, attr); 
   if (attr_start == NULL){
+
     // int类型的默认长度为32，默认进制是10
     return  attr == 'l' ? 32 : 10;
   } 
@@ -65,6 +70,12 @@ int parse_inttype_for_length(const char* type)
 Boolean is_equal(const char* str1, const char* str2)
 {
     return (!strcmp(str1, str2));
+}
+
+
+Boolean is_not_equal(const char* str1, const char* str2)
+{
+    return strcmp(str1, str2);
 }
 
 

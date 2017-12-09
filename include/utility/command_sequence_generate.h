@@ -39,7 +39,7 @@ static void process_parameter
    struct parameter* para,
    struct group_code_blocks* compute_funcs,
    int compute_id,
-   char* start_addr_to_fill,
+   char* start_pos,
    int size
 );
 

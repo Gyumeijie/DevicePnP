@@ -37,10 +37,7 @@ int analogsunsensor_read(int index, void* data)
     int result = -1;
 
     devp = get_open_device(index);
-    if (! check_null(__FILE__, __func__, "devp", devp)){
-       printf("Detail: can't find device open struct with index %d\n", index); 
-       return -1;
-    }
+    assure_not_null(__FILE__, __func__, "devp", devp);    
     
     // 检查使用analogsunsensor_read的设备的类型是否为analogsunsensor
     if (! check_device_type(devp, "analogsunsensor")) return -1;

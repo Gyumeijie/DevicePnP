@@ -167,7 +167,7 @@ extern int do_match(struct match_info* mip);
 
 extern void* get_template_data_table(void);
 
-extern const char* get_op_context();
+extern const char* get_template_data_owner_context();
 
 extern int has_operation_complemented
 (  

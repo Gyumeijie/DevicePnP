@@ -106,12 +106,12 @@ static Boolean need_postprocess
    int process_id
 )
 {
-    const char* src = postprocess_funcs->code_block_src_array[process_id];
-    if ((process_id > NO_NEED_POSTPROCESSION) && (src != NULL)){
-       return True;
-    }
+   const char* src = postprocess_funcs->code_block_src_array[process_id];
+   if ((process_id > NO_NEED_POSTPROCESSION) && (src != NULL)){
+      return True;
+   }
 
-    return False;
+   return False;
 }
 
 
@@ -138,8 +138,7 @@ static void do_postprocession
    if (code != NULL){
       run_code(code);
    }else{
-       struct dependency_items* dep_items;
-       dep_items = init_dependency_items(4);
+       struct dependency_items* dep_items = init_dependency_items(4);
 
        add_dependency_item(dep_items, "bytes_arr", &static_bytes_arr, CHAR+PTR);
        add_dependency_item(dep_items, "var_addr", &var_addr, CHAR+PTR);
@@ -175,19 +174,22 @@ static int do_check_precondition
    int* code = precondition->compiled_byte_code;
 
    if (code != NULL){
-       run_code(code);
-   }else{
-       struct dependency_items* dep_items;
-       dep_items = init_dependency_items(3);
-       add_dependency_item(dep_items, "arr_len", &static_arr_len, INT);
-       add_dependency_item(dep_items, "result", &result, INT);
-       add_dependency_item(dep_items, "bytes_arr", &static_bytes_arr, CHAR+PTR);
-          
-       const char* src = precondition->code_block_src;
-       code = compile_src_code(dep_items, src);
-       precondition->compiled_byte_code = code;
+      run_code(code);
+   } else{
 
-       run_code(code);
+      struct dependency_items* dep_items = init_dependency_items(3);
+      add_dependency_item(dep_items, "arr_len", &static_arr_len, INT);
+      add_dependency_item(dep_items, "result", &result, INT);
+      add_dependency_item(dep_items, "bytes_arr", &static_bytes_arr, CHAR+PTR);
+          
+      // 根据process_id获取源码数据
+      const char* src = precondition->code_block_src;
+
+      // 将编译的代码放在存放在相应的字段中
+      code = compile_src_code(dep_items, src);
+      precondition->compiled_byte_code = code;
+
+      run_code(code);
    }
 
   return result;

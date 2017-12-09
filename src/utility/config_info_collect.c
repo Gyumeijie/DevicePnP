@@ -19,22 +19,14 @@ int config_info_collect_init(void)
 int establish_device_context(char* lid)
 {
     if (device_context == NULL){
-        // 建立设备上下文，如果没有在配置文件中找到相应的项，则返回不匹配
-        device_context = mxmlFindElement(tree,
-                                         tree,
-                                         "device_entity", 
-                                         "lid", 
-                                         lid, 
-                                         MXML_DESCEND);
+       device_context = find_element_in_context(tree,
+                                                "device_entity", 
+                                                "lid", 
+                                                lid); 
 
-        //TODO 对于NULL值的检测，想一下其它的方法is_null会更好一点
-        if (! check_null(__FILE__, __func__, "device_context", device_context)){
-           printf("Detail: can't find configuration info for %s in xml file\n", 
-                  lid);
-           return FAILURE;
-         }
-    }
-    
+       check_existence(device_context, "can't establish device context"); 
+    }   
+
     // 与设备context相关的全局变量的初始化
     op_list_fetch_tracer = 0;
     op_name_list = NULL; 
@@ -66,62 +58,44 @@ const char* get_device_context(void)
 // 判断设备的配置信息中是否含有global项，该函数在驱动匹配模块中被调用
 Boolean has_global_config_item(void)
 {
-    mxml_node_t* element = mxmlFindElement(device_context,
-                                           device_context,
-                                           "global", 
-                                           NULL, 
-                                           NULL, 
-                                           MXML_DESCEND);
+    
+  void* global = find_element_in_device_context("global", NULL, NULL);
 
-   return (element == NULL) ? False : True;
+   return (global == NULL) ? False : True;
 }
 
 
 int get_op_list_length(void)
 {
 
-   mxml_node_t* node = mxmlFindElement(device_context, 
-                                       device_context,
-                                       "op_list",
-                                       NULL,
-                                       NULL, 
-                                       MXML_DESCEND);
-   if(! check_null(__FILE__, __func__, "node", node)) {
-      printf("Detail: can't not find para_list item in xml file\n");
-      // TODO 给-1一个具体的名称，尽可能消除魔幻数
-      return -1;
-   }
+   void* op_list = find_element_in_device_context("op_list", NULL, NULL);
+   check_existence(op_list, "can't find op_list");
 
-   const char* value = mxmlElementGetAttr(node, "length");
-   return strtoul(value, NULL, 10);
+   const char* length_str = get_element_data(op_list, "length");
+   check_element_data_existence("length", length_str);
+
+   return strtoul(length_str, NULL, 10);
 }
 
 
 int get_op_template_id(char* op_name)
 {
-   mxml_node_t* node = NULL;
-   const char* value = NULL;
 
-   node = mxmlFindElement(device_context, 
-                          device_context,
-                          "op", 
-                          "name",
-                          op_name,
-                          MXML_DESCEND);
+   void* op = find_element_in_device_context("op", "name", op_name);
 
-   // TODO 检测value是否为空
-   value = mxmlElementGetAttr(node, "template_id");
+   const char* template_id_str = get_element_data(op, "template_id");
+   check_element_data_existence("template_id", template_id_str);
 
-   return strtoul(value, NULL, 10);
+   return strtoul(template_id_str, NULL, 10);
 }
 
 
 int get_global_template_id()
 {
    void* global = find_element_in_device_context("global", NULL, NULL);
-   const char* template_id_str = get_element_data(global, "template_id");
 
-   if (template_id_str == NULL) return -1;
+   const char* template_id_str = get_element_data(global, "template_id");
+   check_element_data_existence("template_id", template_id_str);
 
    return strtoul(template_id_str, NULL, 10);
 }
@@ -140,81 +114,97 @@ char* get_op_name(void)
 // 为设备配置文件中的设备创建一个操作名列表
 static void create_op_name_list(void)
 {  
+   void* op = find_element_in_device_context("op", NULL, NULL);
+
    op_list_length = get_op_list_length();
-   
-   // 先查找到op_name对应的op项
-   mxml_node_t* op = mxmlFindElement(device_context,
-                                     device_context,
-                                     "op",
-                                     NULL,
-                                     NULL, 
-                                     MXML_DESCEND);
-   
-   op_name_list =(char**) malloc(sizeof(char*)*op_list_length);
+   op_name_list = malloc(sizeof(char*)*op_list_length);
+   check_malloc(op_name_list);
    
    int i;
    for (i=0; i<op_list_length; i++){   
-       const char* op_name =  mxmlElementGetAttr(op, "name");
-       op_name_list[i] =(char*)op_name;
+       const char* op_name_str = get_element_data(op, "name");
+       check_element_data_existence("op_name", op_name_str);
+       op_name_list[i] =(char*)op_name_str;
+
        op = get_next_sibling(op);
    }
 }
 
 
+void prepare_para
+(
+   const char* template_data_owner_name,
+   const char* template_data_name,
+   void** first_para, 
+   int* num_para
+)
+{
+   void* para_list = find_para_list(template_data_owner_name,
+                                    template_data_name);
+
+   check_element_existence("para_list", para_list);
+
+   *num_para = get_para_list_length(para_list);
+   *first_para = get_first_para(para_list);
+}
+
+
 void* get_first_para(void* para_list)
 {
-   mxml_node_t* first_para;
-   first_para = get_first_child(para_list);
-
-   if (!check_null(__FILE__, __func__, "first_para", first_para)){ 
-       printf("Detail: can't find para child in xml file\n");
-       return NULL;
-   }
-
-   return (void*)first_para;
+   void* first_para = get_first_child(para_list);
+   check_element_existence("para", first_para);
+   
+   return first_para;
 }
 
 
 void* find_para_list
 (
    const char* template_data_owner_name,
-   const char* tempate_data_name 
+   const char* template_data_name 
 )
 {  
-   mxml_node_t *template_data_owner, *para_list, *template_data;
-    
-   // 查找配置信息中是否有相关的global或op配置项
-   template_data_owner = find_template_data_owner(template_data_owner_name);
-   if(template_data_owner == NULL) return UNMATCH;
+   void *para_list, *template_data;
 
-   template_data = find_element_in_context(template_data_owner, 
-                                           "template_data",
-                                            "name",
-                                            tempate_data_name);
-   if(template_data == NULL) return UNMATCH;
+   template_data = find_template_data(template_data_owner_name,
+                                      template_data_name); 
 
-   // 然后在op下找到para_name对应的para_list项，如果找不到则返回不匹配
    para_list = find_element_in_context(template_data,"para_list", NULL, NULL);
-
-   if (!check_null(__FILE__, __func__, "para_list", para_list)){
-       printf("Detail: can't find template_data named '%s' in xml file\n",
-              tempate_data_name);
-       return NULL;
-   }
+   check_existence(para_list, "can't find para_list");
 
    return para_list;
 }
 
 
-// 因为fill_系列的函数都是填充相应数据模板结构体的函数
-// 而在同一个设备上下文中，数据模板结构体可能在global或者
-// op下，这个函数的功能是查找数据模板的所有者
-static mxml_node_t* find_template_data_owner
+static void* find_template_data
+(
+   const char* template_data_owner_name,
+   const char* template_data_name 
+)
+{
+   void *template_data_owner, *template_data;
+
+   template_data_owner = find_template_data_owner(template_data_owner_name);
+
+   template_data = find_element_in_context(template_data_owner, 
+                                           "template_data",
+                                            "name",
+                                            template_data_name);
+   check_element_existence("template_data", template_data);
+
+   return template_data;
+}
+
+
+// 因为fill系列的函数都是填充相应数据模板结构体的函数,而在同一个
+// 设备上下文中，模板数据可能在global或者op下，这个函数的功能是
+// 查找模板的所有者
+static void* find_template_data_owner
 (
    const char* template_data_owner_name
 )
 {
-   mxml_node_t* template_data_owner;
+   void* template_data_owner;
 
    if (is_equal(template_data_owner_name, "global")){
        template_data_owner = find_device_global_configuration();
@@ -222,15 +212,8 @@ static mxml_node_t* find_template_data_owner
        template_data_owner = find_device_operation(template_data_owner_name);
    }
 
-
-   if (! check_null(__FILE__, __func__, "template_data_owner", 
-                    template_data_owner))
-   {
-       printf("Detail: can't find data template struct owner named '%s'\n", 
-               template_data_owner_name);
-
-       return NULL;
-   }
+   // 因为如果template_data_owner_name不存在的话，就不会调用相应的匹配函数
+   // 所以这里肯定能够找到template_data_owner,不必检测其是否存在
    
    return template_data_owner;
 }
@@ -238,12 +221,11 @@ static mxml_node_t* find_template_data_owner
 
 int get_para_list_length(void* para_list)
 {
-   const char* length = mxmlElementGetAttr(para_list, "length");
-   if (length != NULL){
-      return strtoul(length, NULL, 10);
-   }
+   const char* length_str = get_element_data(para_list, "length");
+   check_element_data_existence("length", length_str);
 
-   return -1;
+   return strtoul(length_str, NULL, 10);
+
 }
 
 
@@ -258,32 +240,6 @@ mxml_node_t* skip_text_node(mxml_node_t* node)
     }
 
     return sibling;
-}
-
-
-// 检查配置信息中参数的类型
-int check_para_data_type
-(
-    const void* para, 
-    const char* name, 
-    const char* type
-)
-{
-   const char* config_type = mxmlElementGetAttr((mxml_node_t*)para, "type");
-
-   if (! check_null(__FILE__, __func__, "type", config_type)){
-       printf("Detail: can't resolve the type of '%s'\n", name);
-       return FAILURE;
-   }
-
-   if (! is_equal(config_type, type)){
-       report_error(__FILE__, __func__, "bad type!");
-       printf("Detail: the type of '%s' should be '%s', but not '%s'\n",
-               name, type, config_type);
-       return FAILURE;
-    }
-
-   return SUCCESS;
 }
 
 
@@ -307,12 +263,10 @@ static void* find_element_in_device_context
    const char* attr_val
 )
 {
-   return  mxmlFindElement(device_context,
-                           device_context,
-                           elem_name,
-                           attr_name,
-                           attr_val, 
-                           MXML_DESCEND);
+   return find_element_in_context(device_context,
+                                  elem_name,
+                                  attr_name,
+                                  attr_val);
 
 }
 
@@ -368,4 +322,106 @@ void* find_element_in_context
                            attr_name,
                            attr_val, 
                            MXML_DESCEND);
+}
+
+
+// 使用下面几个check函数对配置信息的合法性进行检查
+
+void check_template_data_type
+(
+   const char* template_data_owner_name,
+   const char* template_data_name,
+   const char* expected_type
+)
+{
+   void* template_data = find_template_data(template_data_owner_name,
+                                            template_data_name);  
+
+   check_type_config(template_data, template_data_name, expected_type);
+}
+
+
+void check_para_data_type
+(
+   const void* para,
+   const char* para_name,
+   const char* expected_type
+)
+{
+   check_type_config(para, para_name, expected_type);
+}
+
+
+static void check_type_config
+(
+   const void* item,
+   const char* item_name, 
+   const char* expected_type
+)
+{
+   const char* type_str = get_element_data(item, "type");
+   check_element_data_existence("type", type_str);
+
+   if (is_not_equal(expected_type, type_str)){
+       char msg[128];
+       sprintf(msg,
+               "Bad type: the type of '%s' should be '%s', but not '%s'",
+               item_name, expected_type, type_str);
+
+       print_context_error_message(msg); 
+
+       exit(1);
+    }
+}
+
+
+void check_element_data_existence
+(
+   const char* data_name, 
+   const char* data
+)
+{
+    char msg[64];
+    sprintf(msg, "element data '%s' is missing", data_name);
+
+    check_existence((void*)data, msg);
+}
+
+
+void check_element_existence
+(
+   const char* element_name,
+   void* element
+)
+{
+    char msg[64];
+    sprintf(msg, "element '%s' is not found", element_name);
+
+    check_existence(element, msg);
+}
+
+
+static void check_existence
+(
+   void* item, 
+   const char* msg
+)
+{
+  if (item == NULL){
+     print_context_error_message(msg);
+     exit(1);
+  }
+}
+
+
+static void print_context_error_message(const char* msg)
+{
+   const char* dev_context = get_device_context();
+   const char* tdo_context = get_template_data_owner_context();
+
+   fprintf(stderr, "<Error configuration_context=\"%s@%s\">\n", 
+                    tdo_context, 
+                    dev_context);
+   fprintf(stderr, "  <Message>%s</Message>\n", msg);
+   fprintf(stderr, "</Error>\n");
 }

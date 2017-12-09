@@ -13,7 +13,7 @@ extern int fill_command_sequence
 
 static int get_cmd_seq_size(int len, void* para);
 
-static int alloc_cmd_seq(int bytes_size, struct command_sequence** cmd_seq2p);
+static void alloc_cmd_seq(int bytes_size, struct command_sequence** cmd_seq2p);
 
 static int do_fill_cmd_seq
 ( 

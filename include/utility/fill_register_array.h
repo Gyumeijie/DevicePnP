@@ -11,7 +11,7 @@ extern int fill_register_array
    struct register_array* regap
 );
 
-static int alloc_register_array(int len, struct register_array** rega2p);
+static void alloc_register_array(int len, struct register_array** rega2p);
 
 static int do_fill_register_array
 (

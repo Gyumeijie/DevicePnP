@@ -14,15 +14,17 @@ int fill_register_array
    struct register_array* regap
 )
 {
-   void* para_list;
-   para_list = find_para_list(template_data_owner_name, template_data_name);
-   if (para_list == NULL)  return UNMATCH;
-
-   int num_para = get_para_list_length(para_list);
-   if (num_para == -1)  return UNMATCH;
-
-   void* first_para = get_first_para(para_list);
-   
+   // 先检测模板数据的类型
+   check_template_data_type(template_data_owner_name,
+                            template_data_name,
+                            "register_array");  
+   void* first_para;
+   int num_para;
+   prepare_para(template_data_owner_name,
+                template_data_name,
+                &first_para,
+                &num_para);
+      
    return do_fill_register_array(first_para, num_para, &regap);
 }
 
@@ -35,23 +37,19 @@ static int do_fill_register_array
    struct register_array** rega2p
 )
 {
-   // 分配存储空间，如果分配失败则返回错误
-   if(! alloc_register_array(len, rega2p)) return FAILURE;
-   struct reg* regp = (*rega2p)->regp;
+   alloc_register_array(len, rega2p);
 
    int i;
+   struct reg* regp = (*rega2p)->regp;
    const void* para = first_para;
    for (i=0; i<len; i++){
-       const char* address_str = get_element_data(para, "register_address");
-       if (! check_null(__FILE__, __func__, "register_address", address_str)){
-           return FAILURE;
-       }
+       const char* reg_addr_str = get_element_data(para, "register_address");
+       check_element_data_existence("register_address", reg_addr_str);
+       regp[i].addr = strtol(reg_addr_str, NULL, 16);
 
-       const char* value_str = get_element_data(para, "text_value");
-       if (! check_null(__FILE__, __func__, "value", value_str)) return FAILURE;
-
-       regp[i].addr = strtol(address_str, NULL, 16);
-       regp[i].val = strtol(value_str, NULL, 16);
+       const char* text_value_str = get_element_data(para, "text_value");
+       check_element_data_existence("text_value", text_value_str);
+       regp[i].val = strtol(text_value_str, NULL, 16);
 
        para = get_next_sibling(para);
     }
@@ -63,12 +61,9 @@ static int do_fill_register_array
 }
 
 
-static int alloc_register_array(int len, struct register_array** rega2p)
+static void alloc_register_array(int len, struct register_array** rega2p)
 {
-
-   struct reg* regp = (struct reg*)malloc(sizeof(struct reg) * len);  
-   if (! check_null(__FILE__, __func__, "regp", regp)) return FAILURE;
+   struct reg* regp = malloc(sizeof(struct reg) * len);  
+   check_malloc(regp); 
    (*rega2p)->regp = regp;
-
-    return SUCCESS;
 }

@@ -66,11 +66,7 @@ static int gyroscope_get_helper
     int result = -1;
 
     devp = get_open_device(dev_open_idx);
-    if (! check_null(__FILE__, __func__, "devp", devp)){
-       printf("Detail: can't find device open struct with index %d\n",
-                                                                 dev_open_idx);
-       return -1;
-    }
+    assure_not_null(__FILE__, func_name, "devp", devp);
     
     // 检查设备的类型是否为gyroscope
     if (! check_device_type(devp, "gyroscope")) return -1;
@@ -101,7 +97,7 @@ static int gyroscope_get_helper
     }else{
         char msg[128];
         sprintf(msg, "%s not configured in xml file", func_name);
-        report_error(__FILE__, __func__, msg);
+        fprintf(stderr, "%s", msg);
     }
 
     return result;

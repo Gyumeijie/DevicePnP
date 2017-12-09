@@ -6,12 +6,11 @@
 #include <string.h>
 #include <malloc.h>
 
-static const char* op_context;
+static const char* template_data_owner_context;
 static struct template_data* template_data_table;
 
 int do_match(struct match_info* mip)
 {
-    
     // 初始化设备的模板参数结构体表
     init_template_data_table(mip->data_table_size);
 
@@ -23,7 +22,7 @@ int do_match(struct match_info* mip)
     for (i=0; i<length; i++){
         char* op_name = get_op_name();
         int template_id = get_op_template_id(op_name);
-        op_context = op_name;
+        template_data_owner_context = op_name;
          
         char template_name[MAX_TEMPLATE_NAME_LENGTH];
         construct_template_name(template_name, op_name, template_id);
@@ -31,10 +30,9 @@ int do_match(struct match_info* mip)
         if (! try_match(template_name, mip)) return UNMATCH;
     }
 
-    
     // 检查通用设备驱动是否定义了最小功能集，如果有则检查配置文件
     // 的配置信息是否涵盖了这个最小功能集
-    op_context = NULL;
+    template_data_owner_context = NULL;
     if (mip->mfsp != NULL){
        return has_all_required_operations_complemented(mip);
    }
@@ -46,7 +44,7 @@ int do_match(struct match_info* mip)
 static int tackle_global_configuration(struct match_info* mip)
 {
    if (has_global_config_item()){
-     op_context = "global";
+     template_data_owner_context = "global";
      char template_name[MAX_TEMPLATE_NAME_LENGTH];
      int template_id = get_global_template_id();
     
@@ -79,29 +77,25 @@ static int try_match
 {
     // 查找匹配函数，如果没有找到则返回不匹配，并给出具体的原因
     match_function match_func = find_match_function(template_name, mip);
-    if (! check_null(__FILE__, __func__, "match_func", match_func)){
-        printf("Detail: can't not find matching function of template '%s'\n",
-                                                            template_name);
-        return UNMATCH;
-    }
+    assure_not_null(__FILE__, __func__, template_name, match_func);
 
-    int exec_status = match_func();
-    if (! exec_status){
+    int is_match = match_func();
+    if (! is_match){
         // 释放掉匹配以及收集前面模板所分配的数据结构并返回不匹配
         undo_match();
         template_data_table = NULL;
     }
 
-    return exec_status;
+    return is_match; 
 }
 
 
 static void init_template_data_table(int dtsize)
 {   
-    int memsize = sizeof(struct template_data) * dtsize; 
+    int memsize = sizeof(struct template_data)*dtsize; 
 
     template_data_table = malloc(memsize);
-    check_null(__FILE__, __func__, "template_data_table", template_data_table);
+    check_malloc(template_data_table);
 
     memset(template_data_table, 0, memsize);
 }
@@ -155,19 +149,16 @@ void* get_template_data_table(void)
 }
 
 
-const char* get_op_context()
+const char* get_template_data_owner_context()
 {   
     // 为了调试方便加入的
-    return op_context;
+    return template_data_owner_context;
 }
 
 
 int has_operation_complemented(struct template_data* private_data, int op_idx)
 {
-   if (! check_null(__FILE__, __func__, "private_data", private_data)){
-      printf("Detail: may be no corresponding driver being loaded\n");
-      return 0;
-   }
+   assure_not_null(__FILE__, __func__, "private_data", private_data);
 
    void* para_struct = private_data[op_idx].para_struct;
    
@@ -193,7 +184,7 @@ static int has_all_required_operations_complemented (struct match_info* mip)
            if (! (record & (1<<index))){
               char msg[64];
               sprintf(msg, "'%s' is required", mfsp->required_ops_name[index]);
-              report_error(__FILE__, __func__, msg); 
+              fprintf(stderr, "%s", msg);
 
               return UNMATCH;
            }

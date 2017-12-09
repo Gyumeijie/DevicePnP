@@ -16,15 +16,17 @@ int fill_plain_struct
    fill_struct_function do_fill
 )
 {
-   void* para_list;
-   para_list = find_para_list(template_data_owner_name, template_data_name);
-   if (para_list == NULL)  return UNMATCH;
-
-   int num_para = get_para_list_length(para_list);
-   if (num_para == -1)  return UNMATCH;
-
-   void* first_para = get_first_para(para_list);
-
+   // 先检测模板数据的类型
+   check_template_data_type(template_data_owner_name,
+                            template_data_name,
+                            "plain_struct");  
+   void* first_para;
+   int num_para;
+   prepare_para(template_data_owner_name,
+                template_data_name,
+                &first_para,
+                &num_para);
+   
    return do_fill_plain_struct(first_para, num_para, st, do_fill);
 }
 
@@ -37,23 +39,23 @@ static int do_fill_plain_struct
    fill_struct_function do_fill
 )
 {
-
    int i;
    const void* para = first_para;
    for (i=0; i<num_para; i++){
-       // 检查是否有对应的结构体成员，如果没有则表示不匹配
        const char* name = st[i].name;
-       if (! is_equal(name, get_element_data(para, "name"))) return FAILURE;
+       const char* name_str = get_element_data(para, "name");
+       check_element_data_existence("name", name_str);
+       if (is_not_equal(name, name_str)) return FAILURE;
 
-       // 检查type是否一致，如果不是则表示不匹配
-       if (! check_para_data_type(para, name, st[i].type)) return FAILURE;
+       check_para_data_type(para, name, st[i].type);
 
        // 将成员的数据写入到相应的结构体中
-       const char* value_str = get_element_data(para, "text_value");
-       void* data = string_to_numeric_value(value_str, st[i].type);
+       const char* text_value_str = get_element_data(para, "text_value");
+       check_element_data_existence("text_value", text_value_str);
+       void* data = string_to_numeric_value(text_value_str, st[i].type);
+
        do_fill(st[i].index, data);
        
-       // 获取下一个para项
        para = get_next_sibling(para);
    }
 

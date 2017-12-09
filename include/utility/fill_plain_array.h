@@ -11,7 +11,7 @@ extern int fill_plain_array
    struct plain_array* plainap
 );
 
-static int alloc_plain_array(int len, struct plain_array** plaina2p);
+static void alloc_plain_array(int len, struct plain_array** plaina2p);
 
 static int do_fill_plain_array
 (

@@ -1,6 +1,7 @@
 #include "magnetorquer_match.h"
 #include "magnetorquer.h"
 #include "fill_plain_array.h"
+#include "error_report.h"
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
@@ -48,26 +49,25 @@ static int setxyz_match_template0(void)
 // 辅助函数
 static int set_pat0_match(char* op_name, char* para_name, int op_idx)
 {
-    struct plain_array* set_data_template0;
-    int exec_status;
+   struct plain_array* set_data_template0 = malloc(sizeof(struct plain_array));
+   check_malloc(set_data_template0);
+   set_data_template0->type = "int"; 
 
-    set_data_template0  = malloc(sizeof(struct plain_array));
-    set_data_template0->type = "int"; 
+   int exec_status;
+   exec_status = fill_plain_array(op_name, para_name, set_data_template0); 
 
-    exec_status = fill_plain_array(op_name, para_name, set_data_template0); 
-
-    return check_match(exec_status, op_idx, 0, (void*)set_data_template0);
+   return check_match(exec_status, op_idx, 0, (void*)set_data_template0);
 }
 
 
 // 模板匹配函数表
 static struct template_match match_funcs_table[MAGNETORQUER_TEMPLATE_NUM] = {
-    {"global_template0", global_match_template0},
-    {"magnetorquer_open_template0", open_match_template0},
-    {"magnetorquer_setx_template0", setx_match_template0},
-    {"magnetorquer_sety_template0", sety_match_template0},
-    {"magnetorquer_setz_template0", setz_match_template0},
-    {"magnetorquer_setxyz_template0", setxyz_match_template0}
+   {"global_template0", global_match_template0},
+   {"magnetorquer_open_template0", open_match_template0},
+   {"magnetorquer_setx_template0", setx_match_template0},
+   {"magnetorquer_sety_template0", sety_match_template0},
+   {"magnetorquer_setz_template0", setz_match_template0},
+   {"magnetorquer_setxyz_template0", setxyz_match_template0}
 }; 
 
 

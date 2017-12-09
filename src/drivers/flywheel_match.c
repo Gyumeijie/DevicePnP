@@ -3,6 +3,7 @@
 #include "fill_command_sequence.h"
 #include "fill_bytes_array_assembly_scheme.h"
 #include "collect_code_block.h"
+#include "error_report.h"
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
@@ -17,10 +18,11 @@ static int open_match_template0(void) { return MATCH; }
 static int set_speed_match_template0(void)
 {
    static struct command_sequence* set_speed_data_template0;
-   int exec_status;
 
    set_speed_data_template0 = malloc(sizeof(struct command_sequence));
+   check_malloc(set_speed_data_template0);
 
+   int exec_status;
    exec_status = fill_command_sequence("flywheel_set_speed", 
                                        "set_speed_template0_data",
                                         set_speed_data_template0);
@@ -42,10 +44,11 @@ static int set_speed_match_template0(void)
 static int receive_match_template0(void)
 {
     struct bytes_array_assembly_scheme* receive_data_template0;
-    int exec_status;
 
     receive_data_template0 = malloc(sizeof(struct bytes_array_assembly_scheme));
+    check_malloc(receive_data_template0);
 
+    int exec_status;
     exec_status = fill_bytes_array_assembly_scheme("flywheel_receive", 
                                                    "receive_template0_data",
                                                     receive_data_template0);

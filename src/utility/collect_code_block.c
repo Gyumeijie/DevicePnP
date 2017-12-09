@@ -64,13 +64,15 @@ static int do_group_code_blocks_collection
                                                 "name",
                                                 code_block_name);
 
+   // 对于一个具体的数据模板类型代码块不是必须存在的，但是
+   // 如果配置文件中指定了有效的id，那么代码块就必须存在了
    if (group_blocks == NULL) return FAILURE;
 
    int num_code_block = get_code_block_list_length(group_blocks);
    init_group_code_blocks(num_code_block, gcb);
    
    void* code_block = get_first_child(group_blocks);
-   if (code_block == NULL) return FAILURE;
+   assure_not_null(__FILE__, __func__, "code_block", code_block);
 
    int i;
    const char** code_block_src_array = gcb->code_block_src_array;
@@ -90,7 +92,10 @@ static void init_group_code_blocks
 )
 {
    const char** code_blocks = malloc(sizeof((void*)0)*num_code_block);
+   check_malloc(code_blocks);
+
    int** compiled_byte_code = malloc(sizeof((void*)0)*num_code_block);
+   check_malloc(compiled_byte_code);
 
    memset(code_blocks, 0, sizeof((void*)0)*num_code_block);
    memset(compiled_byte_code, 0, sizeof((void*)0)*num_code_block);
@@ -103,10 +108,8 @@ static void init_group_code_blocks
 
 static int get_code_block_list_length(void* code_block_list)
 {
-   // TODO 注意如果配置文件中没有length属性，将会报错这种是比较常见的模式
-   // 应该有一个专门的报错函数，整理一下error_report
    const char* length_str = get_element_data(code_block_list, "length");
-   if (length_str == NULL) return -1;
+   check_element_data_existence("length", length_str);
 
    return strtoul(length_str, NULL, 10); 
 }
@@ -140,22 +143,26 @@ static void install_code_block
    const int num_code_block
 )
 {
-    const char* src_code = get_element_data(code_block, "text_value");
-    unsigned int id =  strtoul(get_element_data(code_block, "id"), NULL, 10);
+    const char* text_value_str = get_element_data(code_block, "text_value");
+    check_element_data_existence("text_value", text_value_str);
+
+    const char* id_str = get_element_data(code_block, "id");
+    check_element_data_existence("id", id_str);
+    unsigned int id = strtoul(id_str, NULL, 10);
     
     // 一个组的代码块相当于声明一个数组，每个代码块的id对应数组的
     // 下标而且id不应该重复
     if (id < num_code_block && code_block_src_array[id] == NULL){
-        code_block_src_array[id] = src_code; 
+        code_block_src_array[id] = text_value_str; 
     }else{
-        printf("Bad code block id %d: ", id);
+        fprintf(stderr, "Bad code block id %d: ", id);
 
         if (id >= num_code_block){
-           printf("id excess the length\n");
+           fprintf(stderr, "id excess the length\n");
         }else{
-           printf("dulplicate id\n");
+           fprintf(stderr, "dulplicate id\n");
         }
 
-        exit(-1);
+        exit(1);
     }
 }

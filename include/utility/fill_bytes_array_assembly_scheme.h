@@ -11,7 +11,7 @@ extern int fill_bytes_array_assembly_scheme
    struct bytes_array_assembly_scheme* asm_schemep
 );
 
-static int alloc_bytes_array_assembly_scheme
+static void alloc_bytes_array_assembly_scheme
 (
    int num_para, 
    struct bytes_array_assembly_scheme** asm_scheme2p

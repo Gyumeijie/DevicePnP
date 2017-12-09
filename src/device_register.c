@@ -10,11 +10,10 @@
 
 int register_devices(void)
 {
-       
-       
    int i;
    unsigned int device_num = get_devices_descrip_item_num();
    for (i=0; i<device_num; i++){
+
       // 获取设备的属性
       void* device_attrs_item = get_devices_descrip_item();
       char* lid = get_device_lid(device_attrs_item);
@@ -26,7 +25,7 @@ int register_devices(void)
 
       // 分配并初始化设备结构体
       struct device* devp = malloc(sizeof(struct device));
-      if(! check_null(__FILE__, __func__, "devp", devp)) return FAILURE;
+      check_malloc(devp);
 
       devp->devno = devno;
       strcpy(devp->interface, interface);
