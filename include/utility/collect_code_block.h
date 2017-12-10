@@ -3,6 +3,8 @@
 
 #include "driver_match.h"
 
+#define NO_NEED_CODE_BLOCK -1
+
 // 代码块的组织方式
 enum {SINGLE, GROUP};
 
@@ -12,7 +14,14 @@ extern int collect_code_block
    const char* template_data_name,
    const char* code_block_name,
    int code_block_mode,
-   void* code_block_struct
+   void** code_block_struct
+);
+
+
+extern void check_code_block_ids_validity
+(
+   const struct code_block_ids_designated* ids_record,
+   int num_code_block
 );
 
 
@@ -20,7 +29,7 @@ static int do_single_code_block_collection
 (
    void* template_data_context,
    const char* code_block_name,
-   struct single_code_block* scb
+   void** code_block_struct
 );
 
 
@@ -28,7 +37,7 @@ static int do_group_code_blocks_collection
 (
    void* template_data_context,
    const char* code_block_name,
-   struct group_code_blocks* gcb
+   void** code_block_struct
 );
 
 static int get_code_block_list_length(void* code_block_list);

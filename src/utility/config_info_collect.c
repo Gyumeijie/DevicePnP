@@ -414,6 +414,23 @@ static void check_existence
 }
 
 
+void report_invalid_config_info_error
+(
+   const char* location_info,
+   const char* invalid_config_info
+)
+{
+   char msg[128];
+   sprintf(msg, 
+           "%s, %s",
+           location_info,
+           invalid_config_info);
+
+   print_context_error_message(msg);
+   exit(1);
+}
+
+
 static void print_context_error_message(const char* msg)
 {
    const char* dev_context = get_device_context();

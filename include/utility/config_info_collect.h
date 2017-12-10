@@ -114,6 +114,14 @@ static void check_existence
    const char* msg
 );
 
+
+extern void report_invalid_config_info_error
+(
+   const char* location_info,
+   const char* invalid_config_info
+);
+
+
 static void print_context_error_message(const char* msg);
 
 extern void* find_element_in_context

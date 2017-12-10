@@ -76,7 +76,16 @@ struct command_sequence{
 struct bytes_assembly_descriptor{
    short int num_byte;
    short int start;
-   short int process_id;
+   short int postprocess_id;
+};
+
+
+// 用于记录需要用到代码块的数据模板类型在<para>指定的相关id
+// 该数据结构用来在配置阶段判断指定的id号是否合法
+struct code_block_ids_designated
+{
+  unsigned int len;
+  int* id_array;
 };
 
 

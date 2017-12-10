@@ -151,7 +151,8 @@ void* get_template_data_table(void)
 
 const char* get_template_data_owner_context()
 {   
-    // 为了调试方便加入的
+    // 为了调试方便加入的，结合op_context可以快速定位到哪里的
+    // 的配置信息配置有误
     return template_data_owner_context;
 }
 
@@ -168,6 +169,7 @@ int has_operation_complemented(struct template_data* private_data, int op_idx)
 
 // 通过相应的设备驱动匹配模块提供的最小功能集结构体
 // 判断用户的配置信息是否满足
+// TODO 该部分功能正在完善
 static int has_all_required_operations_complemented (struct match_info* mip)
 {
     unsigned int record = *(mip->complementation_record);

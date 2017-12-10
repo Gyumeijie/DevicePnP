@@ -22,7 +22,7 @@ static void postprocess_parameter
    struct group_code_blocks* gcb,
    const char* bytes_arr,
    int asm_val,  
-   int process_id
+   int postprocess_id
 );
 
 
@@ -44,7 +44,7 @@ static Boolean is_precondition_failed
 static void do_postprocession
 (
    struct group_code_blocks* gcb,
-   int process_id,
+   int postprocess_id,
    int asm_val,
    const char* bytes_arr,
    void* var_addr
@@ -54,7 +54,7 @@ static void do_postprocession
 static Boolean need_postprocess
 (
    struct group_code_blocks* postprocess_funcs,
-   int process_id
+   int postprocess_id
 );
 
 

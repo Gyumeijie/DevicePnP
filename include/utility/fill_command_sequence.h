@@ -8,8 +8,10 @@ extern int fill_command_sequence
 (
    const char* template_data_owner_name, 
    const char* template_data_name,
-   struct command_sequence* cmd_seqp
-);
+   struct command_sequence* cmd_seqp,
+   int* does_need_to_collect_code_block,
+   struct code_block_ids_designated* compute_ids_record
+ );
 
 static int get_cmd_seq_size(int len, void* para);
 
@@ -19,7 +21,10 @@ static int do_fill_cmd_seq
 ( 
    void* para, 
    int len, 
-   struct command_sequence** cmd_seq2p
+   struct command_sequence** cmd_seq2p,
+   int* does_need_to_collect_code_block,
+   struct code_block_ids_designated* compute_ids_record
 );
+
 
 #endif
