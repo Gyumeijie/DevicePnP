@@ -5,8 +5,15 @@
 #define SUCCESS 1
 #define FAILURE 0
 
-extern void report_error(const char* file, const char* func, const char* msg);
+extern void assure_not_null
+(
+   const char* file_name, 
+   const char* func_name,
+   const char* para_name, 
+   const void* para
+);
 
-extern int check_null(const char* file, const char* func, const char* para, const void* val);
+extern void check_malloc(void* mem_addr);
+
 
 #endif

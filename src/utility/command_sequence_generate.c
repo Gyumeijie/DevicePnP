@@ -25,17 +25,23 @@ void fill_cmd_seq_dynamically
    int i = 0;
    while (i<bytes_size){
       if (is_equal(cmd_seq_desc[i].occupied_by, "constant")){
+
          i = i + 1;
       }else if(is_equal(cmd_seq_desc[i].occupied_by, "computed")){ 
          int size = cmd_seq_desc[i].extra_cmd_desc.size;
          int compute_id = cmd_seq_desc[i].extra_cmd_desc.compute_id;
 
          struct parameter* para = fetch_para(para_pkgp); 
-         process_parameter(para, compute_funcs, compute_id, &bytes_value[i], size);
+         process_parameter(para,
+                           compute_funcs,
+                           compute_id,
+                           &bytes_value[i],
+                           size);
 
          i = i + size;
       }else{
          calculate_checksum(bytes_value, i);
+
          i = i + 1;
       }
   }
@@ -50,22 +56,24 @@ static void process_parameter
    struct parameter* para,
    struct group_code_blocks* compute_funcs,
    int compute_id,
-   char* start_addr_to_fill,
+   char* start_pos,
    int size
 )
 {
    unsigned int result;
 
    if (compute_id > NO_NEED_COMPUTATION){
+
        // 如果compute_id是有效的，那么就需要实际的计算过程
        result = do_computation(compute_id, compute_funcs, para);
    }else {
+
        // 如果compute_id为是NO_NEED_COMPUTATION的话，即不需要计算
        // 那么默认的是该参数可以直接或者通过转型成32为无符号整型数
        result = cast_to_uint32(para);
    }
 
-   split_uint32_into_bytes(start_addr_to_fill, size, result);
+   split_uint32_into_bytes(start_pos, size, result);
 }
 
 
@@ -76,8 +84,7 @@ static unsigned int cast_to_uint32(struct parameter* para)
    unsigned int result;
 
    // 如果存储的是变量的指针，那么就将value值转型成不同类型的指针
-   // 取出相应的值
-   // 这里按照可能的常见变量类型安排类型判断的顺序
+   // 取出相应的值这里按照可能的常见变量类型安排类型判断的顺序
    if (para->is_pointer){
        if (is_equal(para_type, "int")){
           result =  *(int*)value;
@@ -152,31 +159,28 @@ static int do_computation
    struct parameter* para
 )
 {
-    static int  result;
+    static int result;
 
     int* code =  compute_funcs->compiled_byte_code_array[compute_id]; 
     if (code != NULL){
-       printf("value is %f\n", *(float*)para->value);
-       printf("type is %s\n", para->para_type);
-       run_code(code);
-    }else{ 
-       // 加入该代码块依赖与主程序的变量
-       struct dependency_items* dep_items;
-       dep_items = init_dependency_items(2);
-       int num_type = strtype_to_numtype(para->para_type, para->is_pointer);
 
-       add_dependency_item(dep_items, "para",  (void*)&para->value, num_type);
+       // 直接运行字节码
+       run_code(code);
+    } else{ 
+
+       struct dependency_items* dep_items = init_dependency_items(2);
+       int num_type = strtype_to_numtype(para->para_type, para->is_pointer);
+       add_dependency_item(dep_items, "para", (void*)&para->value, num_type);
        add_dependency_item(dep_items, "result", (void*)&result, INT);
 
-        // 根据compute_id获取源码数据
-        const char* src = compute_funcs->code_block_src_array[compute_id];
+       // 根据compute_id获取源码数据
+       const char* src = compute_funcs->code_block_src_array[compute_id];
 
-        // 将编译的代码放在存放在相应的字段中
-        code = compile_src_code(dep_items, src);
-        compute_funcs->compiled_byte_code_array[compute_id] = code;
-        run_code(code);
+       // 将编译的代码放在存放在相应的字段中
+       code = compile_src_code(dep_items, src);
+       compute_funcs->compiled_byte_code_array[compute_id] = code;
+       run_code(code);
     }
 
-    printf("result is %d\n", result);
     return result;
 }

@@ -2,8 +2,6 @@
 #define BYTES_ARRAY_ASSEMBLY_H
 
 #include "driver_match.h"
-//GET 如果没有包含parameter_package.h，下面的会报struct parameter_package
-//declared inside parameter list
 #include "parameter_package.h"
 
 #define NO_NEED_POSTPROCESSION -1
@@ -24,26 +22,41 @@ static void postprocess_parameter
    struct group_code_blocks* gcb,
    const char* bytes_arr,
    int asm_val,  
-   int process_id
+   int postprocess_id
 );
 
 
 static int do_check_precondition
 (
-   struct single_code_block* precondtion,
+   struct single_code_block* precondition,
    int arr_len,
    const char* bytes_arr
 );
 
 
+static Boolean is_precondition_failed
+(
+   struct single_code_block* precondition,
+   int arr_len,
+   const char* bytes_arr
+);
+
 static void do_postprocession
 (
    struct group_code_blocks* gcb,
-   int process_id,
+   int postprocess_id,
    int asm_val,
    const char* bytes_arr,
    void* var_addr
 );
+
+
+static Boolean need_postprocess
+(
+   struct group_code_blocks* postprocess_funcs,
+   int postprocess_id
+);
+
 
 static int check_bytes_num();
 

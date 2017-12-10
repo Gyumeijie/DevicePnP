@@ -28,11 +28,11 @@ TEST_DEVICE_OPEN_OBJ  = test_device_open.o driver.o driver_register.o \
 					   gyroscope_getz.o  gyroscope_getxyz.o\
                        gyroscope_read_helper.o gyroscope_write_helper.o\
                        fill_plain_struct.o fill_plain_array.o\
-                       fill_reg_array.o fill_command_sequence.o\
+                       fill_register_array.o fill_command_sequence.o\
                        fill_bytes_array_assembly_scheme.o\
                        lex.o parser.o executor.o dependency.o relocation.o\
                        interpreter.o collect_code_block.o type_converter.o\
-                       data_template_fetch.o\
+                       template_data_fetch.o\
                   
 
 test_device_open: $(TEST_DEVICE_OPEN_OBJ)

@@ -3,7 +3,7 @@
 
 int gyroscope_write_helper0(void* para_struct, void* data)
 {
-    struct reg_array* open_template0 = para_struct;
+    struct register_array* open_template0 = para_struct;
     int len = open_template0->len;
     struct reg* regp = open_template0->regp;
 

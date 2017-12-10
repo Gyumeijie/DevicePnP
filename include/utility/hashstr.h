@@ -7,12 +7,25 @@ struct hash_item{
   struct hash_item* next;
 };
 
-extern int
-add_hash_item(const void* key, long value, struct hash_item* hash_table[], const int prime_tablsiz);
+extern int add_hash_item
+(
+  const void* key,
+  long value,
+  struct hash_item* hash_table[], 
+  int prime_table_size
+);
 
-extern struct hash_item* 
-get_hash_item(const void* key, struct hash_item* hash_table[], const int prime_tablsiz);
+extern struct hash_item* get_hash_item
+(  
+   const void* key, 
+   struct hash_item* hash_table[], 
+   int prime_table_size
+);
 
-static unsigned int hashstr(const void* key, const int prime_tablsiz);
+static unsigned int hashstr
+(
+   const void* key, 
+   int prime_table_size
+);
 
 #endif

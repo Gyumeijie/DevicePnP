@@ -6,12 +6,12 @@
 // plain_array相关函数
 extern int fill_plain_array
 (
-  const char* dts_owner_name, 
-  const char* para_list_name, 
-  struct plain_array* plainap
+   const char* template_data_owner_name, 
+   const char* template_data_name, 
+   struct plain_array* plainap
 );
 
-static int alloc_plain_array(int len, struct plain_array** plaina2p);
+static void alloc_plain_array(int len, struct plain_array** plaina2p);
 
 static int do_fill_plain_array
 (
@@ -23,10 +23,10 @@ static int do_fill_plain_array
 
 static void store_data_in_array
 (
-    void* array, 
-    int idx, 
-    void* elem, 
-    const char* elem_type
+   void* array, 
+   int idx, 
+   void* elem, 
+   const char* elem_type
 );
 
 #endif 

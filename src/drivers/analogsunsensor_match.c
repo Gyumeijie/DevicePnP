@@ -1,6 +1,7 @@
 #include "analogsunsensor_match.h"
 #include "analogsunsensor.h"
 #include "fill_plain_array.h"
+#include "error_report.h"
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
@@ -11,33 +12,34 @@
  * 上而没有相应的匹配函数出错
  */
 
-static int global_match(void){ return MATCH; }
+static int global_match_template0(void){ return MATCH; }
 static int open_match_template0(void) { return MATCH; }
 
 static int read_match_template0(void) 
 {
-    static struct plain_array* read_data_template0;
-    int exec_status;
+   static struct plain_array* read_data_template0;
+   read_data_template0  = malloc(sizeof(struct plain_array));
+   check_malloc(read_data_template0);
 
-    read_data_template0  = malloc(sizeof(struct plain_array));
-    read_data_template0->type = "int"; 
+   read_data_template0->type = "int"; 
 
-    exec_status = fill_plain_array("analogsunsensor_read",
-                                   "read_template0", 
-                                   read_data_template0); 
+   int exec_status;
+   exec_status = fill_plain_array("analogsunsensor_read",
+                                  "read_template0_data",
+                                  read_data_template0); 
 
-    return check_match(exec_status, 
-                       ANALOGSUNSENSOR_READ_INDEX,
-                       0, // template_id
-                       (void*)read_data_template0);
+   return check_match(exec_status, 
+                      ANALOGSUNSENSOR_READ_INDEX,
+                      0, // template_id
+                      (void*)read_data_template0);
 }
 
 
 // 模板匹配函数表
 static struct template_match match_funcs_table[ANALOGSUNSENSOR_TEMPLATE_NUM] = {
-    {"global", global_match},
-    {"analogsunsensor_open_template0", open_match_template0},
-    {"analogsunsensor_read_template0", read_match_template0},
+   {"global_template0", global_match_template0},
+   {"analogsunsensor_open_template0", open_match_template0},
+   {"analogsunsensor_read_template0", read_match_template0},
 }; 
 
 
@@ -52,5 +54,5 @@ static struct match_info analongsunsensor_match_info = {
 
 int analogsunsensor_match(void)
 {
-    return  do_match(&analongsunsensor_match_info);
+   return do_match(&analongsunsensor_match_info);
 }

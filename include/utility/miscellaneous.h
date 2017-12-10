@@ -7,6 +7,8 @@ extern void* string_to_numeric_value(const char* value, const char* type);
 
 extern Boolean is_equal(const char* str1, const char* str2);
 
+extern Boolean is_not_equal(const char* str1, const char* str2);
+
 extern Boolean is_inttype(const char* type);
 
 extern int parse_inttype_for_length(const char* type);

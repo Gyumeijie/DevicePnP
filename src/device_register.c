@@ -8,33 +8,24 @@
 #include <stdio.h>
 
 
-/**
- * 输入：无
- * 输出：无
- * 功能：注册设备结构体
- */
 int register_devices(void)
 {
-       
-   devno_t devno;
-   char *lid, *type, *interface;
-   void* device_attrs_item;
-   unsigned int device_num;
-       
    int i;
-   device_num = get_devices_descrip_item_num();
+   unsigned int device_num = get_devices_descrip_item_num();
    for (i=0; i<device_num; i++){
-      //获取设备的属性
-      device_attrs_item = get_devices_descrip_item();
-      lid = get_device_lid(device_attrs_item);
-      type = get_device_type(device_attrs_item);
-      interface = get_device_interface(device_attrs_item);
 
-      //根据设备类型申请设备号
-      devno = alloc_devno(type);
-      //分配并初始化设备结构体
-      struct device* devp = (struct device*)malloc(sizeof(struct device));
-      if(!check_null(__FILE__, __func__, "devp", devp)) return FAILURE;
+      // 获取设备的属性
+      void* device_attrs_item = get_devices_descrip_item();
+      char* lid = get_device_lid(device_attrs_item);
+      char* type = get_device_type(device_attrs_item);
+      char* interface = get_device_interface(device_attrs_item);
+
+      // 根据设备类型申请设备号
+      devno_t devno = alloc_devno(type);
+
+      // 分配并初始化设备结构体
+      struct device* devp = malloc(sizeof(struct device));
+      check_malloc(devp);
 
       devp->devno = devno;
       strcpy(devp->interface, interface);
@@ -43,11 +34,10 @@ int register_devices(void)
       devp->device_operation = NULL;
       devp->private_data = NULL;
 
-      //建立设备逻辑标识符与设备结构体的连接
-      //lid2dev_mapping(lid, devp);
-      lid2dev_mapping(devp->lid, devp);
+      // 建立设备逻辑标识符与设备结构体的连接
+      lid2dev_mapping(lid, devp);
       
-      //注册到设备索引表中
+      // 注册到设备索引表中
       add_device(GET_MAJOR(devno), devp);
    }
 

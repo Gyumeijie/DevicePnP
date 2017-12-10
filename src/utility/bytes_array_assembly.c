@@ -19,16 +19,13 @@ int do_bytes_array_assembly
    struct bytes_array_assembly_scheme* asm_schemep
 )
 {
+   if (para_pkgp->num_para != asm_schemep->num_para) return 1;
+
    struct group_code_blocks* postprocess_funcs = asm_schemep->postprocess_funcs;
    struct single_code_block* precondition = asm_schemep->precondition;
 
-   //TODO 检查所需的字节与读取的字节是否相匹配
-   if (para_pkgp->num_para != asm_schemep->num_para) return 1;
-
-
    // 调用先验条件进行判断
-   if (!(precondition == NULL || 
-        do_check_precondition(precondition, arr_len, bytes_arr))){
+   if (is_precondition_failed(precondition, arr_len, bytes_arr)){
         printf("check failed\n"); 
         return 1;
    }
@@ -40,14 +37,18 @@ int do_bytes_array_assembly
    for (i=0; i<num_para; i++){
       struct parameter* parap = fetch_para(para_pkgp);
 
-      //获取位置信息
+      // 获取位置信息
       int num_byte = descs[i].num_byte;
       int start = descs[i].start;
-      int process_id = descs[i].process_id;
+      int postprocess_id = descs[i].postprocess_id;
 
-      int asm_val = assembly_item(bytes_arr + start, num_byte); 
+      int asm_val = assembly_item(bytes_arr+start, num_byte); 
 
-      postprocess_parameter(parap, postprocess_funcs, bytes_arr, asm_val, process_id);
+      postprocess_parameter(parap,
+                            postprocess_funcs,
+                            bytes_arr,
+                            asm_val, 
+                            postprocess_id);
   }
 
    // 重置parameter_package中的fetch_tracer使得下一次可以重新使用
@@ -63,26 +64,61 @@ static void postprocess_parameter
    struct group_code_blocks* postprocess_funcs,
    const char* bytes_arr,
    int asm_val,  
-   int process_id
+   int postprocess_id
 )
 {
    void* var_addr = (void*)para->value;
-   
-   if ((process_id > NO_NEED_POSTPROCESSION) &&
-       (postprocess_funcs->code_block_src_array[process_id] != NULL)){
-      do_postprocession(postprocess_funcs, process_id, asm_val, bytes_arr, var_addr);
-      //post_proc_funcs[i](bytes_arr + start, num_byte, asm_val, var_addr);
+
+   if (need_postprocess(postprocess_funcs, postprocess_id)){
+      do_postprocession(postprocess_funcs,
+                        postprocess_id,
+                        asm_val, 
+                        bytes_arr,
+                        var_addr);
    }else{
-      //没有的话就做默认处理,即按照给定的类型进行存储
+      // 没有的话就做默认处理,即按照给定的类型进行存储
       store_data(var_addr, &asm_val, para->para_type, "int");
     }
+}
+
+
+static Boolean is_precondition_failed
+(
+   struct single_code_block* precondition,
+   int arr_len,
+   const char* bytes_arr
+ 
+)
+{
+   if (! (precondition == NULL || 
+         do_check_precondition(precondition, arr_len, bytes_arr)))
+   {
+      return True; 
+   }
+
+   return False;
+}
+
+
+static Boolean need_postprocess
+(
+   struct group_code_blocks* postprocess_funcs,
+   int postprocess_id
+)
+{
+   const char* src = postprocess_funcs->code_block_src_array[postprocess_id];
+   if ((postprocess_id > NO_NEED_POSTPROCESSION) && (src != NULL)){
+      return True;
+   }
+
+   return False;
 }
 
 
 static void do_postprocession
 (
    struct group_code_blocks* gcb,
-   int process_id,
+   int postprocess_id,
    int asm_val,
    const char* bytes_arr,
    void* var_addr
@@ -97,25 +133,24 @@ static void do_postprocession
    static_bytes_arr = bytes_arr;
    static_var_addr = (int)var_addr;
    
-   int* code = gcb->compiled_byte_code_array[process_id];
+   int* code = gcb->compiled_byte_code_array[postprocess_id];
 
    if (code != NULL){
       run_code(code);
    }else{
-       struct dependency_items* dep_items;
-       dep_items = init_dependency_items(4);
+       struct dependency_items* dep_items = init_dependency_items(4);
 
        add_dependency_item(dep_items, "bytes_arr", &static_bytes_arr, CHAR+PTR);
        add_dependency_item(dep_items, "var_addr", &var_addr, CHAR+PTR);
        add_dependency_item(dep_items, "asm_val", (void*)&static_asm_val, INT);
        add_dependency_item(dep_items, "result", (void*)&result, INT);
 
-        // 根据process_id获取源码数据
-        const char* src = gcb->code_block_src_array[process_id];
+        // 根据postprocess_id获取源码数据
+        const char* src = gcb->code_block_src_array[postprocess_id];
 
         // 将编译的代码放在存放在相应的字段中
         code = compile_src_code(dep_items, src);
-        gcb->compiled_byte_code_array[process_id] = code;
+        gcb->compiled_byte_code_array[postprocess_id] = code;
 
         run_code(code);
      }
@@ -124,7 +159,7 @@ static void do_postprocession
 
 static int do_check_precondition
 (
-   struct single_code_block* precondtion,
+   struct single_code_block* precondition,
    int arr_len,
    const char* bytes_arr
 )
@@ -136,22 +171,25 @@ static int do_check_precondition
    static_arr_len = arr_len;
    static_bytes_arr = bytes_arr;
 
-   int* code = precondtion->compiled_byte_code;
+   int* code = precondition->compiled_byte_code;
 
    if (code != NULL){
-       run_code(code);
-   }else{
-       struct dependency_items* dep_items;
-       dep_items = init_dependency_items(3);
-       add_dependency_item(dep_items, "arr_len", &static_arr_len, INT);
-       add_dependency_item(dep_items, "result", &result, INT);
-       add_dependency_item(dep_items, "bytes_arr", &static_bytes_arr, CHAR+PTR);
-          
-       const char* src = precondtion->code_block_src;
-       code = compile_src_code(dep_items, src);
-       precondtion->compiled_byte_code = code;
+      run_code(code);
+   } else{
 
-       run_code(code);
+      struct dependency_items* dep_items = init_dependency_items(3);
+      add_dependency_item(dep_items, "arr_len", &static_arr_len, INT);
+      add_dependency_item(dep_items, "result", &result, INT);
+      add_dependency_item(dep_items, "bytes_arr", &static_bytes_arr, CHAR+PTR);
+          
+      // 根据postprocess_id获取源码数据
+      const char* src = precondition->code_block_src;
+
+      // 将编译的代码放在存放在相应的字段中
+      code = compile_src_code(dep_items, src);
+      precondition->compiled_byte_code = code;
+
+      run_code(code);
    }
 
   return result;

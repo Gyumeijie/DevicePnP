@@ -2,7 +2,7 @@
 #include "dev_t.h"
 #include "magnetometer_driver.h"
 #include "magnetometer.h"
-#include "data_template_fetch.h"
+#include "template_data_fetch.h"
 #include "driver_supported_interface.h"
 
 static int template_id;
