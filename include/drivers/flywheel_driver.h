@@ -16,8 +16,6 @@ static int general_flywheel_receive(void* private_data, void* para);
 
 extern void flywheel_driver_loader(void);
 
-typedef int (*driver_operation_function)(void*, void*);
-
 
 static driver_operation_function flywheel_open_templates[] = {
    flywheel_open_template0,
