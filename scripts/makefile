@@ -19,7 +19,7 @@ TARGET     = ../test/test_device_open
 
 CC         = sparc-elf-gcc
 CFLAGS     = 
-CPPFLAGS   = -W --std=c99 -I ../include/ -I ../include/utility -I ../include/drivers \
+CPPFLAGS   = -W --std=c99 -Os -I ../include/ -I ../include/utility -I ../include/drivers \
 			 -I ../include/interpreter -I ../include/mxml -I ../test  
 LDFLAGS    = 
 
