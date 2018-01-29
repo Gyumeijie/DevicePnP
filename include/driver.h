@@ -20,9 +20,6 @@ struct driver_node{
    struct driver_node* next; 
 };
 
-// 定义设备驱动索引表
-static struct driver_node* driver_index_table[MAX_DEVICE_TYPE];
-
 // 初始化driver_index_table
 extern void driver_init(void);
 

@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <memory.h>
 #include <string.h>
 #include "parser.h"
 #include "executor.h"
