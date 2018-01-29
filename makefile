@@ -1,7 +1,7 @@
-VPATH = src/  src/utility src/interpreter src/drivers  test/ 
+VPATH = src/  src/utility src/interpreter src/drivers src/mxml test/ 
 
 CPPFLAGS = -I include/ -I include/utility -I include/drivers \
-		   -I include/interpreter --std=c99  -DDEBUG
+		   -I include/interpreter -I include/mxml --std=c99  -DDEBUG
 
 TEST_DEVICE_OPEN_OBJ  = test_device_open.o driver.o driver_register.o \
 					   driver_bind.o driver_loaders.o dev_t.o hashstr.o \
@@ -32,10 +32,10 @@ TEST_DEVICE_OPEN_OBJ  = test_device_open.o driver.o driver_register.o \
                        fill_bytes_array_assembly_scheme.o\
                        lex.o parser.o executor.o dependency.o relocation.o\
                        interpreter.o collect_code_block.o type_converter.o\
-                       template_data_fetch.o\
-                  
-
+                       template_data_fetch.o mxml-attr.o  mxml-entity.o\
+					   mxml-file.o  mxml-get.o  mxml-index.o mxml-node.o\
+					   mxml-private.o  mxml-search.o  mxml-set.o  mxml-string.o
 test_device_open: $(TEST_DEVICE_OPEN_OBJ)
-	gcc -pedantic -W  -g $^ -lmxml -lpthread -o $@ 
+	gcc -pedantic -W  -g $^ -o $@ 
 	rm -f *.o
 	mv $@ ./test
