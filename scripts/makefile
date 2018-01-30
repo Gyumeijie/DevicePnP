@@ -1,15 +1,3 @@
-#
-# Copyright 2004 P&P Software GmbH (Konstanz, Germany) - All Rights Reserved
-#
-# Makefile
-#
-# Version      1.5
-# Date         22.12.03
-# Author       R. Totaro / A. Pasetti
-#
-# Makefile to build the RegressionTest for the OBS Framework, the test coverage files, and some test programs
-# useful as references for memory occupation tests.
-
 .phony: all clean
 
 SRCDIR     = ../src ../test
