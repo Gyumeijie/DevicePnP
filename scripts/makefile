@@ -5,8 +5,8 @@ INCLUDE    = ../include
 OBJDIR     = .
 TARGET     = ../test/test_device_open
 
-CC         = sparc-elf-gcc
-CFLAGS     = 
+CC         = gcc
+CFLAGS     = -m32 
 CPPFLAGS   = -W --std=c99 -Os -I ../include/ -I ../include/utility -I ../include/drivers \
 			 -I ../include/interpreter -I ../include/mxml -I ../test  
 LDFLAGS    = 
