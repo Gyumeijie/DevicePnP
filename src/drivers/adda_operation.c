@@ -1,5 +1,9 @@
 #include "adda_operation.h"
+#include "../data_acquisition/mf624.h"
 #include <stdio.h>
+
+static mf624_state_t* mfst = NULL;
+
 
 /**
  *　输入：接受数据的数组data，设备通道号数量cnt，以及具体的通道号channel_num数组
@@ -9,22 +13,14 @@
 int ad_devices_read(unsigned int data[], unsigned int cnt, 
                     unsigned int channel_num[])
 {
-    int i;
-    for (i=0; i<cnt; i++){
-        data[i] = ad_read(channel_num[i]);
+    mfst = get_mf624_state();
+
+    for (int i=0; i<cnt; i++){
+        data[i] = ADC_read(mfst, channel_num[i]);
         printf("channel: %d  data: %d\n", channel_num[i], data[i]);
     }
 
     return cnt * sizeof(unsigned int);
-}
-
-
-//测试用
-static unsigned int ad_read(unsigned int channel_num)
-{
-    static int data[16] = {1, 2 ,3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-    
-    return data[channel_num];
 }
 
 
@@ -32,19 +28,13 @@ static unsigned int ad_read(unsigned int channel_num)
 int da_devices_write(unsigned int data[], unsigned int cnt, 
                      unsigned int channel_num[])
 {
-    int i;
-    for (i=0; i<cnt; i++){
-        da_write(channel_num[i], data[i]);
+    mfst = get_mf624_state();
+
+    for (int i=0; i<cnt; i++){
+        DAC_write(mfst, channel_num[i], data[i]);
         printf("channel: %d  data: %d\n", channel_num[i], data[i]);
     }
 
     return cnt * sizeof(unsigned int);
-}
-
-
-//测试用
-static int da_write(unsigned int channel_num, unsigned int data)
-{
-   
 }
 
