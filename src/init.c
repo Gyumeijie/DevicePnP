@@ -9,6 +9,7 @@
 #include "device_open.h"
 #include "error_report.h"
 #include "interpreter.h"
+#include "./data_acquisition/data_acquisition.h"
 #include <stdio.h>
 
 int init(void)
@@ -21,6 +22,8 @@ int init(void)
     if(! config_info_collect_init()) return FAILURE; 
 
     device_open_init();
+
+    data_acquisition_init();
 
     if(! register_devices()) return FAILURE;
 
